@@ -30,9 +30,11 @@ You may have seen the term *data warehouse* coming up quite a number of times. A
 
 If you work with data that needs to be version controlled, that is, it can be rolled back to a previous time, you need to work in dbt. If you want to standardize the data models created across teams, dbt is the tool of choice. If you also want a central place where your data work is documented, dbt handles this quite well. In other words, dbt should be the swiss knife when working with large datasets and you want to maintain modularity, order and documentation of your work.
 
+The below image summarises the role of dbt in your data processing work. 
 
+![The role of dbt](./images/dbt.png)
 
-
+Source: [Reference](https://www.startdataengineering.com/post/advantages-of-using-dbt-data-build-tool/)
 
 
 
