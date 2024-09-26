@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Introduction | A Minimal Book Example</title>
+  <title>Chapter 2 Introduction | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Introduction | A Minimal Book Example" />
+  <meta property="og:title" content="Chapter 2 Introduction | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,17 +19,17 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Introduction | A Minimal Book Example" />
+  <meta name="twitter:title" content="Chapter 2 Introduction | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   
 
-<meta name="author" content="John Doe" />
+<meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-09-25" />
+<meta name="date" content="2024-09-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,7 +37,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="index.html"/>
-<link rel="next" href="cross.html"/>
+<link rel="next" href="the-dbt-architecture.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -181,10 +181,12 @@ div.csl-indent {
 <li class="chapter" data-level="2.3" data-path="introduction.html"><a href="introduction.html#dbt-from-the-professionals"><i class="fa fa-check"></i><b>2.3</b> dbt, from the professionals…</a></li>
 <li class="chapter" data-level="2.4" data-path="introduction.html"><a href="introduction.html#why-use-dbt"><i class="fa fa-check"></i><b>2.4</b> Why use dbt?</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="cross.html"><a href="cross.html"><i class="fa fa-check"></i><b>3</b> Cross-references</a>
+<li class="chapter" data-level="3" data-path="the-dbt-architecture.html"><a href="the-dbt-architecture.html"><i class="fa fa-check"></i><b>3</b> The <code>dbt</code> architecture</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="cross.html"><a href="cross.html#chapters-and-sub-chapters"><i class="fa fa-check"></i><b>3.1</b> Chapters and sub-chapters</a></li>
-<li class="chapter" data-level="3.2" data-path="cross.html"><a href="cross.html#captioned-figures-and-tables"><i class="fa fa-check"></i><b>3.2</b> Captioned figures and tables</a></li>
+<li class="chapter" data-level="3.0.1" data-path="the-dbt-architecture.html"><a href="the-dbt-architecture.html#models"><i class="fa fa-check"></i><b>3.0.1</b> Models</a></li>
+<li class="chapter" data-level="3.0.2" data-path="the-dbt-architecture.html"><a href="the-dbt-architecture.html#tests"><i class="fa fa-check"></i><b>3.0.2</b> Tests</a></li>
+<li class="chapter" data-level="3.0.3" data-path="the-dbt-architecture.html"><a href="the-dbt-architecture.html#documentation"><i class="fa fa-check"></i><b>3.0.3</b> Documentation</a></li>
+<li class="chapter" data-level="3.0.4" data-path="the-dbt-architecture.html"><a href="the-dbt-architecture.html#sources"><i class="fa fa-check"></i><b>3.0.4</b> Sources</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="parts.html"><a href="parts.html"><i class="fa fa-check"></i><b>4</b> Parts</a></li>
 <li class="chapter" data-level="5" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html"><i class="fa fa-check"></i><b>5</b> Footnotes and citations</a>
@@ -217,7 +219,7 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Minimal Book Example</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">dbt Book</a>
           </h1>
         </div>
 
@@ -248,6 +250,12 @@ div.csl-indent {
 <div id="why-use-dbt" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Why use dbt?<a href="introduction.html#why-use-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>If you work with data that needs to be version controlled, that is, it can be rolled back to a previous time, you need to work in dbt. If you want to standardize the data models created across teams, dbt is the tool of choice. If you also want a central place where your data work is documented, dbt handles this quite well. In other words, dbt should be the swiss knife when working with large datasets and you want to maintain modularity, order and documentation of your work.</p>
+<p>The below image summarises the role of dbt in your data processing work.</p>
+<div class="float">
+<img src="images/dbt.png" alt="The role of dbt" />
+<div class="figcaption">The role of dbt</div>
+</div>
+<p>Source: <a href="https://www.startdataengineering.com/post/advantages-of-using-dbt-data-build-tool/">Reference</a></p>
 
 </div>
 </div>
@@ -257,7 +265,7 @@ div.csl-indent {
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="cross.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="the-dbt-architecture.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
