@@ -14,7 +14,10 @@ models
 tests
 documentation
 sources
-parts
+data-storage
+data-warehouse
+data-lake
+data-lakehouse
 footnotes-and-citations
 footnotes
 citations
