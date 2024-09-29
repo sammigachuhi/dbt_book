@@ -19,9 +19,9 @@ data-warehouse
 data-lake
 data-lakehouse
 a-brief-history
-footnotes-and-citations
-footnotes
-citations
+our-data
+accessing-big-query
+copying-the-new-york-city-bikes-data
 blocks
 equations
 theorems-and-proofs

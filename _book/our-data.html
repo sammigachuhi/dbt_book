@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>References | dbt Book</title>
+  <title>Chapter 5 Our data | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="References | dbt Book" />
+  <meta property="og:title" content="Chapter 5 Our data | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="References | dbt Book" />
+  <meta name="twitter:title" content="Chapter 5 Our data | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="sharing-your-book.html"/>
-
+<link rel="prev" href="data-storage.html"/>
+<link rel="next" href="blocks.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -211,17 +211,107 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered hasAnchor">
-<h1>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="our-data" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Our data<a href="our-data.html#our-data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In an earlier chapter, we saw that in data engineering data mainly goes through three processes: extract, load and transform (ELT). The Extract, Transform, Load (ELT) is more of a traditional approach and we will not use it in this case. We will be using Google Bigquery as our data warehouse when working with dbt.</p>
+<p>As a reminder, let’s go through the definitions of ELT.</p>
+<p>Extract - the process of identifying and reading data from one or more source systems. We won’t have to do this since the New York City (NYC) bikes data that will be using has already been <em>extracted</em> from whichever the source is by the trusty workers of Google.</p>
+<p>Load - the process of adding the extracted data to the data warehouse, –in this case Google BigQuery. Again, Google has done this for us. Therefore we won’t have to do it.</p>
+<p>Transform - the process of converting data from its raw format to the format that it will be use for analysis. This falls definitely within our forte. And we shall use dbt for this. Examples of data transformations that can be done with SQL modeling in dbt are:</p>
+<ul>
+<li>Replacing codes with values</li>
+<li>Aggregating numerical sums</li>
+<li>Applying mathematical functions (SQL can do some maths too, but can be very verbose here)</li>
+<li>Converting data types</li>
+<li>Modifying text strings</li>
+<li>Combining data from different tables and databases.</li>
+</ul>
+<div id="accessing-big-query" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Accessing Big Query<a href="our-data.html#accessing-big-query" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>BigQuery is a data warehouse provided by Google.</p>
+<p>To access it, open an incognito window and go to this <a href="https://cloud.google.com/">link</a>. Sign in using your gmail account.</p>
+<p>Click on <strong>Console</strong> button at the top right. That step of bravery will take you to an interface that looks like this:</p>
+<div class="float">
+<img src="images/gcp_interface.png" alt="GCP Interface" />
+<div class="figcaption">GCP Interface</div>
+</div>
+<p>Click on the dropdown at the top. Select <strong>NEW PROJECT</strong>. We want to create a new project that will contain some tables that we will work with in dbt.</p>
+<p>Name your project as <code>dbt-project1</code> or any other name you prefer. Then select <strong>CREATE</strong>.</p>
+<p>Once the project has been created, you will be returned to the original page as first. However, when you select the project dropdown again, you should see your newly created project as one of the options.</p>
+<div class="float">
+<img src="images/gcp_project.png" alt="GCP Project" />
+<div class="figcaption">GCP Project</div>
+</div>
+<p>Click on your project, the interface will refresh and the dropdown should now reflect <code>dbt-project1</code>.</p>
+<p>Click on the <strong>Dashboard</strong> link on the homepage.</p>
+<p>The below interface should appear. It can seem overwhelming at first.</p>
+<div class="float">
+<img src="images/dashboard.png" alt="Dashboard" />
+<div class="figcaption">Dashboard</div>
+</div>
+<p>In one of the “boxes” within the <strong>Dashboard</strong> tab, you will find one called <strong>Resources</strong> with the <strong>BigQuery</strong> button underneath. Click on this button. It will take you to a page asking you to Enable the BigQuery Application Programming Interface (API). Kindly comply!</p>
+<p>Behold, below is the BigQuery interface.</p>
+<div class="float">
+<img src="images/bigquery_interface.png" alt="BigQuery interface" />
+<div class="figcaption">BigQuery interface</div>
+</div>
+<p>You will see one of the resources as <code>dbt_project1&lt;some-random-number&gt;</code> in case you had other resources. Star this project for quick access in future.</p>
+</div>
+<div id="copying-the-new-york-city-bikes-data" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Copying the New York City Bikes data<a href="our-data.html#copying-the-new-york-city-bikes-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>One of the datasets we will be working with is the “New York City Bikes dataset”. To access it, click on the <strong>ADD</strong> button. A sidebar will open up. Go to <strong>Public Datasets</strong>.</p>
+<p>In the <strong>Search Marketplace</strong> searchbar, type ‘bikes’.</p>
+<div class="float">
+<img src="images/marketplace.png" alt="Marketplace" />
+<div class="figcaption">Marketplace</div>
+</div>
+<p>Click on the NYC Citi Bike Trips tab. A new sidebar will popup with a button of <strong>View Dataset</strong>. Click this button and the Google Cloud Platform (GCP) Dashboard will reappear but this time round the <code>bigquery-public-data</code> resource will appear.</p>
+<p>Click on this particular resource’s dropdown on the left and scroll down to the <code>new_york_citibike</code> dataset. We want to copy this dataset from that of <code>bigquery-public-data</code> to that of <code>dbt_project1-437718</code>. The random numbers will be different in your case.</p>
+<p>Scroll up again to your <code>dbt_project1</code> resource. On the kebab menu on the right of this resource, select <em>Create Dataset</em>.</p>
+<div class="float">
+<img src="images/create_dataset.png" alt="Create dataset" />
+<div class="figcaption">Create dataset</div>
+</div>
+<p>A new sidebar will open. Insert the following for each parameter:</p>
+<ul>
+<li><p>Dataset ID - <code>nyc_bikes</code></p></li>
+<li><p>Location type - <code>Region</code></p></li>
+<li><p>Region - <code>africa-south1 (Johannesburg)</code> or your preferred region</p></li>
+</ul>
+<p>Thereafter, click on <strong>CREATE DATASET</strong>.</p>
+<p>The <code>nyc_bikes</code> dataset should now appear under the <code>dbt-projec1</code> resource. We want to copy the contents of the <code>new_york_citibike</code> dataset into our <code>nyc_bikes</code> dataset. So how do we proceed?</p>
+<p>Scroll down to the <code>new_york_citibike</code> dataset under the <code>bigquery-public-data</code> resource and click on it. On the menu for this dataset, you will see the <strong>Copy</strong> button. Click on this button.</p>
+<div class="float">
+<img src="images/copy.png" alt="Copy dataset" />
+<div class="figcaption">Copy dataset</div>
+</div>
+<div class="float">
+<img src="images/copy_sidebar.png" alt="Copy sidebar" />
+<div class="figcaption">Copy sidebar</div>
+</div>
+<p>In the <strong>Destination</strong> searchbar, type <code>nyc_bikes</code> in reference to where we want to copy the contents into. You may need to enable the data transfer API to perform the copy operation. Do so if BigQuery necessitates you that it must be enabled.</p>
+<p>Once you copy the dataset, a small bar will appear on the screen saying <strong>View Details</strong>. Click on it to stop the run operation since BigQuery will be rerunning the copy operation after every 24 hours. Disable the transfer process and delete it.</p>
+<p>Going back to your <code>dbt_project1</code> resource, your <code>nyc_bikes</code> dataset should now be having two tables under it. That is:</p>
+<ul>
+<li>citibike_stations</li>
+<li>citibike_trips</li>
+</ul>
+<p>Click on any of the tables and preview the data therein using the <strong>PREVIEW</strong> button of each tables interface.</p>
+<div class="float">
+<img src="images/table_interface.png" alt="Table" />
+<div class="figcaption">Table</div>
+</div>
+<p>Congratulations on loading your first table in BigQuery!</p>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="sharing-your-book.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="data-storage.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="blocks.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -252,7 +342,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/07-references.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/04-our-data.Rmd",
 "text": "Edit"
 },
 "history": {
