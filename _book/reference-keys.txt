@@ -1,5 +1,3 @@
-eq:binom
-thm:tri
 about
 usage
 render-book
@@ -19,13 +17,13 @@ data-warehouse
 data-lake
 data-lakehouse
 a-brief-history
-our-data
+our-data-in-bigquery
 accessing-big-query
 copying-the-new-york-city-bikes-data
-blocks
-equations
-theorems-and-proofs
-callout-blocks
+installing-dbt
+setting-the-environment
+connecting-to-your-bigquery-data-warehouse
+initializing-a-dbt-project
 sharing-your-book
 publishing
 pages

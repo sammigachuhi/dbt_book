@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 The dbt architecture | dbt Book</title>
+  <title>Chapter 6 Installing dbt | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 The dbt architecture | dbt Book" />
+  <meta property="og:title" content="Chapter 6 Installing dbt | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 The dbt architecture | dbt Book" />
+  <meta name="twitter:title" content="Chapter 6 Installing dbt | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="introduction.html"/>
-<link rel="next" href="data-storage.html"/>
+<link rel="prev" href="our-data-in-bigquery.html"/>
+<link rel="next" href="sharing-your-book.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -211,163 +211,140 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="the-dbt-architecture" class="section level1 hasAnchor" number="3">
-<h1><span class="header-section-number">Chapter 3</span> The <code>dbt</code> architecture<a href="the-dbt-architecture.html#the-dbt-architecture" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In my first time working with dbt, I was overwhelmed with its architecture. Similarly to Django, if one didn’t understand a particular component, it would be enough to break your app. Same case with dbt. Sometimes it feels like that individual who is sitting before that large screen in a nuclear power plant and in charge of all the controls. Sometimes it feels like that, like you have to be on top of everything in dbt, like the chap in that nuclear power plant who has to be on top of all the dials and valves.</p>
-<p>The main components that make up dbt, and which are used in most cases are:</p>
+<div id="installing-dbt" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Installing dbt<a href="installing-dbt.html#installing-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Now that we’ve seen how to access a dataset inside our data warehouse, now let’s proceed to installing dbt. This section assumes you have Visual Studio (VS) Code already installed. All code in this book has been done inside a Linux environment but on a Windows computer thanks to the Window Subsystem for Linux (WSL2) virtualization platform.</p>
+<div id="setting-the-environment" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Setting the environment<a href="installing-dbt.html#setting-the-environment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Open your VS Code.</p>
+<p>Create a new folder called <code>dbt_book</code>. Move into this directory in your VS Code by typing <code>cd dbt_book/</code> in your terminal.</p>
+<p>The first thing we shall do is create a virtual environment from which we shall conduct all our dbt operations. A virtual environment is useful in preventing conflicts between packages across your various programming projects.</p>
+<pre><code>python3 -m venv venv</code></pre>
+<p>The first <code>venv</code> tells python that you’re creating a virtual environment while the second refers to the name of the virtual environment. In this case, our virtual environment shall still share the name <code>venv</code>.</p>
+<p>Now let’s activate our virtual environment.</p>
+<pre><code>source venv/bin/activate
+</code></pre>
+<p>You will see your namespace appended with <code>venv</code> which means that your virtual environment is now active. For example:</p>
+<pre><code>(venv) sammigachuhi@Gachuhi:~/dbt_book$ </code></pre>
+<p>Now here comes the big part: installing dbt for Big Query. We just don’t want to install dbt-core, the dbt packages that we’ll be using, but we also want to install the necessary dependencies that will connect it to BigQuery, where our data is stored.</p>
+<p>The following code will install everything we need; both dbt and the dependencies needed to connect it to BigQuery.</p>
+<pre><code>python3 -m pip install dbt-core dbt-bigquery
+</code></pre>
+</div>
+<div id="connecting-to-your-bigquery-data-warehouse" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Connecting to your BigQuery data warehouse<a href="installing-dbt.html#connecting-to-your-bigquery-data-warehouse" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We wish connecting to a data warehouse for dbt were as easy as providing a username and password. However, it is not so. But it is definitely possible. To connect dbt to a data warehouse, we use a keyfile. A keyfile is a file that contains encryption keys or licenses for a particular task. The keyfile we shall use shall be the doorway to our data warehouse.</p>
+<p>First step, go to your <a href="https://console.cloud.google.com/apis/credentials/wizard">GCP Credentials Wizard</a> page.</p>
+<p>Ensure that your project is set to the dbt project you created in the previous chapter. For my case, I reverted to an earlier created project called <code>dbt_project</code> since my other project <code>dbt_project1</code> started incuring costs.</p>
+<p>For <strong>Credential Type</strong>:</p>
 <ul>
-<li><p>models</p></li>
-<li><p>tests</p></li>
-<li><p>documentation</p></li>
-<li><p>sources</p></li>
+<li><p>From the <strong>Select an API</strong> dropdown, choose <strong>BigQuery API</strong></p></li>
+<li><p>Select <strong>Application data</strong> for the type of data you will be accessing</p></li>
+<li><p>Click <strong>Next</strong> to create a new service account.</p></li>
 </ul>
-<p>Let’s go through each one.</p>
-<div id="models" class="section level3 hasAnchor" number="3.0.1">
-<h3><span class="header-section-number">3.0.1</span> Models<a href="the-dbt-architecture.html#models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>This is the component of dbt that you will most likely work with. In dbt, a model is simply a SQL statement. As simple as that. dbt will use the SQL statements to perform the transformations in your data warehouse that have been defined in your SQL statement. For example, say I want to create a new column of the table in my Google BigQuery. I will create a SQL statement that does just that. That SQL statement is what is referred to as a model in dbt.</p>
-<p>Below is an example of a model that creates a table called <code>customers</code>. The model is saved as <code>customers.sql</code>.</p>
-<pre><code>with customer_orders as (
-    select
-        customer_id,
-        min(order_date) as first_order_date,
-        max(order_date) as most_recent_order_date,
-        count(order_id) as number_of_orders
-
-    from jaffle_shop.orders
-
-    group by 1
-)
-
-select
-    customers.customer_id,
-    customers.first_name,
-    customers.last_name,
-    customer_orders.first_order_date,
-    customer_orders.most_recent_order_date,
-    coalesce(customer_orders.number_of_orders, 0) as number_of_orders
-
-from jaffle_shop.customers
-
-left join customer_orders using (customer_id)</code></pre>
-</div>
-<div id="tests" class="section level3 hasAnchor" number="3.0.2">
-<h3><span class="header-section-number">3.0.2</span> Tests<a href="the-dbt-architecture.html#tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>“Do not put me to test”, is a familiar statement we have heard from an already impatient person. However, dbt allows us to test our data and see if it meets certain assertions. In other words, does our data meet the requirements that have been set for it?</p>
-<p>dbt offers two ways to perform your tests: 1) generic and, 2) custom tests. Generic tests involve just using a pre-defined test that comes packaged in dbt. For example, for every field key you place in a yml file in dbt, you can specify which kind of test to perform on that particular field from the following options: <code>unique</code>, <code>not_null</code>, <code>accepted_values</code> and <code>relationships</code>.</p>
+<p>In the service account page:</p>
 <ul>
-<li><code>unique</code> - the values should be radically distinctive all through</li>
-<li><code>not_null</code> - there shouldn’t be a missing value in the particular column name in the table
-<em><code>accepted_values</code> - only the values contained in the accepted values key will be considered valid. Anything outside of this will result in an error
-</em><code>relationships</code> - the values in this field can be referenced in a different column elsewhere in the table or on a different table altogether.</li>
+<li><p>Type <code>dbt-book</code> as the Service account name or any other name you prefer.</p></li>
+<li><p>From the <strong>Select a role</strong> dropdown, choose <strong>BigQuery Job User</strong> and <strong>BigQuery Data Editor</strong> roles and click <strong>Continue</strong></p></li>
+<li><p>Leave the <strong>Grant users access to this service account</strong> fields blank</p></li>
+<li><p>Once everything is fine it is as good as clicking <strong>Done</strong>!</p></li>
 </ul>
-<p>An example of a generic test is below:</p>
-<pre><code>version: 2
-
-models:
-  - name: orders
-    columns:
-      - name: order_id
-        tests:
-          - unique
-          - not_null
-      - name: status
-        tests:
-          - accepted_values:
-              values: [&#39;placed&#39;, &#39;shipped&#39;, &#39;completed&#39;, &#39;returned&#39;]
-      - name: customer_id
-        tests:
-          - relationships:
-              to: ref(&#39;customers&#39;)
-              field: id</code></pre>
-<p>For custom tests, these involve one creating a SQL model and referencing it in a yml file using Jinja template language.</p>
-<p>For example, here is a custom test written a SQL file called <code>transaction_limit_test.sql</code>.</p>
-<pre><code>-- tests/transaction_limit_test.sql
-select user_id, sum(transaction_amount) as total_spent
-from {{ ref(&#39;transactions&#39;) }}
-group by user_id
-having total_spent &gt; 10000  -- Assuming the limit is 10,000
-
-</code></pre>
-<p>The test is referenced in a yml file and called over a column called <code>transactions</code>.</p>
-<pre><code>models:
-  - name: transactions
-    tests:
-      - transaction_limit_test
-</code></pre>
+<p>Your credentials interface will look like below.</p>
+<div class="float">
+<img src="images/service-account.png" alt="Service account" />
+<div class="figcaption">Service account</div>
 </div>
-<div id="documentation" class="section level3 hasAnchor" number="3.0.3">
-<h3><span class="header-section-number">3.0.3</span> Documentation<a href="the-dbt-architecture.html#documentation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Now the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the <code>description</code> key is used.</p>
-<p>For example here is a description of a field called <code>event_id</code> inside a yml file.</p>
-<pre><code>version: 2
-
-models:
-  - name: events
-    description: This table contains clickstream events from the marketing website
-
-    columns:
-      - name: event_id
-        description: The D-day is the Deed day
-        tests:
-          - unique
-          - not_null
-</code></pre>
-<p>Documentation will be performed where you have placed your tests. There is also a more complex, but scalable manner of writing descriptions. It uses jinja template tags. It works well for large data where the descriptions are many or the descriptions are shared across several tables.</p>
-<p>A short example of the jinja templates’ documentation is this. I will write the description in a different file, a markdown file (<code>.md</code>) for the matter, other than the one containing my field names. The descriptions will be like so:</p>
-<pre><code>{% docs table_events %}
-
-I am not so very robust, but I’ll do the best I can.
-
-Some text here
-
-1) and here
-2) and here
-3) and also here
-
-{% enddocs %}
-</code></pre>
-<p>So when one returns to their yml file, they will reference the particular field of interest with the above description like so:</p>
-<pre><code>version: 2
-
-models:
-  - name: events
-    description: &#39;{{ doc(&quot;table_events&quot;) }}&#39;
-
-    columns:
-      - name: event_id
-        description: The D-day is the Deed day
-        tests:
-            - unique
-            - not_null
-</code></pre>
+<p>Click on your service account name.</p>
+<p>Click on the <strong>KEYS</strong> tab. We want to create a key that dbt will use to connect to our data warehouse.</p>
+<p>Click on <strong>ADD KEY&gt;Create new key</strong>.</p>
+<div class="float">
+<img src="images/add-key.png" alt="Add key" />
+<div class="figcaption">Add key</div>
 </div>
-<div id="sources" class="section level3 hasAnchor" number="3.0.4">
-<h3><span class="header-section-number">3.0.4</span> Sources<a href="the-dbt-architecture.html#sources" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code>sources</code> enable one query the data in your datawarehouse. Once you specify the existing table in your datawarehouse under the <code>sources</code> key, you can access every data from within this table using SQL. To work with a source table, you first have to wrap it inside a <code>{{ source(table-name) }}</code> jinja template. Below is an example of declaring a source.</p>
-<pre><code>version: 2
+<p>Select <strong>JSON</strong> on the interface that appears and click <strong>CREATE</strong>.</p>
+<p>This will download a json file containing the encryption keys that dbt will use to connect to your data warehouse.</p>
+<p>Store this json file in a safe place.</p>
+</div>
+<div id="initializing-a-dbt-project" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Initializing a dbt project<a href="installing-dbt.html#initializing-a-dbt-project" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To create a dbt project, we run the open sesame key: <code>dbt init</code>.</p>
+<p>It will create a string of outputs. It’s important to key in the right details if you want to create a dbt project.</p>
+<p>The first output will ask for the name of your dbt project. Insert <code>dbt_book</code> or any other name you prefer.</p>
+<pre><code>19:07:31  Running with dbt=1.8.7
+Enter a name for your project (letters, digits, underscore): dbt_book</code></pre>
+<p>If you had an already pre-existing dbt project with the same name, dbt will ask if it can overwrite that project. Type <code>y</code> if you wish to do so.</p>
+<p>dbt will thereafter ask you which database you would like to use. Since we had installed dbt with the package dependancies for BigQuery, you will see the sole option for BigQuery. Type <code>1</code> to select BigQuery.</p>
+<pre><code>Which database would you like to use?
+[1] bigquery
 
-sources:
-  - name: jaffle_shop
-    database: raw  
-    schema: jaffle_shop  
-    tables:
-      - name: orders
-      - name: customers
+(Don&#39;t see the one you want? https://docs.getdbt.com/docs/available-adapters)
 
-  - name: stripe
-    tables:
-      - name: payments
+Enter a number: 1</code></pre>
+<p>You will thereafter be asked the authentication method you would like to use. Since we had already created a service account and downloaded the JSON file containing the encryption keys, we shall select option 2.</p>
+<pre><code>Enter a number: 1
+[1] oauth
+[2] service_account
+Desired authentication method option (enter a number): 2</code></pre>
+<p>For the keyfile, provide the path to where you had saved the json file. As a note, this path should be somewhere different than where your dbt project is located. This is because saving the project into Github with your json keys as part of its files will cause Github to raise an alarm and send consistent emails. This is because the json keys are never meant to be shared or stored somewhere accessible. They are considered sensitive information</p>
+<pre><code>keyfile (/path/to/bigquery/keyfile.json): /home/sammigachuhi/dbt_credentials/dbt_book.json</code></pre>
+<p>You will also be asked to provide your project ID. This is available under your dbt project’s dashboard under the <strong>Project ID</strong> heading.</p>
+<pre><code>project (GCP project id): dbt-project-437116</code></pre>
+<p>For the dataset name, we will use <code>nyc_bikes</code> which is the dataset we want to conduct our dbt operations on.</p>
+<pre><code>dataset (the name of your dbt dataset): nyc_bikes</code></pre>
+<p>For the rest of the options, you can fill them as below:</p>
+<pre><code>threads (1 or more): 1
+job_execution_timeout_seconds [300]: 
+[1] US
+[2] EU
+Desired location option (enter a number): 1
+19:09:24  Profile dbt_book written to /home/sammigachuhi/.dbt/profiles.yml using target&#39;s profile_template.yml and your supplied values. Run &#39;dbt debug&#39; to validate the connection.</code></pre>
+<p>Now, in order to test whether your dbt installation is correct, you will have to change directory into your <code>dbt_book</code> subfolder we created as part of the <code>dbt init</code> prompts. At first, we had created a directory called <code>dbt_book</code> in which we also activated the virtual environment. When we ran <code>dbt init</code> from this directory, we specified our project name to be <code>dbt_book</code> as well. It is from here we want to check if our dbt initialization and access to BigQuery was successful.</p>
+<p>So move into this subfolder via <code>cd dbt_book/</code>.</p>
+<pre><code>(venv) sammigachuhi@Gachuhi:~/dbt_book$ cd dbt_book/
+(venv) sammigachuhi@Gachuhi:~/dbt_book/dbt_book$ dbt debug</code></pre>
+<p>Inside the <code>dbt_book</code> subfolder we created as part of the dbt initialization prompts, run <code>dbt debug</code>. If the final output of the run is <code>All checks passed!</code>, you are good to go!</p>
+<pre><code>19:10:20  Running with dbt=1.8.7
+19:10:20  dbt version: 1.8.7
+19:10:20  python version: 3.10.12
+19:10:20  python path: /home/sammigachuhi/dbt_book/venv/bin/python3
+19:10:20  os info: Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+19:10:21  Using profiles dir at /home/sammigachuhi/.dbt
+19:10:21  Using profiles.yml file at /home/sammigachuhi/.dbt/profiles.yml
+19:10:21  Using dbt_project.yml file at /home/sammigachuhi/dbt_book/dbt_book/dbt_project.yml
+19:10:21  adapter type: bigquery
+19:10:21  adapter version: 1.8.2
+19:10:22  Configuration:
+19:10:22    profiles.yml file [OK found and valid]
+19:10:22    dbt_project.yml file [OK found and valid]
+19:10:22  Required dependencies:
+19:10:22   - git [OK found]
+
+19:10:22  Connection:
+19:10:22    method: service-account
+19:10:22    database: dbt-project-437116
+19:10:22    execution_project: dbt-project-437116
+19:10:22    schema: nyc_bikes
+19:10:22    location: US
+19:10:22    priority: interactive
+19:10:22    maximum_bytes_billed: None
+19:10:22    impersonate_service_account: None
+19:10:22    job_retry_deadline_seconds: None
+19:10:22    job_retries: 1
+19:10:22    job_creation_timeout_seconds: None
+19:10:22    job_execution_timeout_seconds: 300
+19:10:22    timeout_seconds: 300
+19:10:22    client_id: None
+19:10:22    token_uri: None
+19:10:22    dataproc_region: None
+19:10:22    dataproc_cluster_name: None
+19:10:22    gcs_bucket: None
+19:10:22    dataproc_batch: None
+19:10:22  Registered adapter: bigquery=1.8.2
+19:10:26    Connection test: [OK connection ok]
+
+19:10:26  All checks passed!
+
 </code></pre>
-<p>You can reference the above source inside a SQL model like so:</p>
-<pre><code>select
-  ...
-
-from {{ source(&#39;jaffle_shop&#39;, &#39;orders&#39;) }}
-
-left join {{ source(&#39;jaffle_shop&#39;, &#39;customers&#39;) }} using (customer_id)
-
-</code></pre>
-<p>dbt will thereafter know that it will perform some operations using data from the <code>orders</code> and <code>customers</code> data from the <code>jaffle_shop</code> –the origin of all our data in this example.</p>
 
 </div>
 </div>
@@ -376,8 +353,8 @@ left join {{ source(&#39;jaffle_shop&#39;, &#39;customers&#39;) }} using (custom
           </div>
         </div>
       </div>
-<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="data-storage.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="our-data-in-bigquery.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sharing-your-book.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -408,7 +385,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/02-dbt-structure.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/05-installing-dbt.Rmd",
 "text": "Edit"
 },
 "history": {
