@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Introduction | dbt Book</title>
+  <title>Chapter 7 Models | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Introduction | dbt Book" />
+  <meta property="og:title" content="Chapter 7 Models | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Introduction | dbt Book" />
+  <meta name="twitter:title" content="Chapter 7 Models | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="the-dbt-architecture.html"/>
+<link rel="prev" href="installing-dbt.html"/>
+<link rel="next" href="references.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -210,45 +210,133 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="introduction" class="section level1 hasAnchor" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Introduction<a href="introduction.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="what-is-dbt" class="section level2 hasAnchor" number="2.1">
-<h2><span class="header-section-number">2.1</span> What is dbt?<a href="introduction.html#what-is-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, when in full, stands for Data build tool. dbt is a tool that data scientists and analytical engineers use to transform data in their data warehouses. If you are a newbie wanting to, or rather curious about dbt, the preceding statements sure contains a lot. The words <em>analytical engineers</em>, <em>transform data</em> and <em>data warehouses</em> may sound unfamiliar, if not imposing. For now just think of dbt much like a recipe. In a recipe, you have the steps and the instructions to cook your favourite meal, say a roasted chicken. Sure enough, your recipe will contain details on the optimal oven temperature, heating duration and how to set it! dbt works in much the same way. We define how we want to transform or build our data. Once we hit <code>run</code> the magic happens.</p>
-</div>
-<div id="encounter-with-dbt" class="section level2 hasAnchor" number="2.2">
-<h2><span class="header-section-number">2.2</span> Encounter with <code>dbt</code><a href="introduction.html#encounter-with-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>How did I come across dbt? Being from a totally different background, the geographical sciences, my first experience with dbt, contrary to what veteran users may say, wasn’t so good. Either because a lot was on my desk back then, but I was having trouble piecing together all the different components that make dbt work, or dbt uses to work. Whichever is the case. It is only after some time, and several hard knocks in between, that I was able to get a semblance of what it does.</p>
-<p>At least I got a few things. dbt could be used to create views of your tables in the data warehouse, it could perform tests and lastly, (the one I liked the most) it could be used to render a website of your documentation!</p>
-</div>
-<div id="dbt-from-the-professionals" class="section level2 hasAnchor" number="2.3">
-<h2><span class="header-section-number">2.3</span> dbt, from the professionals…<a href="introduction.html#dbt-from-the-professionals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, from the words of developers, is an open-source tool that analysts and data engineers use to transform data in their data warehouses. Did someone mention <em>transform data</em> somewhere? Data transformation is the process of converting data from its source format to the format required for analysis. The data transformation process is part of a three stage process known as Extract Load and Transform (ELT). Before ELT, Extract Transform Load was the king. The former involves transfering data from the source, to the destination, such as a data warehouse or data lake and performing the transformation in the destination. The latter, though a traditional approach, involves first identifying the data, transforming it prior to landing it to the destination, in this case data warehouse and letting it rest there where downstream users can get hold of it.</p>
-<p>Here is a better description of the Extract, Load and Transform keywords.</p>
-<p>Extract - this is the identification and reading of data from one or more sources, such as databases, internet, comma separated value (csv) files and the like.</p>
-<p>Load - just like you would pull up a weight into a lorry, this is the process of transferring data from the source to your data warehouse.</p>
-<p>Transform - this is the conversion of data from its state to a format that can be used by downstream users.</p>
-<p>You may have seen the term <em>data warehouse</em> coming up quite a number of times. A data warehouse is a data management system that stores current and historical data from multiple sources in a business friendly manner for easier insights and reporting. Examples of data warehouses are Google Big Query, Snowflake, Amazon Redshift, Azure Synapse Analytics, IBM Db2 Warehouse and Firebolt.</p>
-</div>
-<div id="why-use-dbt" class="section level2 hasAnchor" number="2.4">
-<h2><span class="header-section-number">2.4</span> Why use dbt?<a href="introduction.html#why-use-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If you work with data that needs to be version controlled, that is, it can be rolled back to a previous time, you need to work in dbt. If you want to standardize the data models created across teams, dbt is the tool of choice. If you also want a central place where your data work is documented, dbt handles this quite well. In other words, dbt should be the swiss knife when working with large datasets and you want to maintain modularity, order and documentation of your work.</p>
-<p>The below image summarises the role of dbt in your data processing work.</p>
+<div id="models-1" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Models<a href="models-1.html#models-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>If you have gone through previous chapters, you will by now know that a model in dbt is any SQL file. It is what dbt will use to build tables, views and any other transformations in your data warehouse (read BigQuery).</p>
+<p>In dbt, models are executed with the hit and run command: <code>dbt run</code>.</p>
+<div id="running-a-model" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Running a model<a href="models-1.html#running-a-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>dbt did us a very big favour during installation, it came with two models already created for us. These are namely the <code>my_first_dbt_model.sql</code> and <code>my_second_dbt_model.sql</code> within the <code>models/example</code> directory. It also provided a <code>schema.yml</code> file within the same directory which provides definitions for the model’s schema.</p>
+<p>Alright. Assuming that you are within the <code>dbt_book</code> subdirectory and your virtual environment <code>(venv)</code> already activated, type the following in your terminal <code>dbt run</code>.</p>
+<pre><code>(venv) sammigachuhi@Gachuhi:~/dbt_book/dbt_book$ dbt run</code></pre>
+<p>This will initiate a series of printouts. However, before we go to the expected output, you may run into an error related to the location not being found.</p>
+<pre><code>404 Not found: Dataset dbt-project-437116:nyc_bikes was not found in location US; reason: notFound, message: Not found: Dataset dbt-project-437116:nyc_bikes was not found in location US</code></pre>
+<p>When we were initializing our project using <code>dbt init</code> we selected option 1 for US since there was no other option apart from EU. Luckily, there is a work around to this. It involves editing the <code>projects.yml</code> file. If you run <code>dbt debug</code> it will also show the path of your <code>projects.yml</code> alongside other configuration information.</p>
+<pre><code>18:19:56  Running with dbt=1.8.7
+18:19:56  dbt version: 1.8.7
+18:19:56  python version: 3.10.12
+18:19:56  python path: /home/sammigachuhi/dbt_book/venv/bin/python3
+18:19:56  os info: Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+18:19:57  Using profiles dir at /home/sammigachuhi/.dbt
+18:19:57  Using profiles.yml file at /home/sammigachuhi/.dbt/profiles.yml
+--snip--</code></pre>
+<p>Go to the provided path for <code>profiles.yml</code> which is found at <code>/home/sammigachuhi/.dbt</code> in my case. Open it and change the line with <code>location</code> to read from <code>US</code> to <code>africa-south1</code>.</p>
+<pre><code>dbt_book:
+  outputs:
+    dev:
+      dataset: nyc_bikes
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      keyfile: /home/sammigachuhi/dbt_credentials/dbt_book.json
+      location: africa-south1 
+--snip---</code></pre>
+<p>Now come back, and rerun <code>dbt run</code> again. dbt should now be able to run against your warehouse and create a table called <code>my_first_dbt_model</code> and a view <code>my_second_dbt_model</code> in BigQuery.</p>
+<p>“How do I know that my queries ran successfully?”, you may ask. One, the output of a successful dbt run is <code>Completed successfully</code>. Beneath this, message, will be a log of the number of models ran and if there have been any errors. We had two models, so we expect to see this reflect in the log. And it did.</p>
+<pre><code>18:21:16  Running with dbt=1.8.7
+18:21:17  Registered adapter: bigquery=1.8.2
+18:21:17  Unable to do partial parsing because saved manifest not found. Starting full parse.
+18:21:19  Found 2 models, 4 data tests, 479 macros
+18:21:19  
+18:21:22  Concurrency: 1 threads (target=&#39;dev&#39;)
+18:21:22  
+18:21:22  1 of 2 START sql table model nyc_bikes.my_first_dbt_model ...................... [RUN]
+18:21:30  1 of 2 OK created sql table model nyc_bikes.my_first_dbt_model ................. [CREATE TABLE (2.0 rows, 0 processed) in 7.83s]
+18:21:30  2 of 2 START sql view model nyc_bikes.my_second_dbt_model ...................... [RUN]
+18:21:34  2 of 2 OK created sql view model nyc_bikes.my_second_dbt_model ................. [CREATE VIEW (0 processed) in 4.01s]
+18:21:34  
+18:21:34  Finished running 1 table model, 1 view model in 0 hours 0 minutes and 14.88 seconds (14.88s).
+18:21:34  
+18:21:34  Completed successfully
+18:21:34  
+18:21:34  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2
+</code></pre>
+<p>The second way, and the most obvious, is checking the results in your BigQuery data warehouse. If you see the table and view <code>my_first_dbt_model</code> and <code>my_second_dbt_model</code> respectively, the query ran successfully.</p>
 <div class="float">
-<img src="images/dbt.png" alt="The role of dbt" />
-<div class="figcaption">The role of dbt</div>
+<img src="images/model_outputs.png" alt="Models" />
+<div class="figcaption">Models</div>
 </div>
-<p>Source: <a href="https://www.startdataengineering.com/post/advantages-of-using-dbt-data-build-tool/">Reference</a></p>
+<p>It was that simple, isn’t it?</p>
+</div>
+<div id="model-structure" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Model structure<a href="models-1.html#model-structure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let’s take a look at the model <code>my_first_dbt_model.sql</code>.</p>
+<pre><code>
+{{ config(materialized=&#39;table&#39;) }}
+
+with source_data as (
+
+    select 1 as id
+    union all
+    select null as id
+
+)
+
+select *
+from source_data
+
+/*
+    Uncomment the line below to remove records with null `id` values
+*/
+
+-- where id is not null</code></pre>
+<p>The line <code>{{ config(materialized='table') }}</code> tells dbt to make the output <code>my_first_dbt_model</code> as a table. Any configurations set at the model level will overide the overarching ones set at <code>dbt_project.yml</code> file.</p>
+<p>If you quickly take a sneek peek at the <code>dbt_project.yml</code> file and scroll to the bottom, you will see this configuration:</p>
+<pre><code>models:
+  dbt_book:
+    # Config indicated by + and applies to all files under models/example/
+    example:
+      +materialized: view</code></pre>
+<p>This configuration simply says that for every model inside the <code>dbt_book/example</code> directory, as displayed by the new line and identations, materialize the result as a view<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. However, inside our <code>my_first_dbt_model.sql</code> file, we set the materialization as <code>table</code>. What is in the sql model will override what is in the <code>dbt_project.yml</code>. However, for <code>my_second_dbt_model.sql</code>, we didn’t specify the materialization. Like the case of the rat reigning in the cat’s absence, the materialization specified in the <code>dbt_project.yml</code> will call the shots for the second model. That’s why for <code>my_second_dbt_model</code> the materialization is a view, and not a table as its counterpart.</p>
+<p><a href="https://docs.getdbt.com/docs/build/materializations">Materialization</a> is the persistence of a model in the data warehouse.</p>
+<p>The second part of our first model is the actual SQL statement.</p>
+<pre><code>with source_data as (
+
+    select 1 as id
+    union all
+    select null as id
+
+)
+
+select *
+from source_data</code></pre>
+<p>This is a WITH SQL statement. In very simple terms, the SQL statement in parentheses <code>()</code> is what is referenced as <code>source_data</code>. Once we define our SQL statement and close it with parentheses, we can now select the data referenced by <code>source_data</code>.</p>
+<p>The SQL statements in parentheses is what is referred to as <a href="https://www.atlassian.com/data/sql/using-common-table-expressions">Common Table Expression (CTE)</a>. They were designed to simplify complex queries and be used in the context of a larger query.</p>
+<p>The second model doesn’t have much to provide but it introduces a new trick: the <code>ref</code> function.</p>
+<pre><code>select *
+from {{ ref(&#39;my_first_dbt_model&#39;) }}
+where id = 1</code></pre>
+<p>The <code>ref</code> function is part of the jinja templating language. It is used to reference a model that has been provided within the parentheses enclosed with quotes <code>('')</code>. Therefore, in essence, our model is simply returning the row(s) from <code>my_first_dbt_model</code> that contain the value <code>1</code> in the <code>id</code> column.</p>
+<p>Here is the result of <code>my_second_dbt_model</code> view when I query BigQuery to show its contents.</p>
+<div class="float">
+<img src="images/second_model.png" alt="Second model" />
+<div class="figcaption">Second model</div>
+</div>
 
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>A view is a virtual table, similar to the original table, the physical dataset it was created from<a href="models-1.html#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-dbt-architecture.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="installing-dbt.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -279,7 +367,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/01-intro.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/06-models.Rmd",
 "text": "Edit"
 },
 "history": {

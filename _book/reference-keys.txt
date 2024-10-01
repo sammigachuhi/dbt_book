@@ -24,7 +24,6 @@ installing-dbt
 setting-the-environment
 connecting-to-your-bigquery-data-warehouse
 initializing-a-dbt-project
-sharing-your-book
-publishing
-pages
-metadata-for-sharing
+models-1
+running-a-model
+model-structure

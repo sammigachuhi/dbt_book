@@ -1,0 +1,163 @@
+# Models
+
+If you have gone through previous chapters, you will by now know that a model in dbt is any SQL file. It is what dbt will use to build tables, views and any other transformations in your data warehouse (read BigQuery).
+
+In dbt, models are executed with the hit and run command: `dbt run`.
+
+## Running a model
+
+dbt did us a very big favour during installation, it came with two models already created for us. These are namely the `my_first_dbt_model.sql` and `my_second_dbt_model.sql` within the `models/example` directory. It also provided a `schema.yml` file within the same directory which provides definitions for the model's schema. 
+
+Alright. Assuming that you are within the `dbt_book` subdirectory and your virtual environment `(venv)` already activated, type the following in your terminal `dbt run`. 
+
+
+```
+(venv) sammigachuhi@Gachuhi:~/dbt_book/dbt_book$ dbt run
+```
+
+This will initiate a series of printouts. However, before we go to the expected output, you may run into an error related to the location not being found. 
+
+```
+404 Not found: Dataset dbt-project-437116:nyc_bikes was not found in location US; reason: notFound, message: Not found: Dataset dbt-project-437116:nyc_bikes was not found in location US
+```
+
+When we were initializing our project using `dbt init` we selected option 1 for US since there was no other option apart from EU. Luckily, there is a work around to this. It involves editing the `projects.yml` file. If you run `dbt debug` it will also show the path of your `projects.yml` alongside other configuration information. 
+
+
+```
+18:19:56  Running with dbt=1.8.7
+18:19:56  dbt version: 1.8.7
+18:19:56  python version: 3.10.12
+18:19:56  python path: /home/sammigachuhi/dbt_book/venv/bin/python3
+18:19:56  os info: Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+18:19:57  Using profiles dir at /home/sammigachuhi/.dbt
+18:19:57  Using profiles.yml file at /home/sammigachuhi/.dbt/profiles.yml
+--snip--
+```
+
+
+Go to the provided path for `profiles.yml` which is found at `/home/sammigachuhi/.dbt` in my case. Open it and change the line with `location` to read from `US` to `africa-south1`.
+
+```
+dbt_book:
+  outputs:
+    dev:
+      dataset: nyc_bikes
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      keyfile: /home/sammigachuhi/dbt_credentials/dbt_book.json
+      location: africa-south1 
+--snip---
+```
+
+Now come back, and rerun `dbt run` again. dbt should now be able to run against your warehouse and create a table called `my_first_dbt_model` and a view `my_second_dbt_model` in BigQuery. 
+
+"How do I know that my queries ran successfully?", you may ask. One, the output of a successful dbt run is `Completed successfully`. Beneath this, message, will be a log of the number of models ran and if there have been any errors. We had two models, so we expect to see this reflect in the log. And it did.
+
+```
+18:21:16  Running with dbt=1.8.7
+18:21:17  Registered adapter: bigquery=1.8.2
+18:21:17  Unable to do partial parsing because saved manifest not found. Starting full parse.
+18:21:19  Found 2 models, 4 data tests, 479 macros
+18:21:19  
+18:21:22  Concurrency: 1 threads (target='dev')
+18:21:22  
+18:21:22  1 of 2 START sql table model nyc_bikes.my_first_dbt_model ...................... [RUN]
+18:21:30  1 of 2 OK created sql table model nyc_bikes.my_first_dbt_model ................. [CREATE TABLE (2.0 rows, 0 processed) in 7.83s]
+18:21:30  2 of 2 START sql view model nyc_bikes.my_second_dbt_model ...................... [RUN]
+18:21:34  2 of 2 OK created sql view model nyc_bikes.my_second_dbt_model ................. [CREATE VIEW (0 processed) in 4.01s]
+18:21:34  
+18:21:34  Finished running 1 table model, 1 view model in 0 hours 0 minutes and 14.88 seconds (14.88s).
+18:21:34  
+18:21:34  Completed successfully
+18:21:34  
+18:21:34  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2
+
+```
+
+The second way, and the most obvious, is checking the results in your BigQuery data warehouse. If you see the table and view `my_first_dbt_model` and `my_second_dbt_model` respectively, the query ran successfully. 
+
+![Models](./images/model_outputs.png)
+
+It was that simple, isn't it?
+
+## Model structure
+
+Let's take a look at the model `my_first_dbt_model.sql`. 
+
+```
+
+{{ config(materialized='table') }}
+
+with source_data as (
+
+    select 1 as id
+    union all
+    select null as id
+
+)
+
+select *
+from source_data
+
+/*
+    Uncomment the line below to remove records with null `id` values
+*/
+
+-- where id is not null
+```
+
+The line `{{ config(materialized='table') }}` tells dbt to make the output `my_first_dbt_model` as a table. Any configurations set at the model level will overide the overarching ones set at `dbt_project.yml` file. 
+
+If you quickly take a sneek peek at the `dbt_project.yml` file and scroll to the bottom, you will see this configuration:
+
+```
+models:
+  dbt_book:
+    # Config indicated by + and applies to all files under models/example/
+    example:
+      +materialized: view
+```
+
+This configuration simply says that for every model inside the `dbt_book/example` directory, as displayed by the new line and identations, materialize the result as a view^[A view is a virtual table, similar to the original table, the physical dataset it was created from]. However, inside our `my_first_dbt_model.sql` file, we set the materialization as `table`. What is in the sql model will override what is in the `dbt_project.yml`. However, for `my_second_dbt_model.sql`, we didn't specify the materialization. Like the case of the rat reigning in the cat's absence, the materialization specified in the `dbt_project.yml` will call the shots for the second model. That's why for `my_second_dbt_model` the materialization is a view, and not a table as its counterpart.
+
+[Materialization](https://docs.getdbt.com/docs/build/materializations) is the persistence of a model in the data warehouse. 
+
+
+The second part of our first model is the actual SQL statement.
+
+```
+with source_data as (
+
+    select 1 as id
+    union all
+    select null as id
+
+)
+
+select *
+from source_data
+```
+
+This is a WITH SQL statement. In very simple terms, the SQL statement in parentheses `()` is what is referenced as `source_data`. Once we define our SQL statement and close it with parentheses, we can now select the data referenced by `source_data`. 
+
+The SQL statements in parentheses is what is referred to as [Common Table Expression (CTE)](https://www.atlassian.com/data/sql/using-common-table-expressions). They were designed to simplify complex queries and be used in the context of a larger query. 
+
+
+The second model doesn't have much to provide but it introduces a new trick: the `ref` function.
+
+```
+select *
+from {{ ref('my_first_dbt_model') }}
+where id = 1
+```
+
+The `ref` function is part of the jinja templating language. It is used to reference a model that has been provided within the parentheses enclosed with quotes `('')`. Therefore, in essence, our model is simply returning the row(s) from `my_first_dbt_model` that contain the value `1` in the `id` column.
+
+Here is the result of `my_second_dbt_model` view when I query BigQuery to show its contents.
+
+![Second model](./images/second_model.png)
+
+
+
+
