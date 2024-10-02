@@ -27,3 +27,4 @@ initializing-a-dbt-project
 models-1
 running-a-model
 model-structure
+a-custom-model

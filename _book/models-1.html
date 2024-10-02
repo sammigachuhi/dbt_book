@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-01" />
+<meta name="date" content="2024-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -188,6 +188,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="7.1" data-path="models-1.html"><a href="models-1.html#running-a-model"><i class="fa fa-check"></i><b>7.1</b> Running a model</a></li>
 <li class="chapter" data-level="7.2" data-path="models-1.html"><a href="models-1.html#model-structure"><i class="fa fa-check"></i><b>7.2</b> Model structure</a></li>
+<li class="chapter" data-level="7.3" data-path="models-1.html"><a href="models-1.html#a-custom-model"><i class="fa fa-check"></i><b>7.3</b> A custom model</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -321,6 +322,78 @@ where id = 1</code></pre>
 <img src="images/second_model.png" alt="Second model" />
 <div class="figcaption">Second model</div>
 </div>
+</div>
+<div id="a-custom-model" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> A custom model<a href="models-1.html#a-custom-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Now that we have seen how to run our models, and we have hit the ground running with some of the models preshipped with dbt, it’s now time to fold our shirts and run our own custom model.</p>
+<p>Let’s start easy. We will be no means delve into a complex model since that is only limited by your imagination. If you know SQL, there is no limit to the models, both in number and complexity, that you can do in dbt.</p>
+<p>Our first model will endeavour to perform a change on the <code>citi_trips</code> table within our <code>nyc_bikes</code> dataset. There is a very ripe column called <code>tripduration</code> which stands for the trip in second every cab ride took. Humans prefer to work in minutes so a trivial dbt job would involve creating a column that shows the <code>tripduration</code> in minutes. dbt would then be doing the Transform part in the ELT.</p>
+<p>In the <code>citi_trips_minutes.sql</code> model, we have written a code that creates a view of this result. Remember, views are just virtual tables but they do save on storage!</p>
+<pre><code>{{ config(materialized=&#39;view&#39;) }}
+
+WITH citi_trips AS (
+    SELECT *, 
+    tripduration / 60 AS trip_duration_min
+    FROM 
+    `dbt-project-437116.nyc_bikes.citibike_trips` 
+)
+
+SELECT * FROM citi_trips
+</code></pre>
+<p>The above SQL statement is also a form of Common Table Expression (CTE). It’s not that hard. The variable <code>citi_trips</code> just references the SQL statement in parentheses.</p>
+<p>There is another small trick of the trade. What if this very simple dbt model was just part of thousands, and longer running SQL models. If we wanted to just run this small, tiny winy model, would it have to be part of the entourage of the other model runs. Such would be a waste of time and resources, assuming some of them are heavy models. No. We can use the <code>--select</code> keyword to only select the model we want to run.</p>
+<p>Below we run the <code>citi_trips_minutes</code> model.</p>
+<pre><code>dbt run --select models/example/citi_trips_minutes.sql
+</code></pre>
+<p>Below is the output.</p>
+<pre><code>Concurrency: 1 threads (target=&#39;dev&#39;)
+18:50:33  
+18:50:33  1 of 1 START sql view model nyc_bikes.citi_trips_minutes ....................... [RUN]
+18:50:37  1 of 1 OK created sql view model nyc_bikes.citi_trips_minutes .................. [CREATE VIEW (0 processed) in 4.53s]
+18:50:37  
+18:50:37  Finished running 1 view model in 0 hours 0 minutes and 8.17 seconds (8.17s).
+18:50:37  
+18:50:37  Completed successfully
+18:50:37  
+18:50:37  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1</code></pre>
+<p>We are always glad when we see the soothing words “Completed successfully”. If you go to BigQuery, our data warehouse, you will see a new view called <code>citi_trips_minutes</code> already created. By default, the name of the newly formed view or table in the data warehouse will be that of the model used to create it.</p>
+<p>Similar to the above, the below run command will also work.</p>
+<pre><code>dbt run --select citi_trips_minutes</code></pre>
+<p>But how do we view this newly created result. Unlike a table, BigQuery does not offer the <strong>PREVIEW</strong> button. However, there is a way…</p>
+<div class="float">
+<img src="images/query_button.png" alt="Query" />
+<div class="figcaption">Query</div>
+</div>
+<p>Click on the <strong>Query</strong> button, select <strong>In new tab</strong> and a new tab will form. Copy this SQL query onto the tab and run it to display the result of our <code>citi_trips_minutes</code> view.</p>
+<pre><code>SELECT * FROM `dbt-project-437116.nyc_bikes.citi_trips_minutes` 
+</code></pre>
+<p>Our <code>trip_duration_min</code> column of interest is onto the far right of our view.</p>
+<p>We had hinted earlier that there is no limit to the complexity or number of models you can create in dbt. Below is a sort of more complex model (but not much) compared to the earlier one. This model rounds of the minutes to one decimal place and also removes the null columns, thus reducing number of rows from 58, 937, 715 to 53, 108, 721. The model is saved as <code>citi_trips_round.sql</code>.</p>
+<pre><code>{{ config(materialized=&#39;view&#39;) }}
+
+WITH citi_trips_round AS (
+    SELECT *, ROUND(trip_duration_min, 1) AS trip_min_round
+    FROM (
+        SELECT *, 
+        tripduration / 60 AS trip_duration_min
+        FROM 
+        `dbt-project-437116.nyc_bikes.citibike_trips`
+        ) 
+    WHERE tripduration IS NOT NULL
+)
+
+SELECT * FROM citi_trips_round
+</code></pre>
+<p>Our model is saved as the <code>citi_trips_round</code> view in BigQuery.</p>
+<p>Create a new query tab in BigQuery to view the results. Also use the query tab to count the number of rows and compare that with those from the <code>citibike_trips</code> table. It’s a difference of 5.8 million rows of null value eliminated.</p>
+<pre><code>SELECT * FROM `dbt-project-437116.nyc_bikes.citi_trips_round`; 
+
+SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citi_trips_round`;
+
+-- This is the count of the original citibike_trips table
+SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citibike_trips`;</code></pre>
+<p>You may be wondering what the advantage that dbt provides. After all, can’t one just use the SQL Query tab in BigQuery just to do the transformations and save the table? Fine, that can work. However, dbt offers a form of persistence to your models. You see, an SQL query tab can be erased or modified, but the SQL queries in dbt even if they too can be modified at will they are persisted longer if they are saved in a versioning environment such as Github.</p>
+<p>One more thing, you don’t have to use the <code>models/example</code> folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine.</p>
 
 </div>
 </div>
