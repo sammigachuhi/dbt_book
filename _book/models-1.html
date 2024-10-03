@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-02" />
+<meta name="date" content="2024-10-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,7 +37,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="installing-dbt.html"/>
-<link rel="next" href="references.html"/>
+<link rel="next" href="documentation-1.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -190,7 +190,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.2" data-path="models-1.html"><a href="models-1.html#model-structure"><i class="fa fa-check"></i><b>7.2</b> Model structure</a></li>
 <li class="chapter" data-level="7.3" data-path="models-1.html"><a href="models-1.html#a-custom-model"><i class="fa fa-check"></i><b>7.3</b> A custom model</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="8" data-path="documentation-1.html"><a href="documentation-1.html"><i class="fa fa-check"></i><b>8</b> Documentation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="documentation-1.html"><a href="documentation-1.html#the-yml-files"><i class="fa fa-check"></i><b>8.1</b> The yml files</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="documentation-1.html"><a href="documentation-1.html#version-2"><i class="fa fa-check"></i><b>8.1.1</b> <code>version: 2</code></a></li>
+<li class="chapter" data-level="8.1.2" data-path="documentation-1.html"><a href="documentation-1.html#models-2"><i class="fa fa-check"></i><b>8.1.2</b> <code>models</code></a></li>
+<li class="chapter" data-level="8.1.3" data-path="documentation-1.html"><a href="documentation-1.html#description"><i class="fa fa-check"></i><b>8.1.3</b> <code>description</code></a></li>
+<li class="chapter" data-level="8.1.4" data-path="documentation-1.html"><a href="documentation-1.html#columns"><i class="fa fa-check"></i><b>8.1.4</b> <code>columns</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="documentation-1.html"><a href="documentation-1.html#definition-for-our-model"><i class="fa fa-check"></i><b>8.2</b> Definition for our model</a></li>
+<li class="chapter" data-level="8.3" data-path="documentation-1.html"><a href="documentation-1.html#using-the-doc-function"><i class="fa fa-check"></i><b>8.3</b> Using the <code>doc</code> function</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -393,7 +404,9 @@ SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citi_trips_round`;
 -- This is the count of the original citibike_trips table
 SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citibike_trips`;</code></pre>
 <p>You may be wondering what the advantage that dbt provides. After all, can’t one just use the SQL Query tab in BigQuery just to do the transformations and save the table? Fine, that can work. However, dbt offers a form of persistence to your models. You see, an SQL query tab can be erased or modified, but the SQL queries in dbt even if they too can be modified at will they are persisted longer if they are saved in a versioning environment such as Github.</p>
-<p>One more thing, you don’t have to use the <code>models/example</code> folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine.</p>
+<p>One more thing, you don’t have to use the <code>models/example</code> folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine. In fact, like a stubbon mathematician who will want to battle-test his concepts though they are as robust as Zeus, let’s do it.</p>
+<p>Create a new folder within the <code>models</code> directory called <code>my_models</code>. Move the <code>citi_trips_minutes</code> and <code>citi_trips_round</code> models into the <code>my_models</code> directory. Thereafter, run these two models using <code>dbt run --select models/my_models</code>. The should run fine.</p>
+<p>As an extra bit of information, all successfull compile and run models will appear under the <code>/target</code> directory.</p>
 
 </div>
 </div>
@@ -409,7 +422,7 @@ SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citibike_trips`;</code></pre>
         </div>
       </div>
 <a href="installing-dbt.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="documentation-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

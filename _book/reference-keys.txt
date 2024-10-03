@@ -28,3 +28,11 @@ models-1
 running-a-model
 model-structure
 a-custom-model
+documentation-1
+the-yml-files
+version-2
+models-2
+description
+columns
+definition-for-our-model
+using-the-doc-function

@@ -267,7 +267,11 @@ SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citibike_trips`;
 
 You may be wondering what the advantage that dbt provides. After all, can't one just use the SQL Query tab in BigQuery just to do the transformations and save the table? Fine, that can work. However, dbt offers a form of persistence to your models. You see, an SQL query tab can be erased or modified, but the SQL queries in dbt even if they too can be modified at will they are persisted longer if they are saved in a versioning environment such as Github.
 
-One more thing, you don't have to use the `models/example` folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine.
+One more thing, you don't have to use the `models/example` folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine. In fact, like a stubbon mathematician who will want to battle-test his concepts though they are as robust as Zeus, let's do it.
+
+Create a new folder within the `models` directory called `my_models`. Move the `citi_trips_minutes` and `citi_trips_round` models into the `my_models` directory. Thereafter, run these two models using `dbt run --select models/my_models`. The should run fine. 
+
+As an extra bit of information, all successfull compile and run models will appear under the `/target` directory.
 
 
 

@@ -1,0 +1,209 @@
+# Documentation
+
+In the book *The voyages and adventures of Captain Hatteras* the survivors of a ship whose expedition was to the North Pole relied on the writing of former captains, explorers and sailsmen to not only find the best possible route to the North Pole, but also the hazards and the places where coal was hidden for future explorers like they who were keen on finding the coveted North Pole. So how does this tie to data engineering and dbt? Well, in any digital organization, there is sure to be some turnover. There is sure to be some new chap who would want to wrap their heads around what the organization was doing, and the data was using. Documentation is one way to enable these experts start on a sure footing, but it is rarely the norm. The good thing with dbt is that it provides a way to create documentation at the same place you write code to transform it, not in a separed pdf^[Portable Document Format] as we all do!
+
+## The yml files
+
+In dbt, yml files can do a lot of things. One of the stuff it does is documentation and creation of tests for your data. But first, here are the rules of writing a yml file.
+
+1. Indents should be two spaces
+
+2. List items should be indented
+
+3. Use a new line to separate list items that are dictionaries where appropriate
+
+
+For this case, we shall use the yml files to create documentation for our data. There is hardly any information on a rule-based methodology to create a `yml` file. However, for documentation and testing purposes, we already have a template to start us off with. This is the `schema.yml` file inside the `models/example` directory. 
+
+```
+version: 2
+
+models:
+  - name: my_first_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+
+  - name: my_second_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+```
+
+Let's go through the above structure briefly. 
+
+
+### `version: 2`
+
+There is a story behind this. It is that at the very beginning of dbt development, the structure was very different and inserting `version: 2` enabled developers know which version of dbt they were working. Don't expect a `version: 3` to come any time soon, but this is just a required necessity. 
+
+
+### `models`
+
+Remember when we said that a model in dbt is simply a sql file? Well, next to the `name` key which is under this key you specify the name of your sql file, minus the `.sql` extension. 
+
+
+### `description`
+
+This is where you insert the description of your table. 
+
+### `columns`
+
+These are the fields contained in your table. You name them here and under each column are three mappings. 
+
+- `name` - this is the name of the field in your table. In other words, it is the column name.
+
+- `description` - this is a short explanation of your column.
+
+- `data_test` - the kind of tests that you would like to perform on your field are inserted here. dbt comes with generic tests such as `unique`, `not_null` and `integer` but you can create your own custom tests too.
+
+## Definition for our model
+
+Alright, having gone through the template, we can create our own `yml` file under the `my_models` directory. Let's call it `my_models.yml`. Copy past the yml structure from `schema.yml` to the `my_models.yml` and let the first yml structure for `citi_trips_minutes.sql` look like below.
+
+```
+version: 2
+
+models:
+  - name: citi_trips_minutes
+    description: "This is a table with an extra column showing the trip duration in minutes"
+    columns:
+      - name: tripduration
+        description: "Trip Duration (in seconds)"
+
+      - name: starttime
+        description: "Start Time, in NYC local time."
+      
+      - name: stoptime
+        description: "Stop Time, in NYC local time."
+
+      - name: start_station_id
+        description: "Start Station ID"
+      
+      - name: start_station_name
+        description: "Start Station Name"
+
+      - name: start_station_latitude
+        description: "Start Station Latitude"
+      
+      - name: start_station_longitude
+        description: "Start Station Longitude"
+
+      - name: end_station_id
+        description: "End Station ID"
+
+      - name: end_station_name
+        description: "End Station Name"
+
+      - name: end_station_latitude
+        description: "End Station Latitude"
+
+      - name: end_station_longitude
+        description: "End Station Longitude"
+      
+      - name: bike_id
+        description: "Bike ID"
+      
+      - name: usertype
+        description: "User Type (Customer = 24-hour pass or 7-day pass user, Subscriber = Annual Member)"
+
+      - name: birth_year
+        description: "Year of Birth"
+
+      - name: gender
+        description: "Gender (unknown, male, female)"
+
+      - name: customer_plan
+        description: "The name of the plan that determines the rate charged for the trip"
+
+      - name: trip_duration_min
+        description: "The trip duration in minutes"
+```
+
+
+What we've done is quite straightforward. We have simply typed out the descriptions in a verbose manner where they needed to be, next to the `description` mapping key.
+
+However, imagine you were working with hundreds of models which use similar definitions. Would you have the nerve to copy paste every definition to its respective model? I don't think so. There is a function by the name of the `docs()` function which can reference to descriptions in a separate markdown file.
+
+
+## Using the `doc` function
+
+To use the `doc()` function, we write our definitions in a separate markdown `(.md)` file and place the descriptions within `{% docs <field-name> %}` <Description-inside-here> `{% enddocs %}` tags. For this tutorial, we created three markdown tables.
+
+* `references.md` - this contains the descriptions for our column names of interest
+
+* `tables.md` - contains the descriptions for our tables of interest
+
+* `overview.md` - contains the text that will go to the overview page
+
+
+Here is what our `references.md` contains. As you can see, we have provided some textual information for some of our column names. We can also add some more style to our descriptions since they are now on a separate markdown. For example we could insert links, make the text italic, and bold if you wish!
+
+```
+{% docs tripduration %}
+
+Trip Duration (in seconds). Like:
+
+- How long did the trip take?
+- What is the time in seconds?
+- More info on time, see [here](https://www.poemhunter.com/poem/time-xxi/)
+
+*https://www.poemhunter.com/poem/time-xxi/*
+
+{% enddocs %}
+
+{% docs starttime %}
+
+Start Time, in NYC local time. As accurate as could ever be.
+
+{% enddocs %}
+
+--snip--
+```
+
+
+
+The `tables.md` just contains a description of our `citi_trips_round` table. 
+
+```
+{% docs citi_trips_round %}
+
+This table contains the trip duration in minutes to one decimal place only. 
+
+{% enddocs %}
+```
+
+Now, in order to enable dbt reference these descriptions from our yml file, we would simply use the `doc ()` function enclosed in single quotes and curly brackets like so: 
+
+
+```
+- name: citi_trips_round
+    description: '{{ doc("citi_trips_round") }}'
+    columns:
+      - name: tripduration
+        description: '{{ doc("tripduration") }}'
+
+      - name: starttime
+        description: '{{ doc("starttime") }}'
+      
+      - name: stoptime
+        description: '{{ doc("stoptime") }}'
+
+      - name: start_station_id
+        description: "Start Station ID"
+        
+--snip--
+```
+
+
+
+
+
