@@ -203,6 +203,90 @@ Now, in order to enable dbt reference these descriptions from our yml file, we w
 --snip--
 ```
 
+The file saved as `overview.md` in our project will be used to display the home page of our dbt documentation website. The markdowns created so far, including the one for overview, can go with any other name provided the wordings in the `docs` tags are reference correctly. A rose by any other name is still a rose!
+
+Back to the overview page. The overview page is simply the home page, but in dbt we use a slightly different syntax for the overview page, like so:
+
+```
+{% docs __overview__ %}
+
+Some more text here...
+
+{% enddocs %}
+
+```
+
+Therefore, here is some dummy text for our overview page.
+
+```
+{% docs __overview__ %}
+
+# Learning dbt
+
+Learning is not merely the acquisition of knowledge, but the cultivation of the mind. It is through the active engagement of our intellect that we develop the capacity for critical thought, discernment, and wisdom. 
+
+--snip--
+
+{% enddocs %}
+
+```
+
+## Images in dbt documentation
+
+They say an image is worth a thousand words. Reading plain text can be boring, and saving it efficiently can also be painstaking. In dbt, we store images in a folder called `assets`. Ideally, one can create any folder in dbt to store images provided you reference it correctly in the documentation. However, it is preferably and strongly advised by the dbt team to store it inside an `assets` folder for versioning purposes. Furthermore, images in dbt, once run as part of your document generation, will also appear under the `targets/` folder just like your SQL models.
+
+Therefore, going with the recommended approach, create an `assets/` folder under `dbt_book`. Place you image in there. 
+
+Go to the `dbt_projects.yml` file and create a new line with the following code:
+
+```
+asset-paths: ["assets"]
+```
+
+This path tells dbt to copy any images within `assets` into the `target` directory. Any image in a different directory will not get copied into the `target` directory when documents are generated.
+
+Finally, as the missing piece to the puzzle, insert a reference to your image in the `overview.md` file.
+
+```
+![Example image](assets/image_example.jpg)
+
+```
+
+One can also create [custom overviews](https://docs.getdbt.com/docs/build/documentation#setting-a-custom-overview) for the dbt packages they used. However, since we didn't use them, they weren't placed here. 
+
+Here is our complete `overview.md` file. 
+
+```
+{% docs __overview__ %}
+
+# Learning dbt
+
+Learning is not merely the acquisition of knowledge, but the cultivation of the mind. It is through the active engagement of our intellect that we develop the capacity for critical thought, discernment, and wisdom. By examining the world around us with curiosity and rigor, we uncover the underlying principles that govern its workings. This intellectual pursuit not only broadens our understanding but also equips us to navigate life's challenges with greater clarity and purpose.
+
+![Example image](assets/image_example.jpg)
+
+Some more text here...
+
+{% enddocs %}
+
+```
+
+## Generating the document
+
+Now is the time where we ignite the rocket engines and shoot off. To generate a dbt documentation, first run `dbt docs generate`. This command tells dbt to compile the necessary information of your project into the `catalog.json` and `manifest.json` files. The ignition key for our documentation generation is `dbt docs serve`. dbt will generate a list of outputs and create a popup providing the browser link to open up your documentation. You can click on the popup or copy-paste the link. In this case, we used the former. Our documentation is in the host: `localhost:8080/`. 
+
+![Model page](./images/overview_page.png)
+
+![Models page](./images/model_page.png)
+
+If you go to the `targets` directory, our image(s) will be there! 
+
+There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as `my_second_dbt_model`, you will see it shows a dependency on `my_first_dbt_model`. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex.
+
+![Lineage graph](./images/lineage_graph.png)
+
+It is highly encouraged to play around with the buttons **resources**, **packages**, **tags**, **--select** and **--exclude**. For the **select** button, play around with inserting `+` both before and after the name of the model. Clue: it has to do with showing or hiding the dependencies and/or children. 
+
 
 
 

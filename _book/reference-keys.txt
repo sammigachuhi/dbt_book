@@ -36,3 +36,5 @@ description
 columns
 definition-for-our-model
 using-the-doc-function
+images-in-dbt-documentation
+generating-the-document

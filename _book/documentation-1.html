@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-03" />
+<meta name="date" content="2024-10-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -201,6 +201,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8.2" data-path="documentation-1.html"><a href="documentation-1.html#definition-for-our-model"><i class="fa fa-check"></i><b>8.2</b> Definition for our model</a></li>
 <li class="chapter" data-level="8.3" data-path="documentation-1.html"><a href="documentation-1.html#using-the-doc-function"><i class="fa fa-check"></i><b>8.3</b> Using the <code>doc</code> function</a></li>
+<li class="chapter" data-level="8.4" data-path="documentation-1.html"><a href="documentation-1.html#images-in-dbt-documentation"><i class="fa fa-check"></i><b>8.4</b> Images in dbt documentation</a></li>
+<li class="chapter" data-level="8.5" data-path="documentation-1.html"><a href="documentation-1.html#generating-the-document"><i class="fa fa-check"></i><b>8.5</b> Generating the document</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -390,6 +392,69 @@ This table contains the trip duration in minutes to one decimal place only.
         description: &quot;Start Station ID&quot;
         
 --snip--</code></pre>
+<p>The file saved as <code>overview.md</code> in our project will be used to display the home page of our dbt documentation website. The markdowns created so far, including the one for overview, can go with any other name provided the wordings in the <code>docs</code> tags are reference correctly. A rose by any other name is still a rose!</p>
+<p>Back to the overview page. The overview page is simply the home page, but in dbt we use a slightly different syntax for the overview page, like so:</p>
+<pre><code>{% docs __overview__ %}
+
+Some more text here...
+
+{% enddocs %}
+</code></pre>
+<p>Therefore, here is some dummy text for our overview page.</p>
+<pre><code>{% docs __overview__ %}
+
+# Learning dbt
+
+Learning is not merely the acquisition of knowledge, but the cultivation of the mind. It is through the active engagement of our intellect that we develop the capacity for critical thought, discernment, and wisdom. 
+
+--snip--
+
+{% enddocs %}
+</code></pre>
+</div>
+<div id="images-in-dbt-documentation" class="section level2 hasAnchor" number="8.4">
+<h2><span class="header-section-number">8.4</span> Images in dbt documentation<a href="documentation-1.html#images-in-dbt-documentation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>They say an image is worth a thousand words. Reading plain text can be boring, and saving it efficiently can also be painstaking. In dbt, we store images in a folder called <code>assets</code>. Ideally, one can create any folder in dbt to store images provided you reference it correctly in the documentation. However, it is preferably and strongly advised by the dbt team to store it inside an <code>assets</code> folder for versioning purposes. Furthermore, images in dbt, once run as part of your document generation, will also appear under the <code>targets/</code> folder just like your SQL models.</p>
+<p>Therefore, going with the recommended approach, create an <code>assets/</code> folder under <code>dbt_book</code>. Place you image in there.</p>
+<p>Go to the <code>dbt_projects.yml</code> file and create a new line with the following code:</p>
+<pre><code>asset-paths: [&quot;assets&quot;]</code></pre>
+<p>This path tells dbt to copy any images within <code>assets</code> into the <code>target</code> directory. Any image in a different directory will not get copied into the <code>target</code> directory when documents are generated.</p>
+<p>Finally, as the missing piece to the puzzle, insert a reference to your image in the <code>overview.md</code> file.</p>
+<pre><code>![Example image](assets/image_example.jpg)
+</code></pre>
+<p>One can also create <a href="https://docs.getdbt.com/docs/build/documentation#setting-a-custom-overview">custom overviews</a> for the dbt packages they used. However, since we didn’t use them, they weren’t placed here.</p>
+<p>Here is our complete <code>overview.md</code> file.</p>
+<pre><code>{% docs __overview__ %}
+
+# Learning dbt
+
+Learning is not merely the acquisition of knowledge, but the cultivation of the mind. It is through the active engagement of our intellect that we develop the capacity for critical thought, discernment, and wisdom. By examining the world around us with curiosity and rigor, we uncover the underlying principles that govern its workings. This intellectual pursuit not only broadens our understanding but also equips us to navigate life&#39;s challenges with greater clarity and purpose.
+
+![Example image](assets/image_example.jpg)
+
+Some more text here...
+
+{% enddocs %}
+</code></pre>
+</div>
+<div id="generating-the-document" class="section level2 hasAnchor" number="8.5">
+<h2><span class="header-section-number">8.5</span> Generating the document<a href="documentation-1.html#generating-the-document" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Now is the time where we ignite the rocket engines and shoot off. To generate a dbt documentation, first run <code>dbt docs generate</code>. This command tells dbt to compile the necessary information of your project into the <code>catalog.json</code> and <code>manifest.json</code> files. The ignition key for our documentation generation is <code>dbt docs serve</code>. dbt will generate a list of outputs and create a popup providing the browser link to open up your documentation. You can click on the popup or copy-paste the link. In this case, we used the former. Our documentation is in the host: <code>localhost:8080/</code>.</p>
+<div class="float">
+<img src="images/overview_page.png" alt="Model page" />
+<div class="figcaption">Model page</div>
+</div>
+<div class="float">
+<img src="images/model_page.png" alt="Models page" />
+<div class="figcaption">Models page</div>
+</div>
+<p>If you go to the <code>targets</code> directory, our image(s) will be there!</p>
+<p>There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as <code>my_second_dbt_model</code>, you will see it shows a dependency on <code>my_first_dbt_model</code>. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex.</p>
+<div class="float">
+<img src="images/lineage_graph.png" alt="Lineage graph" />
+<div class="figcaption">Lineage graph</div>
+</div>
+<p>It is highly encouraged to play around with the buttons <strong>resources</strong>, <strong>packages</strong>, <strong>tags</strong>, <strong>–select</strong> and <strong>–exclude</strong>. For the <strong>select</strong> button, play around with inserting <code>+</code> both before and after the name of the model. Clue: it has to do with showing or hiding the dependencies and/or children.</p>
 
 </div>
 </div>
