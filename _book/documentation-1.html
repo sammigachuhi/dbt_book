@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-05" />
+<meta name="date" content="2024-10-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -449,12 +449,17 @@ Some more text here...
 <div class="figcaption">Models page</div>
 </div>
 <p>If you go to the <code>targets</code> directory, our image(s) will be there!</p>
-<p>There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as <code>my_second_dbt_model</code>, you will see it shows a dependency on <code>my_first_dbt_model</code>. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex.</p>
+<p>There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as <code>my_second_dbt_model</code>, you will see it shows a dependency on <code>my_first_dbt_model</code>. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex. A good example will be for the <code>citi_trips_long</code> model.</p>
 <div class="float">
 <img src="images/lineage_graph.png" alt="Lineage graph" />
 <div class="figcaption">Lineage graph</div>
 </div>
 <p>It is highly encouraged to play around with the buttons <strong>resources</strong>, <strong>packages</strong>, <strong>tags</strong>, <strong>–select</strong> and <strong>–exclude</strong>. For the <strong>select</strong> button, play around with inserting <code>+</code> both before and after the name of the model. Clue: it has to do with showing or hiding the dependencies and/or children.</p>
+<p>Below is an example of the <code>citi_trips_long</code> model, which has more than one dependency.</p>
+<div class="float">
+<img src="images/lineage_graph2.png" alt="A model with more than one dependency" />
+<div class="figcaption">A model with more than one dependency</div>
+</div>
 
 </div>
 </div>

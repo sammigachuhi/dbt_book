@@ -281,12 +281,15 @@ Now is the time where we ignite the rocket engines and shoot off. To generate a 
 
 If you go to the `targets` directory, our image(s) will be there! 
 
-There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as `my_second_dbt_model`, you will see it shows a dependency on `my_first_dbt_model`. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex.
+There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as `my_second_dbt_model`, you will see it shows a dependency on `my_first_dbt_model`. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex. A good example will be for the `citi_trips_long` model. 
 
 ![Lineage graph](./images/lineage_graph.png)
 
 It is highly encouraged to play around with the buttons **resources**, **packages**, **tags**, **--select** and **--exclude**. For the **select** button, play around with inserting `+` both before and after the name of the model. Clue: it has to do with showing or hiding the dependencies and/or children. 
 
+Below is an example of the `citi_trips_long` model, which has more than one dependency.
+
+![A model with more than one dependency](./images/lineage_graph2.png)
 
 
 
