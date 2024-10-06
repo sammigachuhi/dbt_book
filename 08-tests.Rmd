@@ -1,0 +1,106 @@
+# Tests
+
+Tests in dbt are basically assertions of your data. That is, they are just some assumptions that you have of your datasets or columns that are correct. Tests enable one to know 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feal like something to bemoan, can fail (as all tests do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug if not more injurious to the integrity of your data later on!
+
+## Types of tests in dbt
+
+In dbt, a test can be defined in either of the following two ways:
+
+1. generic test - this is a test written in a SQL model and defined inside a YAML file. The test in the YAML file is defined using jinja Macros. dbt comes with four shipped, all-batteries included tests namely:
+
+* unique - asserts that the column has no repeating values
+* not_null - asserts that there are no null values
+* accepted_values - checks if the values in your field correspond to those in a defined list
+* relationships - checks if the field has an existing relationship with another field in a different table. 
+
+2. singular test - some normally refer to this as a custom test. This is a SQL query which is used to check assertions in your data. The SQL files that make up your test are defined inside the `tests` directory or the path defined in the `test-paths` key inside the `dbt_project.yml` file. Each SQL file will have one test only. Nevertheless, if this test will be used across many fields and files, you can reference it using jinja macros `{{ }}`. If this is the case, it is no longer singular test but a generic *custom* test. 
+
+Let's start with a dbt out-of-the-box generic test.
+
+## Generic tests in dbt
+
+We will start with a very simple test, the `not_null` test on the `start_station_name` column of `citi_trips_long` model. Surely, unless you are teleporting from somewhere, every rented bike must have an origin. 
+
+
+```
+
+- name: citi_trips_long
+    description: '{{ doc("citi_trips_long") }}'
+    columns:
+      - name: starttime
+        description: '{{ doc("starttime") }}'
+
+      --snip--
+
+      - name: start_station_name
+        description: "Start Station Name"
+        tests:
+          - not_null
+          
+```
+
+
+We use the below code to test only those models under `my_models` folder.
+
+```
+dbt test --select my_models
+```
+
+Here is the output.
+
+```
+--snip--
+
+19:15:33  Concurrency: 1 threads (target='dev')
+19:15:33  
+19:15:33  1 of 1 START test not_null_citi_trips_long_start_station_name .................. [RUN]
+19:15:36  1 of 1 PASS not_null_citi_trips_long_start_station_name ........................ [PASS in 3.20s]
+19:15:36  
+19:15:36  Finished running 1 test in 0 hours 0 minutes and 4.44 seconds (4.44s).
+19:15:36  
+19:15:36  Completed successfully
+19:15:36  
+19:15:36  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+
+```
+
+If we had gone with the more blanket code of `dbt test`, it would have also tested those models under the shipped `examples` folder where there is already a test designed to fail, purely for educational purposes. Back to our `citi_trips_long` model, we can see that the test passed successfully. As expected, there are no null values in our `start_station_name` field. If the opposite happened, we suspect that this could be a case of fraud or some paranormal activities...
+
+Now let's create a test that will fail on purpose. From a large dataset, obviously the station names can't be unique all through. So we insert the `unique` value under the `tests` key as follows.
+
+```
+- name: start_station_name
+        description: "Start Station Name"
+        tests:
+          - not_null
+          - unique
+```
+
+The output is as below. Note that it results in a failure and also shows the path to the SQL query that was used to carry out the test inside the `target/` directory. The resultant SQL path inside the target directory, if pasted in a SQL tab of your data warehouse will return the number of rows that *fail* the test.
+
+```
+19:23:35  Concurrency: 1 threads (target='dev')
+19:23:35  
+19:23:35  1 of 2 START test not_null_citi_trips_long_start_station_name .................. [RUN]
+19:23:38  1 of 2 PASS not_null_citi_trips_long_start_station_name ........................ [PASS in 3.01s]
+19:23:38  2 of 2 START test unique_citi_trips_long_start_station_name .................... [RUN]
+19:23:41  2 of 2 FAIL 910 unique_citi_trips_long_start_station_name ...................... [FAIL 910 in 2.68s]
+19:23:41  
+19:23:41  Finished running 2 data tests in 0 hours 0 minutes and 6.78 seconds (6.78s).
+19:23:41  
+19:23:41  Completed with 1 error and 0 warnings:
+19:23:41  
+19:23:41  Failure in test unique_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:23:41    Got 910 results, configured to fail if != 0
+19:23:41  
+19:23:41    compiled code at target/compiled/dbt_book/models/my_models/my_models.yml/unique_citi_trips_long_start_station_name.sql
+19:23:41  
+19:23:41  Done. PASS=1 WARN=0 ERROR=1 SKIP=0 TOTAL=2
+
+```
+
+![Failed test](./images/failed_test.png)
+
+
+
+

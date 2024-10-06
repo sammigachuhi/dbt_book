@@ -38,3 +38,6 @@ definition-for-our-model
 using-the-doc-function
 images-in-dbt-documentation
 generating-the-document
+tests-1
+types-of-tests-in-dbt
+generic-tests-in-dbt
