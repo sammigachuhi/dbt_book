@@ -1,6 +1,8 @@
 # Tests
 
-Tests in dbt are basically assertions of your data. That is, they are just some assumptions that you have of your datasets or columns that are correct. Tests enable one to know 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feal like something to bemoan, can fail (as all tests do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug if not more injurious to the integrity of your data later on!
+Probably if you've worked on a Windows computer, you must have used Microsoft Defender Full Scan at some point. During or at the end of the scan, some results were displayed. dbt works in almost the same way, only that this time they scan your data.
+
+Tests in dbt are basically assertions of your data. That is, they are just some assumptions that you have of your datasets or columns that are correct. Tests enable one to know 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feal like something to bemoan, can fail (as all tests do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug if not more injurious to the integrity of your data later on! In a nutshell, dbt tests perform much like a programmatic scan that will only spew out errors of something that is suspicious.
 
 ## Types of tests in dbt
 
@@ -100,6 +102,56 @@ The output is as below. Note that it results in a failure and also shows the pat
 ```
 
 ![Failed test](./images/failed_test.png)
+
+## Singular tests in dbt
+
+As mentioned earlier, singular tests are SQL models in your `tests` folder. They differ from the generic tests in that they are bespoke to your data needs. For example, if one of your tests doesn't conform to the four batteries included tests, you can create one inside the `tests` folder. 
+
+Below we create a singular test called `unnecessary_trips.sql` inside the `test` folder. The purpose of the test is to raise an error if a trip is less than 1 min, and if this passes without a hitch, we increase the trip to 10 min. The latter must surely generate an error! Notice that one can reference another model within a test using the `ref()` function.
+
+```
+SELECT bikeid, start_station_name, end_station_name,
+    birth_year, gender, tripduration
+FROM {{ ref('citi_trips_round') }}
+WHERE trip_min_round < 10
+
+```
+
+So to perform the litmus test, run our usual magic phrase:
+
+```
+dbt test --select unnecessary_trips
+
+```
+
+Below will be the output.
+
+```
+19:51:50  Concurrency: 1 threads (target='dev')
+19:51:50  
+19:51:50  1 of 1 START test unnecessary_trips ............................................ [RUN]
+19:51:53  1 of 1 FAIL 25183763 unnecessary_trips ......................................... [FAIL 25183763 in 3.11s]
+19:51:53  
+19:51:53  Finished running 1 test in 0 hours 0 minutes and 4.70 seconds (4.70s).
+19:51:53  
+19:51:53  Completed with 1 error and 0 warnings:
+19:51:53  
+19:51:53  Failure in test unnecessary_trips (tests/unnecessary_trips.sql)
+19:51:53    Got 25183763 results, configured to fail if != 0
+19:51:53  
+19:51:53    compiled code at target/compiled/dbt_book/tests/unnecessary_trips.sql
+19:51:53  
+19:51:53  Done. PASS=0 WARN=0 ERROR=1 SKIP=0 TOTAL=1
+```
+
+As you can see, a total 25183763 rows failed the test. If we had used a condition of less than 1 min (`trip_min_round < 1`) the test would have passed.
+
+A singular test can also be transformed into a generic test when its reused across the fields of your table(s) in the data warehouse. 
+
+
+
+
+
 
 
 
