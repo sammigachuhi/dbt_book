@@ -146,7 +146,118 @@ Below will be the output.
 
 As you can see, a total 25183763 rows failed the test. If we had used a condition of less than 1 min (`trip_min_round < 1`) the test would have passed.
 
-A singular test can also be transformed into a generic test when its reused across the fields of your table(s) in the data warehouse. 
+A singular test can also be transformed into a generic test when its reused across the fields of your table(s) in the data warehouse. To demonstrate this, let's create some generic tests.
+
+## Creating a generic test
+
+From the dbt documentation website, your *custom* generic tests are created within a `generic` folder within the `tests` directory. Thus, within your `tests/generic` directory, you will place the SQL models for your tests. Anything returned by your SQL models is in fact your tests failing! If nothing is returned, then your test passed, and your data as clean as a new pin.
+
+Create a SQL model called `long_characters` within the `tests/generic` directory.
+
+```
+{% test long_characters (model, column_name) %}
+SELECT * FROM {{ model }}
+WHERE LENGTH({{ column_name }}) > 15 
+{% endtest %}
+```
+
+Let's go through the above line by line. We begin a generic test by using the `{%test <model-name> (model, column_name) %}` SQL statement in here `{% endtest %}` tags. The `model` and `column_name` are standard arguments where one or both should be defined. 
+
+* `model` - the resource on which the test will be operated on. In our case, this is any model in which the test will be run on.
+
+* `column_name` - this is a field within which the model will be run against. In other words, the column at which this model will operate on.
+
+The SQL statement within the test tags references the model and the columns using the `{{ model }}` and `{{ column_name }}` respectively. For example, if the test is placed in the `my_models` YAML file under the `citi_trips_long` model name, for the field `start_station_name`, it is as though the test is running this SELECT statement:
+
+```
+
+SELECT * FROM citi_trips_long
+WHERE LENGTH(start_station_name) > 15 
+
+```
+
+In very few words, the above SQL tells dbt to shout out an error if any station name is greater than 15 characters. Such must be train stations larger than life.
+
+Let's create another test that will raise alarms if there are special characters within your `start_station_name`. 
+
+```
+{% test special_characters (model, column_name) %}
+SELECT * FROM {{ model }}
+WHERE {{ column_name }}
+LIKE '%^[a-zA-Z0-9+-]%'
+{% endtest %}
+
+```
+
+Okay, it's not time for our litmus test. Going back to the `start_station_name` mapping that we have performed some litmus tests, lets also add our two *custom* generic tests of `long_character` and `special_characters`. 
+
+
+```
+- name: citi_trips_long
+    description: '{{ doc("citi_trips_long") }}'
+    columns:
+      --snip--
+
+      - name: start_station_name
+        description: "Start Station Name"
+        tests:
+          - not_null
+          - unique
+          - long_characters
+          - special_characters
+
+```
+
+If we go for the big bull and run all our tests with trusty `dbt test` keyword, we can see the output of the nine tests we have so far. 
+
+```
+19:08:15  Concurrency: 1 threads (target='dev')
+19:08:15  
+19:08:15  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
+19:08:29  1 of 9 FAIL 11463868 long_characters_citi_trips_long_start_station_name ........ [FAIL 11463868 in 14.47s]
+
+--snip--
+
+19:08:55  5 of 9 START test special_characters_citi_trips_long_start_station_name ........ [RUN]
+19:08:59  5 of 9 PASS special_characters_citi_trips_long_start_station_name .............. [PASS in 4.48s]
+
+--snip--
+
+19:09:07  9 of 9 START test unnecessary_trips ............................................ [RUN]
+19:09:10  9 of 9 FAIL 25183763 unnecessary_trips ......................................... [FAIL 25183763 in 2.81s]
+
+```
+
+From the above output, we can see that there were some station names with quite some long names and (thankfully) no station names with special characters.
+
+There is also other output below the above which shows how many records failed, depending on your test.
+
+```
+19:09:10  Completed with 4 errors and 0 warnings:
+19:09:10  
+19:09:10  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:09:10    Got 11463868 results, configured to fail if != 0
+ 
+--snip--
+
+19:09:10  Failure in test unique_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:09:10    Got 910 results, configured to fail if != 0
+
+```
+
+## Configuring custom generic tests
+
+What if you feel that the *FAIL* alert like in the above tests is shouting too much! That you would prefer them to be *WARNINGS* because they are non-critical?
+
+
+
+
+
+
+
+
+
+
 
 
 

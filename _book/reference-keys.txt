@@ -41,3 +41,4 @@ generating-the-document
 tests-1
 types-of-tests-in-dbt
 generic-tests-in-dbt
+singular-tests-in-dbt
