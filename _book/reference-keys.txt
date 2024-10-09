@@ -42,3 +42,6 @@ tests-1
 types-of-tests-in-dbt
 generic-tests-in-dbt
 singular-tests-in-dbt
+creating-a-generic-test
+configuring-custom-generic-tests
+storing-test-failures

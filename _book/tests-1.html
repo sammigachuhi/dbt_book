@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-08" />
+<meta name="date" content="2024-10-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -209,6 +209,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="9.1" data-path="tests-1.html"><a href="tests-1.html#types-of-tests-in-dbt"><i class="fa fa-check"></i><b>9.1</b> Types of tests in dbt</a></li>
 <li class="chapter" data-level="9.2" data-path="tests-1.html"><a href="tests-1.html#generic-tests-in-dbt"><i class="fa fa-check"></i><b>9.2</b> Generic tests in dbt</a></li>
 <li class="chapter" data-level="9.3" data-path="tests-1.html"><a href="tests-1.html#singular-tests-in-dbt"><i class="fa fa-check"></i><b>9.3</b> Singular tests in dbt</a></li>
+<li class="chapter" data-level="9.4" data-path="tests-1.html"><a href="tests-1.html#creating-a-generic-test"><i class="fa fa-check"></i><b>9.4</b> Creating a generic test</a></li>
+<li class="chapter" data-level="9.5" data-path="tests-1.html"><a href="tests-1.html#configuring-custom-generic-tests"><i class="fa fa-check"></i><b>9.5</b> Configuring custom generic tests</a></li>
+<li class="chapter" data-level="9.6" data-path="tests-1.html"><a href="tests-1.html#storing-test-failures"><i class="fa fa-check"></i><b>9.6</b> Storing test failures</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -344,7 +347,153 @@ WHERE trip_min_round &lt; 10
 19:51:53  
 19:51:53  Done. PASS=0 WARN=0 ERROR=1 SKIP=0 TOTAL=1</code></pre>
 <p>As you can see, a total 25183763 rows failed the test. If we had used a condition of less than 1 min (<code>trip_min_round &lt; 1</code>) the test would have passed.</p>
-<p>A singular test can also be transformed into a generic test when its reused across the fields of your table(s) in the data warehouse.</p>
+<p>A singular test can also be transformed into a generic test when its reused across the fields of your table(s) in the data warehouse. To demonstrate this, let’s create some generic tests.</p>
+</div>
+<div id="creating-a-generic-test" class="section level2 hasAnchor" number="9.4">
+<h2><span class="header-section-number">9.4</span> Creating a generic test<a href="tests-1.html#creating-a-generic-test" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>From the dbt documentation website, your <em>custom</em> generic tests are created within a <code>generic</code> folder within the <code>tests</code> directory. Thus, within your <code>tests/generic</code> directory, you will place the SQL models for your tests. Anything returned by your SQL models is in fact your tests failing! If nothing is returned, then your test passed, and your data as clean as a new pin.</p>
+<p>Create a SQL model called <code>long_characters</code> within the <code>tests/generic</code> directory.</p>
+<pre><code>{% test long_characters (model, column_name) %}
+SELECT * FROM {{ model }}
+WHERE LENGTH({{ column_name }}) &gt; 15 
+{% endtest %}</code></pre>
+<p>Let’s go through the above line by line. We begin a generic test by using the <code>{%test &lt;model-name&gt; (model, column_name) %}</code> SQL statement in here <code>{% endtest %}</code> tags. The <code>model</code> and <code>column_name</code> are standard arguments where one or both should be defined.</p>
+<ul>
+<li><p><code>model</code> - the resource on which the test will be operated on. In our case, this is any model in which the test will be run on.</p></li>
+<li><p><code>column_name</code> - this is a field within which the model will be run against. In other words, the column at which this model will operate on.</p></li>
+</ul>
+<p>The SQL statement within the test tags references the model and the columns using the <code>{{ model }}</code> and <code>{{ column_name }}</code> respectively. For example, if the test is placed in the <code>my_models</code> YAML file under the <code>citi_trips_long</code> model name, for the field <code>start_station_name</code>, it is as though the test is running this SELECT statement:</p>
+<pre><code>
+SELECT * FROM citi_trips_long
+WHERE LENGTH(start_station_name) &gt; 15 
+</code></pre>
+<p>In very few words, the above SQL tells dbt to shout out an error if any station name is greater than 15 characters. Such must be train stations larger than life.</p>
+<p>Let’s create another test that will raise alarms if there are special characters within your <code>start_station_name</code>.</p>
+<pre><code>{% test special_characters (model, column_name) %}
+SELECT * FROM {{ model }}
+WHERE {{ column_name }}
+LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
+{% endtest %}
+</code></pre>
+<p>Okay, it’s not time for our litmus test. Going back to the <code>start_station_name</code> mapping that we have performed some litmus tests, lets also add our two <em>custom</em> generic tests of <code>long_character</code> and <code>special_characters</code>.</p>
+<pre><code>- name: citi_trips_long
+    description: &#39;{{ doc(&quot;citi_trips_long&quot;) }}&#39;
+    columns:
+      --snip--
+
+      - name: start_station_name
+        description: &quot;Start Station Name&quot;
+        tests:
+          - not_null
+          - unique
+          - long_characters
+          - special_characters
+</code></pre>
+<p>If we go for the big bull and run all our tests with trusty <code>dbt test</code> keyword, we can see the output of the nine tests we have so far.</p>
+<pre><code>19:08:15  Concurrency: 1 threads (target=&#39;dev&#39;)
+19:08:15  
+19:08:15  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
+19:08:29  1 of 9 FAIL 11463868 long_characters_citi_trips_long_start_station_name ........ [FAIL 11463868 in 14.47s]
+
+--snip--
+
+19:08:55  5 of 9 START test special_characters_citi_trips_long_start_station_name ........ [RUN]
+19:08:59  5 of 9 PASS special_characters_citi_trips_long_start_station_name .............. [PASS in 4.48s]
+
+--snip--
+
+19:09:07  9 of 9 START test unnecessary_trips ............................................ [RUN]
+19:09:10  9 of 9 FAIL 25183763 unnecessary_trips ......................................... [FAIL 25183763 in 2.81s]
+</code></pre>
+<p>From the above output, we can see that there were some station names with quite some long names and (thankfully) no station names with special characters.</p>
+<p>There is also other output below the above which shows how many records failed, depending on your test.</p>
+<pre><code>19:09:10  Completed with 4 errors and 0 warnings:
+19:09:10  
+19:09:10  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:09:10    Got 11463868 results, configured to fail if != 0
+ 
+--snip--
+
+19:09:10  Failure in test unique_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:09:10    Got 910 results, configured to fail if != 0
+</code></pre>
+</div>
+<div id="configuring-custom-generic-tests" class="section level2 hasAnchor" number="9.5">
+<h2><span class="header-section-number">9.5</span> Configuring custom generic tests<a href="tests-1.html#configuring-custom-generic-tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>What if you feel that the <em>FAIL</em> alert like in the above tests is shouting too much! That you would prefer them to be <em>WARNINGS</em> because they are non-critical?</p>
+<p>You can do so by setting the configuration to diplay as a warning rather than an error.</p>
+<pre><code>{% test long_characters (model, column_name) %}
+    {{ config(severity = &#39;warn&#39;) }}
+    SELECT * FROM {{ model }}
+    WHERE LENGTH({{ column_name }}) &gt; 15 
+{% endtest %}</code></pre>
+<p>Here is the output as a warning.</p>
+<pre><code>
+19:16:34  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
+19:16:36  1 of 9 WARN 11463868 long_characters_citi_trips_long_start_station_name ........ [WARN 11463868 in 2.64s]
+19:16:36  2 of 9 START test not_null_citi_trips_long_start_station_name .................. [RUN]
+19:16:39  2 of 9 PASS not_null_citi_trips_long_start_station_name ........................ [PASS in 2.67s]
+-- snip --
+19:16:56  Warning in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:16:56  Got 11463868 results, configured to warn if != 0
+-- snip --</code></pre>
+<p>However, in case you immediately change your mind that the failing tests of <code>long_characters</code> returned should be an error rather than a warning, you can simply overide your custom generic SQL models by specifying the severity within the YAML definition files.</p>
+<pre><code>- name: start_station_name
+        description: &quot;Start Station Name&quot;
+        tests:
+          - not_null
+          - unique
+          - long_characters:
+            severity: &#39;error&#39;
+          - special_characters</code></pre>
+<p>In the generated output, it will be back to business as usual with the ‘FAIL’ keyword.</p>
+<pre><code>-- snip -- 
+19:21:25  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
+19:21:28  1 of 9 FAIL 11463868 long_characters_citi_trips_long_start_station_name ........ [FAIL 11463868 in 3.45s]
+-- snip --
+
+19:21:50  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:21:50    Got 11463868 results, configured to fail if != 0
+-- snip --
+</code></pre>
+</div>
+<div id="storing-test-failures" class="section level2 hasAnchor" number="9.6">
+<h2><span class="header-section-number">9.6</span> Storing test failures<a href="tests-1.html#storing-test-failures" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>If you thought that dbt tests are a cool feature, then there is one more trick in the bag if you want a neat one-liner to view a dataset of the failing records. The <em>open sesame</em> key word is <code>--store-failures</code>. dbt will store the failing records as a table in the database.</p>
+<p>Let’s try it out. This is only what is needed to be run.</p>
+<pre><code>dbt test --store-failures
+</code></pre>
+<p>Of course our test will generate failed records, but we’ve already seen them. Here is part of the output for the test of long characters above the 15 character threshold.</p>
+<pre><code>19:26:40  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:26:40    Got 11463868 results, configured to fail if != 0
+19:26:40  
+19:26:40    compiled code at target/compiled/dbt_book/models/my_models/my_models.yml/long_characters_citi_trips_long_start_station_name.sql
+19:26:40  
+19:26:40    See test failures:
+  -------------------------------------------------------------------------------------------------------------------
+  select * from `dbt-project-437116`.`nyc_bikes_dbt_test__audit`.`long_characters_citi_trips_long_start_station_name`
+  -------------------------------------------------------------------------------------------------------------------</code></pre>
+<p>If you paste the <code>SELECT</code> statement in one of the SQL tabs for BigQuery, it will not only return the number of failing records but also the data that is part of the failing records.</p>
+<div class="float">
+<img src="images/failing_records.png" alt="Failing records" />
+<div class="figcaption">Failing records</div>
+</div>
+<p>That’s a very convenient one-liner!</p>
+<p>Below are other forms of generic tests shipped with dbt, for the <code>accepted_values</code> and <code>relationships</code>. The latter took to long to run and was cancelled midway.</p>
+<pre><code>- name: end_station_name
+        description: &quot;End Station Name&quot;
+         tests:
+            - relationships:
+                to: ref(&#39;citi_trips_round&#39;)
+                field: end_station_name
+
+      - name: gender
+        description: &quot;Gender (unknown, male, female)&quot;
+        tests:
+          - accepted_values:
+              values: [&#39;unknown&#39;, &#39;male&#39;, &#39;female&#39;]
+</code></pre>
+<p>It’s been quite an exciting journey with tests. And for sure dbt tests do grill your data!</p>
 
 </div>
 </div>

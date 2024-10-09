@@ -249,16 +249,109 @@ There is also other output below the above which shows how many records failed, 
 
 What if you feel that the *FAIL* alert like in the above tests is shouting too much! That you would prefer them to be *WARNINGS* because they are non-critical?
 
+You can do so by setting the configuration to diplay as a warning rather than an error.
+
+```
+{% test long_characters (model, column_name) %}
+    {{ config(severity = 'warn') }}
+    SELECT * FROM {{ model }}
+    WHERE LENGTH({{ column_name }}) > 15 
+{% endtest %}
+```
+
+Here is the output as a warning.
+
+```
+
+19:16:34  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
+19:16:36  1 of 9 WARN 11463868 long_characters_citi_trips_long_start_station_name ........ [WARN 11463868 in 2.64s]
+19:16:36  2 of 9 START test not_null_citi_trips_long_start_station_name .................. [RUN]
+19:16:39  2 of 9 PASS not_null_citi_trips_long_start_station_name ........................ [PASS in 2.67s]
+-- snip --
+19:16:56  Warning in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:16:56  Got 11463868 results, configured to warn if != 0
+-- snip --
+```
+
+However, in case you immediately change your mind that the failing tests of `long_characters` returned should be an error rather than a warning, you can simply overide your custom generic SQL models by specifying the severity within the YAML definition files.
+
+```
+- name: start_station_name
+        description: "Start Station Name"
+        tests:
+          - not_null
+          - unique
+          - long_characters:
+            severity: 'error'
+          - special_characters
+```
+
+In the generated output, it will be back to business as usual with the 'FAIL' keyword.
+
+```
+-- snip -- 
+19:21:25  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
+19:21:28  1 of 9 FAIL 11463868 long_characters_citi_trips_long_start_station_name ........ [FAIL 11463868 in 3.45s]
+-- snip --
+
+19:21:50  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:21:50    Got 11463868 results, configured to fail if != 0
+-- snip --
+
+```
+
+## Storing test failures
+
+If you thought that dbt tests are a cool feature, then there is one more trick in the bag if you want a neat one-liner to view a dataset of the failing records. The *open sesame* key word is `--store-failures`. dbt will store the failing records as a table in the database. 
+
+Let's try it out. This is only what is needed to be run.
+
+```
+dbt test --store-failures
+
+```
+
+Of course our test will generate failed records, but we've already seen them. Here is part of the output for the test of long characters above the 15 character threshold. 
+
+```
+19:26:40  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
+19:26:40    Got 11463868 results, configured to fail if != 0
+19:26:40  
+19:26:40    compiled code at target/compiled/dbt_book/models/my_models/my_models.yml/long_characters_citi_trips_long_start_station_name.sql
+19:26:40  
+19:26:40    See test failures:
+  -------------------------------------------------------------------------------------------------------------------
+  select * from `dbt-project-437116`.`nyc_bikes_dbt_test__audit`.`long_characters_citi_trips_long_start_station_name`
+  -------------------------------------------------------------------------------------------------------------------
+```
+
+If you paste the `SELECT` statement in one of the SQL tabs for BigQuery, it will not only return the number of failing records but also the data that is part of the failing records.
+
+![Failing records](./images/failing_records.png)
 
 
+That's a very convenient one-liner!
 
 
+Below are other forms of generic tests shipped with dbt, for the `accepted_values` and `relationships`. The latter took to long to run and was cancelled midway.
 
+```
+- name: end_station_name
+        description: "End Station Name"
+         tests:
+            - relationships:
+                to: ref('citi_trips_round')
+                field: end_station_name
 
+      - name: gender
+        description: "Gender (unknown, male, female)"
+        tests:
+          - accepted_values:
+              values: ['unknown', 'male', 'female']
 
+```
 
-
-
+It's been quite an exciting journey with tests. And for sure dbt tests do grill your data!
 
 
 
