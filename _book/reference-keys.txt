@@ -45,3 +45,5 @@ singular-tests-in-dbt
 creating-a-generic-test
 configuring-custom-generic-tests
 storing-test-failures
+dbt-expectations-package
+dbt-expectations-installation

@@ -1,0 +1,97 @@
+# dbt Expectations package
+
+What is dbt-expectations? dbt-expectations is an extension package for dbt which works much akin to the Great Expectations package for Python. It was intentionally designed to provide Great Expectations like features in dbt, but now from dbt itself rather than integrating Great Expectations (GE).
+
+Unless you've used GE, you may be wondering what this is in the first place, and its okay to feel lost. GE is much like tests in the previous chapter, it conducts quality tests on your data flagging those that deviate from the set assertions. 
+
+I would put dbt-expectations and GE on the same plane and use an allegory to drive the point home; that of a car. When buying a car, there are some common checklist items, and others bespoke depending on your car model. For example, an ordinary car must have the following features (at least most of them):
+
+* have four wheels
+* have a driver's seat
+* have a gear (whether manual or automatic)
+* have headlights
+* have a windshield
+
+The above list can go on and on depending on your knowledge of cars. But your checklist can also contain some unique items, but must-have lists depending on your car make. For example, here is a checklist of the Volvo XC60 T6 (sorry, my bias!):
+
+* 0.9l/100km fuel consumption
+* Allowed emissions 22g/km (the less the better)
+* Hybrid fuel type
+
+So if you go to a showrooms and the beautiful or handsome sales agent takes you to the Volvo XC60, you will be viewing it as you cross your checklist items. dbt-expectations and GE work in the same way.
+
+
+## dbt-expectations installation
+
+According to the [documentation](https://hub.getdbt.com/calogica/dbt_expectations/latest/) dbt-expectations will work for dbt versions 1.7x and higher. Let's first pass this little test.
+
+```
+dbt --version
+```
+
+If you get your dbt-core version is above 1.7x, then you can proceed. If not, you need to update your dbt. You can do so using `python -m pip install --upgrade dbt-core` or if you want to be more specific, this will do: `python -m pip install --upgrade dbt-core==0.19.0`.
+
+Ours, at the moment of writing this book, was version `1.8.7`. Therefore we have a clean bill of health to proceed.
+
+dbt-expectations isn't installed in the same *type and enter* kind of means like we did for `dbt-core` and `dbt big-query`. Nevertheless, some code is written in some YAML files and from henceforth dbt recognises it.
+
+First create a `packages.yml` file in the same level as your `dbt_project.yml` file. You can do so by running this command:
+
+```
+touch packages.yml
+```
+
+On the `packages.yml` file, insert the following:
+
+```
+packages:
+  - package: calogica/dbt_expectations
+    version: [">=0.10.0", "<0.11.0"]
+```
+
+
+Apart from that, the `dbt-date` dependency must also be installed. This is because `dbt-expectations` references to it. However, this will be installed in the `dbt_project.yml` file rather than the `packages.yml` file. So inside the `dbt_project.yml` paste the following just before the `materializations` dictionary.
+
+```
+vars:
+  'dbt_date:time_zone': 'Africa/Nairobi'
+```
+
+You may insert any valid timezone apart from the one specified above.
+
+Now run `dbt deps` to seal the deal by installing the `dbt-expectations` package.
+
+```
+dbt deps
+```
+
+Here is output showing the successful installation of the package in our environment, and `dbt-date` too.
+
+```
+19:31:10  Running with dbt=1.8.7
+19:31:12  Updating lock file in file path: /home/sammigachuhi/dbt_book2/dbt_book/package-lock.yml
+19:31:13  Installing calogica/dbt_expectations
+19:31:44  Installed from version 0.10.4
+19:31:44  Up to date!
+19:31:44  Installing calogica/dbt_date
+19:31:45  Installed from version 0.10.1
+19:31:45  Up to date!
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
