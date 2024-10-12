@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-10" />
+<meta name="date" content="2024-10-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -215,7 +215,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html"><i class="fa fa-check"></i><b>10</b> dbt Expectations package</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#dbt-expectations-installation"><i class="fa fa-check"></i><b>10.1</b> dbt-expectations installation</a></li>
+<li class="chapter" data-level="10.1" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#dbt-expectations-installation"><i class="fa fa-check"></i><b>10.1</b> <code>dbt-expectations</code> installation</a></li>
+<li class="chapter" data-level="10.2" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#types-of-dbt-expectations-tests"><i class="fa fa-check"></i><b>10.2</b> Types of <code>dbt-expectations</code> tests</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#table-shape"><i class="fa fa-check"></i><b>10.2.1</b> Table shape</a></li>
+<li class="chapter" data-level="10.2.2" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#missing-values-unique-values-and-types"><i class="fa fa-check"></i><b>10.2.2</b> Missing values, unique values, and types</a></li>
+<li class="chapter" data-level="10.2.3" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#sets-and-ranges"><i class="fa fa-check"></i><b>10.2.3</b> Sets and Ranges</a></li>
+<li class="chapter" data-level="10.2.4" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#string-matching"><i class="fa fa-check"></i><b>10.2.4</b> String matching</a></li>
+<li class="chapter" data-level="10.2.5" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#aggregate"><i class="fa fa-check"></i><b>10.2.5</b> Aggregate</a></li>
+<li class="chapter" data-level="10.2.6" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#multi-column"><i class="fa fa-check"></i><b>10.2.6</b> Multi-column</a></li>
+<li class="chapter" data-level="10.2.7" data-path="dbt-expectations-package.html"><a href="dbt-expectations-package.html#distributional-functions"><i class="fa fa-check"></i><b>10.2.7</b> Distributional functions</a></li>
+</ul></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -257,7 +267,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>So if you go to a showrooms and the beautiful or handsome sales agent takes you to the Volvo XC60, you will be viewing it as you cross your checklist items. dbt-expectations and GE work in the same way.</p>
 <div id="dbt-expectations-installation" class="section level2 hasAnchor" number="10.1">
-<h2><span class="header-section-number">10.1</span> dbt-expectations installation<a href="dbt-expectations-package.html#dbt-expectations-installation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<h2><span class="header-section-number">10.1</span> <code>dbt-expectations</code> installation<a href="dbt-expectations-package.html#dbt-expectations-installation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>According to the <a href="https://hub.getdbt.com/calogica/dbt_expectations/latest/">documentation</a> dbt-expectations will work for dbt versions 1.7x and higher. Let’s first pass this little test.</p>
 <pre><code>dbt --version</code></pre>
 <p>If you get your dbt-core version is above 1.7x, then you can proceed. If not, you need to update your dbt. You can do so using <code>python -m pip install --upgrade dbt-core</code> or if you want to be more specific, this will do: <code>python -m pip install --upgrade dbt-core==0.19.0</code>.</p>
@@ -285,7 +295,143 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 19:31:45  Installed from version 0.10.1
 19:31:45  Up to date!
 </code></pre>
+</div>
+<div id="types-of-dbt-expectations-tests" class="section level2 hasAnchor" number="10.2">
+<h2><span class="header-section-number">10.2</span> Types of <code>dbt-expectations</code> tests<a href="dbt-expectations-package.html#types-of-dbt-expectations-tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><code>dbt-expectations</code> comes with a plethora of tests’ functions which can be classified into the following categories.</p>
+<ul>
+<li>Table shape</li>
+<li>Missing values, unique values, and types</li>
+<li>Sets and ranges</li>
+<li>String matching</li>
+<li>Aggregate functions</li>
+<li>Multi-column</li>
+<li>Distributional functions</li>
+</ul>
+<p>We will perform one test in each category just to exemplify the potential of <code>dbt-expectations</code>.</p>
+<div id="table-shape" class="section level3 hasAnchor" number="10.2.1">
+<h3><span class="header-section-number">10.2.1</span> Table shape<a href="dbt-expectations-package.html#table-shape" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="expect_table_row_count_to_equal_other_table" class="section level4 hasAnchor" number="10.2.1.1">
+<h4><span class="header-section-number">10.2.1.1</span> <code>expect_table_row_count_to_equal_other_table</code><a href="dbt-expectations-package.html#expect_table_row_count_to_equal_other_table" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Description: Expect the number of rows in a model match another model.</p>
+<p>We will expect the <code>citi_trips_round</code> and the <code>citi_trips_minutes</code> tables to have the same number of rows since their respective models used the same <code>citi_bike_trips</code> table. Therefore, the two tables should pass this test, or will they?</p>
+<p>Since we only want to concentrate on the models within the <code>my_models</code> directory, just run: <code>dbt test --select models/my_models</code></p>
+<p>Here is the output.</p>
+<pre><code>-- snip --
+07:57:38  2 of 8 FAIL 1 dbt_expectations_expect_table_row_count_to_equal_other_table_citi_trips_minutes_ref_citi_trips_round_  [FAIL 1 in 4.83s]
+07:57:38  3 of 8 START test dbt_expectations_expect_table_row_count_to_equal_other_table_citi_trips_round_ref_citi_trips_minutes_  [RUN]
+07:57:42  3 of 8 FAIL 1 dbt_expectations_expect_table_row_count_to_equal_other_table_citi_trips_round_ref_citi_trips_minutes_  [FAIL 1 in 4.53s]
+-- snip --
+</code></pre>
+<p>This leaves one puzzled, why?</p>
+<p>A close look at the model for <code>citi_trips_round</code> reveals the answer. This model was designed to only work on non-null rows, unlike the <code>citi_trips_minutes</code> which worked on all rows, null or not. Therefore the <code>citi_trips_round</code> had less rows and thus the generated error. In case your tests results seem incongruent, it is always good to recheck the models to refresh your memory, as we did here.</p>
+<p>In fact, dbt did a good job of generating an SQL to show us the error:</p>
+<pre><code>07:58:03  Failure in test dbt_expectations_expect_table_row_count_to_equal_other_table_citi_trips_minutes_ref_citi_trips_round_ (models/my_models/my_models.yml)
+07:58:03    Got 1 result, configured to fail if != 0
+07:58:03  
+07:58:03    compiled code at target/compiled/dbt_book/models/my_models/my_models.yml/dbt_expectations_expect_table__c00100dada30a31f15f90b9c1ba0b295.sql</code></pre>
+<p>If you click on the destination of the SQL statement and copy the contents to the SQL query tab of BigQuery, you will see the difference in row count for the two tables.</p>
+<div class="float">
+<img src="images/row_count_difference.png" alt="Row count difference" />
+<div class="figcaption">Row count difference</div>
+</div>
+</div>
+</div>
+<div id="missing-values-unique-values-and-types" class="section level3 hasAnchor" number="10.2.2">
+<h3><span class="header-section-number">10.2.2</span> Missing values, unique values, and types<a href="dbt-expectations-package.html#missing-values-unique-values-and-types" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="expect_column_values_to_not_be_null" class="section level4 hasAnchor" number="10.2.2.1">
+<h4><span class="header-section-number">10.2.2.1</span> <code>expect_column_values_to_not_be_null</code><a href="dbt-expectations-package.html#expect_column_values_to_not_be_null" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Description: Expect column values to not be null.</p>
+<p>This is a <em>no-brainer</em> kind of test. Can you guess which columns in any of our tables in the <code>nyc_bikes</code> dataset that should never be null? Here is a clue, station_id and station names, unless the biker teleports to or from somewhere!</p>
+<p>So on the <code>my_models</code> YAML file, insert the below test on the <code>start_station_id</code>, <code>start_station_name</code>, <code>end_station_id</code> and <code>end_station_name</code> fields.</p>
+<pre><code>tests:
+  - dbt_expectations.expect_column_values_to_not_be_null</code></pre>
+<p>You will get some interesting results. some of the tests fail for the <code>citi_trips_minutes</code> model because of the many null rows in the table. However, none of this particular test fail for the <code>citi_trips_round</code> table; it has zero null rows.</p>
+<p>A caveat when using the <code>dbt_expectations.expect_column_values_to_not_be_null</code>, only add a colon <code>:</code> when specifying more optional parameters such as <code>row_condition: "id is not null" # (Optional)</code>. Otherwise, leave it out.</p>
+</div>
+</div>
+<div id="sets-and-ranges" class="section level3 hasAnchor" number="10.2.3">
+<h3><span class="header-section-number">10.2.3</span> Sets and Ranges<a href="dbt-expectations-package.html#sets-and-ranges" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="expect_column_values_to_be_in_set" class="section level4 hasAnchor" number="10.2.3.1">
+<h4><span class="header-section-number">10.2.3.1</span> <code>expect_column_values_to_be_in_set</code><a href="dbt-expectations-package.html#expect_column_values_to_be_in_set" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Description: Expect each column value to be in a given set.</p>
+<p>This test works best for where you are sure that a certain column will only accept certain values. A good example is the <code>gender</code> column. Here we insert the test in our <code>citi_trips_minutes</code> and <code>citi_trips_round</code> models.</p>
+<pre><code>- name: gender
+  description: &quot;Gender (unknown, male, female)&quot;
+  tests:
+    - dbt_expectations.expect_column_values_to_be_in_set:
+        value_set: [&#39;unknown&#39;,&#39;male&#39;,&#39;female&#39;]
+</code></pre>
+<p>If you run the above test for both the <code>citi_trips_minutes</code> and <code>citi_trips_round</code> models, the test will fail for the former? Why, because of the pesky null rows. However, to take the null rows into consideration and take them as accepted values in the <code>citi_trips_minutes</code> model only, we simply add an empty quotation marks, like so (<code>''</code>). Here is our modified test: <code>value_set: ['', 'unknown','male','female']</code>. The test will then pass for our <code>citi_trips_minutes</code> table.</p>
+</div>
+</div>
+<div id="string-matching" class="section level3 hasAnchor" number="10.2.4">
+<h3><span class="header-section-number">10.2.4</span> String matching<a href="dbt-expectations-package.html#string-matching" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="expect_column_value_lengths_to_be_between" class="section level4 hasAnchor" number="10.2.4.1">
+<h4><span class="header-section-number">10.2.4.1</span> <code>expect_column_value_lengths_to_be_between</code><a href="dbt-expectations-package.html#expect_column_value_lengths_to_be_between" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Description: Expect column entries to be strings with length between a min_value value and a max_value value (inclusive).</p>
+<p>In one of our generic tests, called the <code>long_characters.sql</code> inside the <code>tests/generic</code> folder, we set out to alert ourselves of any tests above the 15 word threshold. Now of course, we got some results, so let’s use this as the upper limit of our station names. Additionally, we will add <code>1</code> as the minimum value to flag off those station names without a single character. The null values should be easy to catch with this.</p>
+<p>Because our <code>citi_trips_minutes</code> table has several null rows, we used some fine-grained creativity to take this into account also for the station names. So for both the <code>start_station_name</code> and the <code>end_station_name</code>, we inserted the following test:</p>
+<pre><code>tests:
+  - dbt_expectations.expect_column_values_to_not_be_null
+  - dbt_expectations.expect_column_value_lengths_to_be_between:
+      min_value: 0</code></pre>
+<p>The minimum character length for a station name is 0, thus even null values will be accepted.</p>
+<p>However, we were more brutal for the <code>citi_trips_round</code> model, but used a high maximum character of length to be lenient to those stations very long names.</p>
+<pre><code>tests:
+  - dbt_expectations.expect_column_values_to_not_be_null
+  - dbt_expectations.expect_column_value_lengths_to_be_between:
+      min_value: 1 # (Optional)
+      max_value: 70 # (Optional)</code></pre>
+<p>We are glad to know both models passed this simple test.</p>
+</div>
+</div>
+<div id="aggregate" class="section level3 hasAnchor" number="10.2.5">
+<h3><span class="header-section-number">10.2.5</span> Aggregate<a href="dbt-expectations-package.html#aggregate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="expect_column_max_to_be_between" class="section level4 hasAnchor" number="10.2.5.1">
+<h4><span class="header-section-number">10.2.5.1</span> <code>expect_column_max_to_be_between</code><a href="dbt-expectations-package.html#expect_column_max_to_be_between" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Description: Expect the column max to be between a min and max value</p>
+<p>You may wonder what the purpose of this test is. But don’t dismiss it yet, it can come quite in handy when searching for outlier values. We will demonstrate it in catching overly long bike trips. However, this test needs some background knowledge of your data.</p>
+<p>Applying the below queries on BigQuery will help.</p>
+<pre><code>SELECT AVG(trip_duration_min) FROM dbt-project-437116.nyc_bikes.citi_trips_minutes; -- 16
 
+SELECT MAX(trip_duration_min) FROM dbt-project-437116.nyc_bikes.citi_trips_minutes; -- 325167.48
+
+SELECT * FROM dbt-project-437116.nyc_bikes.citi_trips_minutes
+WHERE trip_duration_min &gt; 200000;</code></pre>
+<p>Now lets place the limits of our maximum trip duration values to be between the average of 16 and some intermediate value such as 100, 000 minutes (1, 666 hours)!</p>
+<pre><code>tests:
+  - dbt_expectations.expect_column_max_to_be_between:
+      min_value: 16 # (Optional)
+      max_value: 100000 # (Optional)</code></pre>
+<p>That will flag off some errors, but if you change the <code>max_value</code> parameter to <code>360000</code>, the tests will pass. We used some fine-grained creativity in this case where all <code>trip_duration_min</code> fields in both the <code>citi_trips_minutes</code> and <code>citi_trips_round</code> had 360000 as their <code>max_value</code> parameter. However, in the <code>trip_min_round</code> field of the <code>citi_trips_round</code> model, we set the <code>max_value</code> as 100000 to demonstrate the error.</p>
+</div>
+</div>
+<div id="multi-column" class="section level3 hasAnchor" number="10.2.6">
+<h3><span class="header-section-number">10.2.6</span> Multi-column<a href="dbt-expectations-package.html#multi-column" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="expect_column_pair_values_a_to_be_greater_than_b" class="section level4 hasAnchor" number="10.2.6.1">
+<h4><span class="header-section-number">10.2.6.1</span> <code>expect_column_pair_values_A_to_be_greater_than_B</code><a href="dbt-expectations-package.html#expect_column_pair_values_a_to_be_greater_than_b" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Description: Expect values in column A to be greater than column B.</p>
+<p>This kind of test comes in handy when you want to ensure that one of your columnar values is greater than, or less than that of a different column. A good example is a comparison of trip duration in seconds in the <code>tripduration</code> column versus the trip duration in minutes from <code>trip_min_round</code> column in our <code>citi_trips_round</code> table. Surely time in seconds will always have a greater value in terms of length than the more concise minutes values!</p>
+<p>In our <code>citi_trips_round</code> model, insert the test as follows:</p>
+<pre><code>- name: citi_trips_round
+    description: &#39;{{ doc(&quot;citi_trips_round&quot;) }}&#39;
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: ref(&quot;citi_trips_minutes&quot;)
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: tripduration
+          column_B: trip_min_round</code></pre>
+<p>It surely does pass the test.</p>
+<pre><code>-- snip --
+09:40:46  5 of 26 PASS dbt_expectations_expect_column_pair_values_A_to_be_greater_than_B_citi_trips_round_tripduration__trip_min_round  [PASS in 2.20s]</code></pre>
+</div>
+</div>
+<div id="distributional-functions" class="section level3 hasAnchor" number="10.2.7">
+<h3><span class="header-section-number">10.2.7</span> Distributional functions<a href="dbt-expectations-package.html#distributional-functions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This is another category of shipped-in tests of <code>dbt-expectations</code>. However, they require some statistical homework to be conducted on your data prior to applying the tests. The tests under this category include: <code>expect_column_values_to_be_within_n_moving_stdevs</code>, <code>expect_column_values_to_be_within_n_stdevs</code> and <code>expect_row_values_to_have_data_for_every_n_datepart</code>.</p>
+
+</div>
 </div>
 </div>
 

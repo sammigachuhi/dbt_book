@@ -47,3 +47,17 @@ configuring-custom-generic-tests
 storing-test-failures
 dbt-expectations-package
 dbt-expectations-installation
+types-of-dbt-expectations-tests
+table-shape
+expect_table_row_count_to_equal_other_table
+missing-values-unique-values-and-types
+expect_column_values_to_not_be_null
+sets-and-ranges
+expect_column_values_to_be_in_set
+string-matching
+expect_column_value_lengths_to_be_between
+aggregate
+expect_column_max_to_be_between
+multi-column
+expect_column_pair_values_a_to_be_greater_than_b
+distributional-functions
