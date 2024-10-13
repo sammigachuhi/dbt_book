@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Introduction | dbt Book</title>
+  <title>Chapter 11 Seeds | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Introduction | dbt Book" />
+  <meta property="og:title" content="Chapter 11 Seeds | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Introduction | dbt Book" />
+  <meta name="twitter:title" content="Chapter 11 Seeds | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="the-dbt-architecture.html"/>
+<link rel="prev" href="dbt-expectations-package.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -252,45 +252,81 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="introduction" class="section level1 hasAnchor" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Introduction<a href="introduction.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="what-is-dbt" class="section level2 hasAnchor" number="2.1">
-<h2><span class="header-section-number">2.1</span> What is dbt?<a href="introduction.html#what-is-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, when in full, stands for Data build tool. dbt is a tool that data scientists and analytical engineers use to transform data in their data warehouses. If you are a newbie wanting to, or rather curious about dbt, the preceding statements sure contains a lot. The words <em>analytical engineers</em>, <em>transform data</em> and <em>data warehouses</em> may sound unfamiliar, if not imposing. For now just think of dbt much like a recipe. In a recipe, you have the steps and the instructions to cook your favourite meal, say a roasted chicken. Sure enough, your recipe will contain details on the optimal oven temperature, heating duration and how to set it! dbt works in much the same way. We define how we want to transform or build our data. Once we hit <code>run</code> the magic happens.</p>
-</div>
-<div id="encounter-with-dbt" class="section level2 hasAnchor" number="2.2">
-<h2><span class="header-section-number">2.2</span> Encounter with <code>dbt</code><a href="introduction.html#encounter-with-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>How did I come across dbt? Being from a totally different background, the geographical sciences, my first experience with dbt, contrary to what veteran users may say, wasn’t so good. Either because a lot was on my desk back then, but I was having trouble piecing together all the different components that make dbt work, or dbt uses to work. Whichever is the case. It is only after some time, and several hard knocks in between, that I was able to get a semblance of what it does.</p>
-<p>At least I got a few things. dbt could be used to create views of your tables in the data warehouse, it could perform tests and lastly, (the one I liked the most) it could be used to render a website of your documentation!</p>
-</div>
-<div id="dbt-from-the-professionals" class="section level2 hasAnchor" number="2.3">
-<h2><span class="header-section-number">2.3</span> dbt, from the professionals…<a href="introduction.html#dbt-from-the-professionals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, from the words of developers, is an open-source tool that analysts and data engineers use to transform data in their data warehouses. Did someone mention <em>transform data</em> somewhere? Data transformation is the process of converting data from its source format to the format required for analysis. The data transformation process is part of a three stage process known as Extract Load and Transform (ELT). Before ELT, Extract Transform Load was the king. The former involves transfering data from the source, to the destination, such as a data warehouse or data lake and performing the transformation in the destination. The latter, though a traditional approach, involves first identifying the data, transforming it prior to landing it to the destination, in this case data warehouse and letting it rest there where downstream users can get hold of it.</p>
-<p>Here is a better description of the Extract, Load and Transform keywords.</p>
-<p>Extract - this is the identification and reading of data from one or more sources, such as databases, internet, comma separated value (csv) files and the like.</p>
-<p>Load - just like you would pull up a weight into a lorry, this is the process of transferring data from the source to your data warehouse.</p>
-<p>Transform - this is the conversion of data from its state to a format that can be used by downstream users.</p>
-<p>You may have seen the term <em>data warehouse</em> coming up quite a number of times. A data warehouse is a data management system that stores current and historical data from multiple sources in a business friendly manner for easier insights and reporting. Examples of data warehouses are Google Big Query, Snowflake, Amazon Redshift, Azure Synapse Analytics, IBM Db2 Warehouse and Firebolt.</p>
-</div>
-<div id="why-use-dbt" class="section level2 hasAnchor" number="2.4">
-<h2><span class="header-section-number">2.4</span> Why use dbt?<a href="introduction.html#why-use-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If you work with data that needs to be version controlled, that is, it can be rolled back to a previous time, you need to work in dbt. If you want to standardize the data models created across teams, dbt is the tool of choice. If you also want a central place where your data work is documented, dbt handles this quite well. In other words, dbt should be the swiss knife when working with large datasets and you want to maintain modularity, order and documentation of your work.</p>
-<p>The below image summarises the role of dbt in your data processing work.</p>
+<div id="seeds" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">Chapter 11</span> Seeds<a href="seeds.html#seeds" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Seeds are Comma Separated Values (csv) files stored inside your <code>seeds</code> directory which can be loaded into your data warehouse using the <code>dbt seed</code> command.</p>
+<p>Seeds can also be referenced by your SQL models using the <code>ref()</code> function. Seeds in dbt are version controlled, that is, you can revert them to a previous state.</p>
+<p>Seeds are best used for data that changes infrequently. A good example is country codes, email accounts and station names. However, seeds should not be used to store sensitive information such as passwords.</p>
+<p>To demonstrate about seeds in dbt, we will try to upload a <a href="https://www.civicdata.com/dataset/nyc-bike-share-trip-data/resource/3e7acf34-19ba-4bf4-8dd2-cf349623dc6b">New York City (NYC) bike history data</a> for 2014.</p>
+<p>Extract the zip folder and copy the <code>3e7acf34-19ba-4bf4-8dd2-cf349623dc6b.csv</code> inside the <code>dbt_book/seeds</code> directory. To avoid being verbose, let’s rename it to <code>2014-tripdata.csv</code>.</p>
+<div id="uploading-a-seed-into-your-data-warehouse" class="section level2 hasAnchor" number="11.1">
+<h2><span class="header-section-number">11.1</span> Uploading a seed into your data warehouse<a href="seeds.html#uploading-a-seed-into-your-data-warehouse" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Believe you me we had a better csv table to upload, one much more related to the NYC bikes dataset. However, because it was ~320MB and we want to be economical in upload times, we settled for this historical data. Nevertheless, keeping on with this chapter, to upload a seed into a data warehouse, we use this command:</p>
+<pre><code>dbt seed</code></pre>
+<p>After that, it’s a test of patience. Depending on your upload speeds, it shouldn’t take long to upload a 36MB file to BigQuery.</p>
+<pre><code>-- snip --
+16:31:51  Concurrency: 1 threads (target=&#39;dev&#39;)
+16:31:51  
+16:31:51  1 of 1 START seed file nyc_bikes.2014-tripdata ................................. [RUN]
+16:33:17  1 of 1 OK loaded seed file nyc_bikes.2014-tripdata ............................. [INSERT 224736 in 85.39s]
+16:33:17  
+16:33:17  Finished running 1 seed in 0 hours 1 minutes and 28.54 seconds (88.54s).
+16:33:17  
+16:33:17  Completed successfully
+16:33:17  
+16:33:17  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+</code></pre>
+<p>If you go to BigQuery and refresh the contents of your <code>nyc_bikes</code> dataset, you should see the <code>2014-tripdata</code> table present.</p>
 <div class="float">
-<img src="images/dbt.png" alt="The role of dbt" />
-<div class="figcaption">The role of dbt</div>
+<img src="images/2014-tripdata.png" alt="Seeds" />
+<div class="figcaption">Seeds</div>
 </div>
-<p>Source: <a href="https://www.startdataengineering.com/post/advantages-of-using-dbt-data-build-tool/">Reference</a></p>
+</div>
+<div id="referencing-seeds-in-models" class="section level2 hasAnchor" number="11.2">
+<h2><span class="header-section-number">11.2</span> Referencing seeds in models<a href="seeds.html#referencing-seeds-in-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Just like you would reference a model in another model, we can also reference seeds in another model. All your need to reference a seed is to place the name of the csv file, excluding the <code>.csv</code> extension inside the <code>ref()</code> function.</p>
+<p>For example, we want to create a view that contains those start station names from our 2014 table that are existent in the <code>citi_trips_long</code> model.</p>
+<p>Within the <code>models/my_models</code> directory, create the <code>citi_stations_2014.sql</code> model with the following query:</p>
+<pre><code>{{ config(materialized=&#39;view&#39;) }}
+
+WITH citi_stations_2014 AS (
+    SELECT * FROM {{ref (&#39;2014-tripdata&#39;) }}
+    WHERE `start station name` IN (
+        SELECT start_station_name FROM {{ ref(&#39;citi_trips_long&#39;) }}
+    )
+)
+
+SELECT * FROM citi_stations_2014
+</code></pre>
+<p>Thereafter, run the model using <code>dbt run --select citi_stations_2014</code></p>
+<p>That will create a view that contains only those stations within the <code>2014-tripdata.csv</code> also within the <code>citi_trips_long</code> model. Much to our surprise, all the stations within our 2014 table are also found in the <code>citi_trips_long</code> model!</p>
+<p>Here are the SQL queries we used to perform a count of each of the two tables in BigQuery.</p>
+<pre><code>SELECT COUNT(*) FROM `dbt-project-437116`.`nyc_bikes`.`2014-tripdata`;
+
+SELECT COUNT(*) FROM dbt-project-437116.nyc_bikes.citi_stations_2014;</code></pre>
+<p>Both returned a value of <code>224736</code>.</p>
+<p>Here is the view of the <code>citi_stations_2014</code> model in BigQuery.</p>
+<div class="float">
+<img src="images/seed_view.png" alt="View from seed" />
+<div class="figcaption">View from seed</div>
+</div>
 
 </div>
 </div>
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-dbt-architecture.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="dbt-expectations-package.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -321,7 +357,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/01-intro.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/10-seeds.Rmd",
 "text": "Edit"
 },
 "history": {

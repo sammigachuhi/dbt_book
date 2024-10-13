@@ -61,3 +61,6 @@ expect_column_max_to_be_between
 multi-column
 expect_column_pair_values_a_to_be_greater_than_b
 distributional-functions
+seeds
+uploading-a-seed-into-your-data-warehouse
+referencing-seeds-in-models
