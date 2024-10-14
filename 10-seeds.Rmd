@@ -80,11 +80,46 @@ Here is the view of the `citi_stations_2014` model in BigQuery.
 
 ![View from seed](./images/seed_view.png)
 
+## Seed Configurations at project level
 
+Though it may sound like there is a lot to do here, there actually isn't. Suffice to only say that seeds are configurable as much as our normal models are. There are two ways to [configure seeds](https://docs.getdbt.com/reference/seed-configs) in dbt, either in the `dbt_project` YAML file or a t the individual seed's YAML properties. 
 
+For the purposes of this exercise, at the project level we will set a dictionary that looks as follows:
 
+```
+seeds:
+  dbt_book:
+    2014-tripdata:
+      schema: nyc2014_data
+```
 
+For any [custom schema](https://docs.getdbt.com/reference/resource-configs/schema) that we set, the result will be in the following format: `{{ target.schema }}_{{ schema }}.` That means the expected schema for our seed will be `nyc_bikes_nyc2014_data` --quite a mouthful of a name.
 
+Thereafter run `dbt seed`.
+
+```
+-- snip --
+19:24:43  Concurrency: 1 threads (target='dev')
+19:24:43  
+19:24:43  1 of 1 START seed file nyc_bikes_nyc2014_data.2014-tripdata .................... [RUN]
+19:26:18  1 of 1 OK loaded seed file nyc_bikes_nyc2014_data.2014-tripdata ................ [INSERT 224736 in 95.10s]
+19:26:18  
+19:26:18  Finished running 1 seed in 0 hours 1 minutes and 46.50 seconds (106.50s).
+19:26:18  
+19:26:18  Completed successfully
+19:26:18  
+19:26:18  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+```
+
+Think of a schema as a folder or container for storing your data (read tables). Therefore, if you were in a company, there would be a schema (read it as folder or container) for sales, customers, products and clients. Inside the schema, (read folder or container) for sales, there would be tables for `january_sales`, `february_sales` and so on. 
+
+Just a *nota bene*, don't use hyphens `(-)` for your schema names, otherwise an error will result. 
+
+Here is our seed data appearing under the `nyc_bikes_nyc2014_data` dataset. 
+
+![Schema for seeds](./images/seeds_schema.png)
+
+## Seed properties and configurations at properties level
 
 
 
