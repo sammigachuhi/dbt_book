@@ -121,9 +121,85 @@ Here is our seed data appearing under the `nyc_bikes_nyc2014_data` dataset.
 
 ## Seed properties and configurations at properties level
 
+Seeds can also be configured at the properties level. In fact, the configurations at the properties level will override those set at the project level, that is at the `dbt_project` file. 
+
+To demonstrate setting seed configurations at the properties level, create `nyc_bikes2014` YAML file. Copy paste the following contents into the file. 
+
+```
+version: 2
+
+seeds:
+  - name: 2014-tripdata
+    description: "Seed for NYC 2014 bike data"
+    docs:
+      show: true 
+      node_color: purple # Use name (such as node_color: purple) or hex code with quotes (such as node_color: "#cd7f32")
+    config:
+      schema: nyc_bikes2014
+```
+
+Not much different from the model properties' files we create, isn't it? In this case, the `name` of the model is not a SQL file but the csv we pushed to the data warehouse. The `docs` key is not so much important as the `config` key which we use to set the schema of our seed in the data warehouse.
+
+What's good for the goose is good for the gander. Much akin to the model properties files were we can insert tests and documentation, the same goes for seed properties' files. In the contents of the below properties file of `nyc_bikes2014.yml` we have inserted documentation at both the table and column levels. We have also inserted tests at both levels as well. 
+
+```
+version: 2
+
+seeds:
+  - name: 2014-tripdata
+    description: '{{ doc("seed_2014_tripdata") }}'
+    docs:
+      show: true 
+      node_color: purple # Use name (such as node_color: purple) or hex code with quotes (such as node_color: "#cd7f32")
+    config:
+      schema: nyc_bikes2014
+    tests:
+      - dbt_expectations.expect_table_column_count_to_be_between:
+          min_value: 1 # (Optional)
+    columns:
+      - name: _id
+        description: 'Unique identifier'
+        tests:
+          - dbt_expectations.expect_column_values_to_be_unique
+
+      - name: tripduration
+        description: '{{ doc("tripduration") }}'
+```
+
+If you have additional seeds, simply add them to the properties files much like what we have in the `my_models.yml` which consists of the three models `citi_trips_minutes`, `citi_trips_round` and `citi_trips_long`. 
 
 
+## Performing tests on seeds 
 
+Tests on seeds are performed in much the same way as for the other models. The only trick is to insert the name of the csv file. For example, to run a test of our `2014-tripdata.csv` which is our seed model, we execute `dbt test --select 2014-tripdata`. 
+
+```
+-- snip --
+18:19:53  Concurrency: 1 threads (target='dev')
+18:19:53  
+18:19:53  1 of 2 START test dbt_expectations_expect_column_values_to_be_unique_2014-tripdata__id  [RUN]
+18:19:57  1 of 2 PASS dbt_expectations_expect_column_values_to_be_unique_2014-tripdata__id  [PASS in 4.67s]
+18:19:57  2 of 2 START test dbt_expectations_expect_table_column_count_to_be_between_2014-tripdata_1  [RUN]
+18:20:02  2 of 2 PASS dbt_expectations_expect_table_column_count_to_be_between_2014-tripdata_1  [PASS in 4.58s]
+18:20:02  
+18:20:02  Finished running 2 data tests in 0 hours 0 minutes and 12.62 seconds (12.62s).
+18:20:02  
+18:20:02  Completed successfully
+-- snip --
+```
+
+As you can see, the two tests we defined in our `nyc_bikes2014` YAML properties' file of `dbt_expectations.expect_table_column_count_to_be_between` and `dbt_expectations.expect_column_values_to_be_unique` have passed. 
+
+## Viewing documentation for dbt seeds
+
+Even much less different than running tests is the generation of documentation regarding your dbt seeds. The process is exactly the same. First, run `dbt docs generate`. Assuming that the manifest files have successfully been created in the catalog, run `dbt docs serve`. If no errors appear at this final stage, open the port link that appears, such as `localhost:8080/`, on the terminal in your preferred browser. 
+
+You should see the documentation you created for your seed. The lineage graph should also work well for the seeds too.
+
+![Documentation on seeds](./images/seed_documentation.png)
+
+
+Every seed at some point is left to grow on its own. We suppose this chapter has provided the necessary nutrition to see you bud to life working with dbt seeds.
 
 
 
