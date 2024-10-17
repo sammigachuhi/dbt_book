@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-13" />
+<meta name="date" content="2024-10-17" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,7 +37,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="dbt-expectations-package.html"/>
-
+<link rel="next" href="sources-1.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -231,6 +231,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="11.1" data-path="seeds.html"><a href="seeds.html#uploading-a-seed-into-your-data-warehouse"><i class="fa fa-check"></i><b>11.1</b> Uploading a seed into your data warehouse</a></li>
 <li class="chapter" data-level="11.2" data-path="seeds.html"><a href="seeds.html#referencing-seeds-in-models"><i class="fa fa-check"></i><b>11.2</b> Referencing seeds in models</a></li>
+<li class="chapter" data-level="11.3" data-path="seeds.html"><a href="seeds.html#seed-configurations-at-project-level"><i class="fa fa-check"></i><b>11.3</b> Seed Configurations at project level</a></li>
+<li class="chapter" data-level="11.4" data-path="seeds.html"><a href="seeds.html#seed-properties-and-configurations-at-properties-level"><i class="fa fa-check"></i><b>11.4</b> Seed properties and configurations at properties level</a></li>
+<li class="chapter" data-level="11.5" data-path="seeds.html"><a href="seeds.html#performing-tests-on-seeds"><i class="fa fa-check"></i><b>11.5</b> Performing tests on seeds</a></li>
+<li class="chapter" data-level="11.6" data-path="seeds.html"><a href="seeds.html#viewing-documentation-for-dbt-seeds"><i class="fa fa-check"></i><b>11.6</b> Viewing documentation for dbt seeds</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="sources-1.html"><a href="sources-1.html"><i class="fa fa-check"></i><b>12</b> Sources</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="sources-1.html"><a href="sources-1.html#defining-a-source"><i class="fa fa-check"></i><b>12.1</b> Defining a source</a></li>
+<li class="chapter" data-level="12.2" data-path="sources-1.html"><a href="sources-1.html#referencing-sources"><i class="fa fa-check"></i><b>12.2</b> Referencing sources</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -310,23 +319,111 @@ SELECT COUNT(*) FROM dbt-project-437116.nyc_bikes.citi_stations_2014;</code></pr
 <img src="images/seed_view.png" alt="View from seed" />
 <div class="figcaption">View from seed</div>
 </div>
+</div>
+<div id="seed-configurations-at-project-level" class="section level2 hasAnchor" number="11.3">
+<h2><span class="header-section-number">11.3</span> Seed Configurations at project level<a href="seeds.html#seed-configurations-at-project-level" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Though it may sound like there is a lot to do here, there actually isn’t. Suffice to only say that seeds are configurable as much as our normal models are. There are two ways to <a href="https://docs.getdbt.com/reference/seed-configs">configure seeds</a> in dbt, either in the <code>dbt_project</code> YAML file or a t the individual seed’s YAML properties.</p>
+<p>For the purposes of this exercise, at the project level we will set a dictionary that looks as follows:</p>
+<pre><code>seeds:
+  dbt_book:
+    2014-tripdata:
+      schema: nyc2014_data</code></pre>
+<p>For any <a href="https://docs.getdbt.com/reference/resource-configs/schema">custom schema</a> that we set, the result will be in the following format: <code>{{ target.schema }}_{{ schema }}.</code> That means the expected schema for our seed will be <code>nyc_bikes_nyc2014_data</code> –quite a mouthful of a name.</p>
+<p>Thereafter run <code>dbt seed</code>.</p>
+<pre><code>-- snip --
+19:24:43  Concurrency: 1 threads (target=&#39;dev&#39;)
+19:24:43  
+19:24:43  1 of 1 START seed file nyc_bikes_nyc2014_data.2014-tripdata .................... [RUN]
+19:26:18  1 of 1 OK loaded seed file nyc_bikes_nyc2014_data.2014-tripdata ................ [INSERT 224736 in 95.10s]
+19:26:18  
+19:26:18  Finished running 1 seed in 0 hours 1 minutes and 46.50 seconds (106.50s).
+19:26:18  
+19:26:18  Completed successfully
+19:26:18  
+19:26:18  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1</code></pre>
+<p>Think of a schema as a folder or container for storing your data (read tables). Therefore, if you were in a company, there would be a schema (read it as folder or container) for sales, customers, products and clients. Inside the schema, (read folder or container) for sales, there would be tables for <code>january_sales</code>, <code>february_sales</code> and so on.</p>
+<p>Just a <em>nota bene</em>, don’t use hyphens <code>(-)</code> for your schema names, otherwise an error will result.</p>
+<p>Here is our seed data appearing under the <code>nyc_bikes_nyc2014_data</code> dataset.</p>
+<div class="float">
+<img src="images/seeds_schema.png" alt="Schema for seeds" />
+<div class="figcaption">Schema for seeds</div>
+</div>
+</div>
+<div id="seed-properties-and-configurations-at-properties-level" class="section level2 hasAnchor" number="11.4">
+<h2><span class="header-section-number">11.4</span> Seed properties and configurations at properties level<a href="seeds.html#seed-properties-and-configurations-at-properties-level" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Seeds can also be configured at the properties level. In fact, the configurations at the properties level will override those set at the project level, that is at the <code>dbt_project</code> file.</p>
+<p>To demonstrate setting seed configurations at the properties level, create <code>nyc_bikes2014</code> YAML file. Copy paste the following contents into the file.</p>
+<pre><code>version: 2
+
+seeds:
+  - name: 2014-tripdata
+    description: &quot;Seed for NYC 2014 bike data&quot;
+    docs:
+      show: true 
+      node_color: purple # Use name (such as node_color: purple) or hex code with quotes (such as node_color: &quot;#cd7f32&quot;)
+    config:
+      schema: nyc_bikes2014</code></pre>
+<p>Not much different from the model properties’ files we create, isn’t it? In this case, the <code>name</code> of the model is not a SQL file but the csv we pushed to the data warehouse. The <code>docs</code> key is not so much important as the <code>config</code> key which we use to set the schema of our seed in the data warehouse.</p>
+<p>What’s good for the goose is good for the gander. Much akin to the model properties files were we can insert tests and documentation, the same goes for seed properties’ files. In the contents of the below properties file of <code>nyc_bikes2014.yml</code> we have inserted documentation at both the table and column levels. We have also inserted tests at both levels as well.</p>
+<pre><code>version: 2
+
+seeds:
+  - name: 2014-tripdata
+    description: &#39;{{ doc(&quot;seed_2014_tripdata&quot;) }}&#39;
+    docs:
+      show: true 
+      node_color: purple # Use name (such as node_color: purple) or hex code with quotes (such as node_color: &quot;#cd7f32&quot;)
+    config:
+      schema: nyc_bikes2014
+    tests:
+      - dbt_expectations.expect_table_column_count_to_be_between:
+          min_value: 1 # (Optional)
+    columns:
+      - name: _id
+        description: &#39;Unique identifier&#39;
+        tests:
+          - dbt_expectations.expect_column_values_to_be_unique
+
+      - name: tripduration
+        description: &#39;{{ doc(&quot;tripduration&quot;) }}&#39;</code></pre>
+<p>If you have additional seeds, simply add them to the properties files much like what we have in the <code>my_models.yml</code> which consists of the three models <code>citi_trips_minutes</code>, <code>citi_trips_round</code> and <code>citi_trips_long</code>.</p>
+</div>
+<div id="performing-tests-on-seeds" class="section level2 hasAnchor" number="11.5">
+<h2><span class="header-section-number">11.5</span> Performing tests on seeds<a href="seeds.html#performing-tests-on-seeds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Tests on seeds are performed in much the same way as for the other models. The only trick is to insert the name of the csv file. For example, to run a test of our <code>2014-tripdata.csv</code> which is our seed model, we execute <code>dbt test --select 2014-tripdata</code>.</p>
+<pre><code>-- snip --
+18:19:53  Concurrency: 1 threads (target=&#39;dev&#39;)
+18:19:53  
+18:19:53  1 of 2 START test dbt_expectations_expect_column_values_to_be_unique_2014-tripdata__id  [RUN]
+18:19:57  1 of 2 PASS dbt_expectations_expect_column_values_to_be_unique_2014-tripdata__id  [PASS in 4.67s]
+18:19:57  2 of 2 START test dbt_expectations_expect_table_column_count_to_be_between_2014-tripdata_1  [RUN]
+18:20:02  2 of 2 PASS dbt_expectations_expect_table_column_count_to_be_between_2014-tripdata_1  [PASS in 4.58s]
+18:20:02  
+18:20:02  Finished running 2 data tests in 0 hours 0 minutes and 12.62 seconds (12.62s).
+18:20:02  
+18:20:02  Completed successfully
+-- snip --</code></pre>
+<p>As you can see, the two tests we defined in our <code>nyc_bikes2014</code> YAML properties’ file of <code>dbt_expectations.expect_table_column_count_to_be_between</code> and <code>dbt_expectations.expect_column_values_to_be_unique</code> have passed.</p>
+</div>
+<div id="viewing-documentation-for-dbt-seeds" class="section level2 hasAnchor" number="11.6">
+<h2><span class="header-section-number">11.6</span> Viewing documentation for dbt seeds<a href="seeds.html#viewing-documentation-for-dbt-seeds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Even much less different than running tests is the generation of documentation regarding your dbt seeds. The process is exactly the same. First, run <code>dbt docs generate</code>. Assuming that the manifest files have successfully been created in the catalog, run <code>dbt docs serve</code>. If no errors appear at this final stage, open the port link that appears, such as <code>localhost:8080/</code>, on the terminal in your preferred browser.</p>
+<p>You should see the documentation you created for your seed. The lineage graph should also work well for the seeds too.</p>
+<div class="float">
+<img src="images/seed_documentation.png" alt="Documentation on seeds" />
+<div class="figcaption">Documentation on seeds</div>
+</div>
+<p>Every seed at some point is left to grow on its own. We suppose this chapter has provided the necessary nutrition to see you bud to life working with dbt seeds.</p>
 
 </div>
 </div>
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="dbt-expectations-package.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="dbt-expectations-package.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sources-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

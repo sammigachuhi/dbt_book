@@ -64,3 +64,10 @@ distributional-functions
 seeds
 uploading-a-seed-into-your-data-warehouse
 referencing-seeds-in-models
+seed-configurations-at-project-level
+seed-properties-and-configurations-at-properties-level
+performing-tests-on-seeds
+viewing-documentation-for-dbt-seeds
+sources-1
+defining-a-source
+referencing-sources

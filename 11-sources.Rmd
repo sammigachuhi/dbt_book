@@ -1,0 +1,102 @@
+# Sources 
+
+In the all-time favourite book *The voyages and adventures of Captain Hatteras*, an intelligent second-in-command captain of the sturdy ship --*The Forward*, would receive letters on almost every morning of the instructions that he and the crew should follow. The instructions were from an unknown source but they would detail which bearings the ship should follow, or what to do to navigate the high seas. In dbt, sources are what make your data in the data warehouse be referenced in dbt operations such as running models, tests and checking the 'freshness' of your data. 
+Just like in the above anecdote where, if any person in the crew would ask Sir Richard Shandon, the second-in-command for justification of any task they were commanded to do, Richard would always refer to the authoratative letter from an anonymous source. Likewise, when working with sources, dbt will perform operations by referencing the sources using the `source` function (`{{ source("schema", "table") }}`).
+
+Sources in dbt are defined inside YAML files, and they are referenced inside SQL files, just like regular models again!
+
+## Defining a source
+
+To demonstrate defining sources, we will work with two tables already in our data warehouse. These are the `2014-tripdata` and `citi_trips_round` tables under `nyc_bikes_nyc_bikes2014` (`nyc_bikes_nyc_bikes2014/2014-tripdata`) and `nyc_bikes` tree structures in BigQuery respectively. 
+
+Create a new sibling directory next to the `docs`, `example`, and `my_models` folders. Inside it, create a new YAML file called `sources_bikes.yml`. The path to this file should be `models/sources/sources_bikes.yml`. 
+
+Copy paste these contents into the newly created YAML file.
+
+```
+version: 2
+
+sources:
+  - name: nyc_bikes_nyc_bikes2014
+    schema: nyc_bikes_nyc_bikes2014
+    tables:
+      - name: 2014-tripdata
+
+  - name: nyc_bikes
+    schema: nyc_bikes 
+    tables:
+      - name: citi_trips_round
+
+```
+
+If you've worked with YAML property files in the previous chapters, this should be all too familiar. Nevertheless, the `name` and `schema` values refer to the schema name in your data warehouse, but they can be different. For the `tables` dictionary, we refer to the names of those tables under a particular schema. For example, the `citi_trips_round` is definitely under the `nyc_bikes` schema. 
+
+
+## Referencing sources 
+
+Sources in our data warehouse are referenced using the `source()` function. Remember when referencing other models within models we used the `ref()` function? When working with sources, the `ref()` is now `source()`. 
+
+Below is a demonstration of referencing a source to only select male bike riders. Notice the arrangement of the schema and table names within quotation markes (`''`) and separated by a comman. This is how we reference other data acting as the *source* in our `nyc_bikes_male.sql`. 
+
+```
+SELECT * FROM 
+{{ source('nyc_bikes', 'citi_trips_round') }}
+WHERE gender = "male"
+
+```
+
+The same also works for data uploaded as a seed in our data warehouse as seen in the `nyc_male_2014.sql`. 
+
+```
+SELECT * FROM 
+{{ source('nyc_bikes_nyc_bikes2014', '2014-tripdata') }}
+WHERE gender = 1
+
+```
+
+We run these two specific models using `dbt run --select sources` and we get this output: 
+
+```
+19:29:52  Concurrency: 1 threads (target='dev')
+19:29:52  
+19:29:52  1 of 2 START sql view model nyc_bikes.nyc_bikes_male ........................... [RUN]
+19:29:56  1 of 2 OK created sql view model nyc_bikes.nyc_bikes_male ...................... [CREATE VIEW (0 processed) in 3.74s]
+19:29:56  2 of 2 START sql view model nyc_bikes.nyc_male_2014 ............................ [RUN]
+19:29:59  2 of 2 OK created sql view model nyc_bikes.nyc_male_2014 ....................... [CREATE VIEW (0 processed) in 3.29s]
+19:29:59  
+19:29:59  Finished running 2 view models in 0 hours 0 minutes and 12.75 seconds (12.75s).
+19:30:00  
+19:30:00  Completed successfully
+19:30:00  
+19:30:00  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2
+
+```
+
+
+If you check under the `nyc_bikes` schema in your BigQuery, you will notice two new views have been created: `nyc_bikes_male` and `nyc_male_2014`. 
+
+![Sources](./images/sources.png)
+
+One would have expected the `nyc_male_2014` view to be under the `nyc_bikes_nyc_bikes2014` schema because that's the seed dataset. Our assumption is that we set the `nyc_bikes` as the dataset to work with when setting up dbt, and thus it's very hard to deviate from this. But we stand to be corrected. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
