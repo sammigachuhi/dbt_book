@@ -77,7 +77,17 @@ If you check under the `nyc_bikes` schema in your BigQuery, you will notice two 
 
 ![Sources](./images/sources.png)
 
-One would have expected the `nyc_male_2014` view to be under the `nyc_bikes_nyc_bikes2014` schema because that's the seed dataset. Our assumption is that we set the `nyc_bikes` as the dataset to work with when setting up dbt, and thus it's very hard to deviate from this. But we stand to be corrected. 
+One would have expected the `nyc_male_2014` view to be under the `nyc_bikes_nyc_bikes2014` schema because that's the seed dataset. Our assumption is that we set the `nyc_bikes` as the dataset to work with when setting up dbt, and thus it's very hard to deviate from this. But we stand to be corrected. One more thing, though its obvious --the dbt source can also work inside a `WITH` SQL statement like so in the `nyc_female_2014` model.
+
+```
+WITH nyc_female_2014 AS (
+    SELECT * FROM 
+        {{ source('nyc_bikes_nyc_bikes2014', '2014-tripdata') }}
+    WHERE gender = 2
+)
+
+SELECT * FROM nyc_female_2014
+```
 
 
 
