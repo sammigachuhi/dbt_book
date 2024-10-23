@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-17" />
+<meta name="date" content="2024-10-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -240,6 +240,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="12.1" data-path="sources-1.html"><a href="sources-1.html#defining-a-source"><i class="fa fa-check"></i><b>12.1</b> Defining a source</a></li>
 <li class="chapter" data-level="12.2" data-path="sources-1.html"><a href="sources-1.html#referencing-sources"><i class="fa fa-check"></i><b>12.2</b> Referencing sources</a></li>
+<li class="chapter" data-level="12.3" data-path="sources-1.html"><a href="sources-1.html#defining-properties-in-a-sources-file"><i class="fa fa-check"></i><b>12.3</b> Defining properties in a <code>sources</code> file</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -318,7 +319,243 @@ WHERE gender = 1
 <img src="images/sources.png" alt="Sources" />
 <div class="figcaption">Sources</div>
 </div>
-<p>One would have expected the <code>nyc_male_2014</code> view to be under the <code>nyc_bikes_nyc_bikes2014</code> schema because that’s the seed dataset. Our assumption is that we set the <code>nyc_bikes</code> as the dataset to work with when setting up dbt, and thus it’s very hard to deviate from this. But we stand to be corrected.</p>
+<p>One would have expected the <code>nyc_male_2014</code> view to be under the <code>nyc_bikes_nyc_bikes2014</code> schema because that’s the seed dataset. Our assumption is that we set the <code>nyc_bikes</code> as the dataset to work with when setting up dbt, and thus it’s very hard to deviate from this. But we stand to be corrected. One more thing, though its obvious –the dbt source can also work inside a <code>WITH</code> SQL statement like so in the <code>nyc_female_2014</code> model.</p>
+<pre><code>WITH nyc_female_2014 AS (
+    SELECT * FROM 
+        {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
+    WHERE gender = 2
+)
+
+SELECT * FROM nyc_female_2014</code></pre>
+</div>
+<div id="defining-properties-in-a-sources-file" class="section level2 hasAnchor" number="12.3">
+<h2><span class="header-section-number">12.3</span> Defining properties in a <code>sources</code> file<a href="sources-1.html#defining-properties-in-a-sources-file" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Just like you would craft the properties for a given models YAML file, the same can likewise be done for the sources YAML file. You can define descriptions and tests for your fields in a <code>sources</code> file. Again, what’s good for the goose is good for the gander also applies here. Below is our enriched <code>sources</code> YAML file.</p>
+<pre><code>version: 2
+
+sources:
+  - name: nyc_bikes_nyc_bikes2014
+    schema: nyc_bikes_nyc_bikes2014
+    tables:
+      - name: 2014-tripdata
+        description: &#39;{{ doc(&quot;tripduration&quot;) }}&#39;
+        columns:
+          - name: _id 
+            description: &#39;Unique id&#39;
+            tests:
+              - dbt_expectations.expect_column_values_to_not_be_null
+
+          - name: tripduration 
+            description: &#39;{{ doc(&quot;tripduration&quot;) }}&#39;
+
+          - name: starttime 
+            description: &#39;&#39;
+
+          - name: stoptime 
+            description: &#39;&#39;
+
+          - name: start station id 
+            description: &#39;&#39;
+
+          - name: start station name
+            description: &#39;&#39;
+
+          - name: start station latitude
+            description: &#39;&#39;
+
+          - name: start station longitude
+            description: &#39;&#39;
+
+          - name: end station id
+            description: &#39;&#39;
+
+          - name: end station name
+            description: &#39;&#39;
+
+          - name: end station latitude
+            description: &#39;&#39;
+
+          - name: end station longitude
+            description: &#39;&#39;
+
+          - name: bikeid
+            description: &#39;&#39;
+
+          - name: usertype
+            description: &#39;&#39;
+
+          - name: birth year
+            description: &#39;&#39;
+
+          - name: gender
+            description: &#39;&#39;
+
+  - name: nyc_bikes
+    schema: nyc_bikes 
+    tables:
+      - name: citi_trips_round</code></pre>
+<p>Let’s start by running the sole test at the trusty <code>tripduration</code> key via our one liner slingshot code: <code>dbt test --select sources</code>.</p>
+<p>Everything run fine meaning there were no null values in this field.</p>
+<pre><code>19:32:18  Concurrency: 1 threads (target=&#39;dev&#39;)
+19:32:18  
+19:32:18  1 of 1 START test dbt_expectations_source_expect_column_values_to_not_be_null_nyc_bikes_nyc_bikes2014_2014-tripdata__id  [RUN]
+19:32:21  1 of 1 PASS dbt_expectations_source_expect_column_values_to_not_be_null_nyc_bikes_nyc_bikes2014_2014-tripdata__id  [PASS in 3.24s]</code></pre>
+<p>To see if our descriptions will be updated in the dbt documentation, simply run <code>dbt docs generate</code> followed by <code>dbt docs serve</code> to start the local server.</p>
+<div class="float">
+<img src="images/sources_definitions.png" alt="Sources descriptions" />
+<div class="figcaption">Sources descriptions</div>
+</div>
+<p>You should see your dbt documentation updated with the descriptions for <code>nyc_bikes_nyc_bikes2014</code> table. Since the <code>citi_trips_round</code> table has been defined twice, once in the <code>my_models</code> YAML and now in the <code>sources</code> YAML, you will notice one of the <code>citi_trips_round</code> table does not have any definition. We can decide to copy paste the definitons of <code>citi_trip_round</code> table from <code>my_models</code> into the <code>sources</code> YAML file. The <code>2014-tripdata</code> table inside the <code>nyc_bikes_nyc_bikes2014</code> YAML also suffers from the same issue.</p>
+<p>Below is our <code>sources</code> YAML file in full with additional descriptions and tests.</p>
+<pre><code>version: 2
+
+sources:
+  - name: nyc_bikes_nyc_bikes2014
+    schema: nyc_bikes_nyc_bikes2014
+    tables:
+      - name: 2014-tripdata
+        description: &#39;{{ doc(&quot;seed_2014_tripdata&quot;) }}&#39;
+        columns:
+          - name: _id 
+            description: &#39;Unique id&#39;
+            tests:
+              - dbt_expectations.expect_column_values_to_not_be_null
+
+          - name: tripduration 
+            description: &#39;{{ doc(&quot;tripduration&quot;) }}&#39;
+
+          - name: starttime 
+            description: &#39;&#39;
+
+          - name: stoptime 
+            description: &#39;&#39;
+
+          - name: start station id 
+            description: &#39;&#39;
+
+          - name: start station name
+            description: &#39;&#39;
+
+          - name: start station latitude
+            description: &#39;&#39;
+
+          - name: start station longitude
+            description: &#39;&#39;
+
+          - name: end station id
+            description: &#39;&#39;
+
+          - name: end station name
+            description: &#39;&#39;
+
+          - name: end station latitude
+            description: &#39;&#39;
+
+          - name: end station longitude
+            description: &#39;&#39;
+
+          - name: bikeid
+            description: &#39;&#39;
+
+          - name: usertype
+            description: &#39;&#39;
+
+          - name: birth year
+            description: &#39;&#39;
+
+          - name: gender
+            description: &#39;&#39;
+
+  - name: nyc_bikes
+    schema: nyc_bikes 
+    tables:
+      - name: citi_trips_round
+        description: &#39;{{ doc(&quot;citi_trips_round&quot;) }}&#39;
+        tests:
+          - dbt_expectations.expect_table_row_count_to_equal_other_table:
+              compare_model: ref(&quot;citi_trips_minutes&quot;)
+          - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+              column_A: tripduration
+              column_B: trip_min_round
+        columns:
+          - name: tripduration
+            description: &#39;{{ doc(&quot;tripduration&quot;) }}&#39;
+
+          - name: starttime
+            description: &#39;{{ doc(&quot;starttime&quot;) }}&#39;
+          
+          - name: stoptime
+            description: &#39;{{ doc(&quot;stoptime&quot;) }}&#39;
+
+          - name: start_station_id
+            description: &quot;Start Station ID&quot;
+            tests:
+              - dbt_expectations.expect_column_values_to_not_be_null
+          
+          - name: start_station_name
+            description: &quot;Start Station Name&quot;
+            tests:
+              - dbt_expectations.expect_column_values_to_not_be_null
+              - dbt_expectations.expect_column_value_lengths_to_be_between:
+                  min_value: 1 # (Optional)
+                  max_value: 70 # (Optional)
+
+          - name: start_station_latitude
+            description: &quot;Start Station Latitude&quot;
+          
+          - name: start_station_longitude
+            description: &quot;Start Station Longitude&quot;
+
+          - name: end_station_id
+            description: &quot;End Station ID&quot;
+            tests:
+              - dbt_expectations.expect_column_values_to_not_be_null
+
+          - name: end_station_name
+            description: &quot;End Station Name&quot;
+            tests:
+              - dbt_expectations.expect_column_values_to_not_be_null
+              - dbt_expectations.expect_column_value_lengths_to_be_between:
+                  min_value: 1 # (Optional)
+                  max_value: 70 # (Optional)
+
+          - name: end_station_latitude
+            description: &quot;End Station Latitude&quot;
+
+          - name: end_station_longitude
+            description: &quot;End Station Longitude&quot;
+          
+          - name: bike_id
+            description: &quot;Bike ID&quot;
+          
+          - name: usertype
+            description: &quot;User Type (Customer = 24-hour pass or 7-day pass user, Subscriber = Annual Member)&quot;
+
+          - name: birth_year
+            description: &quot;Year of Birth&quot;
+
+          - name: gender
+            description: &quot;Gender (unknown, male, female)&quot;
+            tests:
+              - dbt_expectations.expect_column_values_to_be_in_set:
+                  value_set: [&#39;unknown&#39;,&#39;male&#39;,&#39;female&#39;]
+
+          - name: customer_plan
+            description: &quot;The name of the plan that determines the rate charged for the trip&quot;
+
+          - name: trip_duration_min
+            description: &#39;{{ doc(&quot;trip_duration_min&quot;) }}&#39;
+            tests:
+              - dbt_expectations.expect_column_max_to_be_between:
+                  min_value: 16 # (Optional)
+                  max_value: 326000 # (Optional)
+
+          - name: trip_min_round
+            description: &#39;{{ doc(&quot;trip_min_round&quot;) }}&#39;
+            tests:
+              - dbt_expectations.expect_column_max_to_be_between:
+                  min_value: 16 # (Optional)
+                  max_value: 100000 # (Optional)</code></pre>
 
 </div>
 </div>

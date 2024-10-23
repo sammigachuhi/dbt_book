@@ -71,3 +71,4 @@ viewing-documentation-for-dbt-seeds
 sources-1
 defining-a-source
 referencing-sources
+defining-properties-in-a-sources-file

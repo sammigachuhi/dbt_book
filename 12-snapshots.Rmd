@@ -1,0 +1,114 @@
+# Snapshots
+
+Picture this, there is this lady you have been eyeing, after many nights of turning and tossing, you decide to visit her place because she is currently not anywhere interested in being taken out. When you visit her at the rendezvous, you decide to ask her to take a 'selfie' of you and her (big mistake). You think she will send the selfie to you, she never does. Well, that's a true story of yours truly and even though no hard feelings over the incident, snapshots in dbt work in much the same way. 
+
+A snapshot in dbt is a recorded change of a mutable table over time. Think of a snapshot as a way to track changes in your data over time. For example, you could be a having a crazy table that logs your relationship status with your girlfriend or boyfriend over time. The first row could be as follows:
+
+```
+|----------|--------------|---------------|
+| id       |  Status      | updated-at    |
+| 11       |  Spark       | 21/09/2024    |
+|----------|--------------|---------------|
+```
+
+Now let's say, you realise something about your girlfriend and boyfriend that puts a freeze on the relationship, so in your relationship table it would have the following update.
+
+```
+|----------|--------------|---------------|
+| id       |  Status      | updated-at    |
+| 11       |  Shaky       | 22/10/2024    |
+|----------|--------------|---------------|
+```
+
+The relationship would now be 'shaky' subject to external forces and internal will, but our update may have overwritten the previous record of 'Spark' when the relationship was at cloud nine. dbt offers a way to preserve these past records so that they can be used for further analysis, or for posterity purposes. For example, keeping a record of the change can be used to analyse how long the relationship lasted from its hey days to when the waves started beating the ship. This kind of analysis can be used for more serious matters, such as when analyzing the time it takes from sending to receiving an order. dbt will help you record these changes and log the time when the change took place. For example, our dbt snapshot for our relationship would be:
+
+
+|----------|--------------|---------------|----------------|--------------|
+| id       |  Status      | updated-at    | dbt_valid_from | dbt_valid_to |
+| 11       |  Spark       | 21/09/2024    | 21/09/2024     | 22/10/2024   |
+| 11       |  Shaky       | 22/10/2024    | 22/10/2024     | null         |
+|----------|--------------|---------------|----------------|--------------|
+
+
+The most up-to-date record will have a value of `null` in the `dbt_valid_to` field. Here is a description of the last two fields and those used internally by dbt. 
+
+1. `dbt_valid_from` - The timestamp when this snapshot row was first inserted. This column can be used to order the different "versions" of a record. 
+
+2. `dbt_valid_to` - The timestamp when this row became invalidated. The most recent snapshot record will have dbt_valid_to set to null.
+
+3. `dbt_scd_id` - 	A unique key generated for each snapshotted record. This is used internally by dbt.
+
+4. `dbt_updated_at` - The updated_at timestamp of the source record when this snapshot row was inserted. This is used internally by dbt.
+
+Slowly Changing Dimension (SCD) refers to the way data changes over time in a data warehouse. In today's world, one wouldn't say that data changes slowly, but the term arises from the fact that even though data may change infrequently, such as makeups and breakups in your relationship, they are significant over time even to the future of the relationship or the continuity of your business!
+
+SCDs are typically of three types:
+
+* **Type 1**: This is where old data is overwritten without any preservation of its history. Old data ceases to exist with update of new data.
+
+* **Type 2**: When a new record of data is added, the old record is preserved as historical data. This is the most common type of SCD and which dbt implements. 
+
+* **Type 3**: This approach adds a new column for the new data and preserves the old data in the original column. This type is best used to see the progression of changes *rather* than when a change happened. 
+
+Therefore, when *snapshoting* in dbt, when a change occurs in the source data, instead of overwriting the existing record (Type 1) or a dding a new column (Type 3), dbt adds a new record with the new data (Type 2). The `dbt_valid_from` and `dbt_valid_to` columns in the snapshot table indicate when each version of the record was valid, allowing you to track the full history of changes over time. This looks much like git commits, only that the commits are in tabular form.
+
+## Create a snapshot
+
+```
+{% snapshot tripdata_snapshot %}
+
+{{
+  config(      
+    target_schema='snapshots',      
+    strategy='check',      
+    unique_key='_id',      
+    check_cols='all'    
+  )  
+}}  
+
+SELECT * FROM {{ source('nyc_bikes_nyc_bikes2014', '2014-tripdata') }}
+
+{% endsnapshot %}
+```
+
+Output
+
+```
+21:01:01  Concurrency: 1 threads (target='dev')
+21:01:01  
+21:01:01  1 of 1 START snapshot snapshots.tripdata_snapshot .............................. [RUN]
+21:01:11  1 of 1 OK snapshotted snapshots.tripdata_snapshot .............................. [CREATE TABLE (224.7k rows, 33.3 MiB processed) in 10.03s]
+21:01:11  
+21:01:11  Finished running 1 snapshot in 0 hours 0 minutes and 17.65 seconds (17.65s).
+21:01:12  
+21:01:12  Completed successfully
+21:01:12  
+21:01:12  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
