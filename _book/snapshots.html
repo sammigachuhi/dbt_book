@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 Data storage | dbt Book</title>
+  <title>Chapter 13 Snapshots | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 Data storage | dbt Book" />
+  <meta property="og:title" content="Chapter 13 Snapshots | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 Data storage | dbt Book" />
+  <meta name="twitter:title" content="Chapter 13 Snapshots | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="the-dbt-architecture.html"/>
-<link rel="next" href="our-data-in-bigquery.html"/>
+<link rel="prev" href="sources-1.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -267,65 +267,144 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="data-storage" class="section level1 hasAnchor" number="4">
-<h1><span class="header-section-number">Chapter 4</span> Data storage<a href="data-storage.html#data-storage" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>As as been repeatedly mentioned, to the point of boredom, dbt transforms the data in your data warehouse. Now, before expanding the concept of a data warehouse, the following two are also terms you will here mentioned quite often in the field of analytical engineering. They are data lake and data lakehouse.</p>
-<div id="data-warehouse" class="section level2 hasAnchor" number="4.1">
-<h2><span class="header-section-number">4.1</span> Data warehouse<a href="data-storage.html#data-warehouse" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>At the very beginning, when introduced to data engineering concepts with a test paper to boot in four weeks time, I thought that a data warehouse was some storage system akin to that found in Google Drive. I could have been partly right, but I was still far off the mark. A data warehouse is more than just a storage system. It is where data is not only stored but also queried, by means of SQL. It allows data from multiple sources such as internet of things, apps, from emails to social media and keeps a historical record of any changes. Examples of data warehouses are Snowflake, Google Big Query, Amazon Redshift and Azure Synapse Analytics.</p>
-<p>The following are the components of a data warehouse.</p>
+<div id="snapshots" class="section level1 hasAnchor" number="13">
+<h1><span class="header-section-number">Chapter 13</span> Snapshots<a href="snapshots.html#snapshots" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Picture this, there is this lady you have been eyeing, after many nights of turning and tossing, you decide to visit her place because she is currently not anywhere interested in being taken out. When you visit her at the rendezvous, you decide to ask her to take a ‘selfie’ of you and her (big mistake). You think she will send the selfie to you, she never does. Well, that’s a true story of yours truly and even though no hard feelings over the incident, snapshots in dbt work in much the same way.</p>
+<p>A snapshot in dbt is a recorded change of a mutable table over time. Think of a snapshot as a way to track changes in your data over time. For example, you could be a having a crazy table that logs your relationship status with your girlfriend or boyfriend over time. The first row could be as follows:</p>
+<pre><code>|----------|--------------|---------------|
+| id       |  Status      | updated-at    |
+| 11       |  Spark       | 21/09/2024    |
+|----------|--------------|---------------|</code></pre>
+<p>Now let’s say, you realise something about your girlfriend and boyfriend that puts a freeze on the relationship, so in your relationship table it would have the following update.</p>
+<pre><code>|----------|--------------|---------------|
+| id       |  Status      | updated-at    |
+| 11       |  Shaky       | 22/10/2024    |
+|----------|--------------|---------------|</code></pre>
+<p>The relationship would now be ‘shaky’ subject to external forces and internal will, but our update may have overwritten the previous record of ‘Spark’ when the relationship was at cloud nine. dbt offers a way to preserve these past records so that they can be used for further analysis, or for posterity purposes. For example, keeping a record of the change can be used to analyse how long the relationship lasted from its hey days to when the waves started beating the ship. This kind of analysis can be used for more serious matters, such as when analyzing the time it takes from sending to receiving an order. dbt will help you record these changes and log the time when the change took place. For example, our dbt snapshot for our relationship would be:</p>
+<p>|———-|————–|—————|—————-|————–|
+| id | Status | updated-at | dbt_valid_from | dbt_valid_to |
+| 11 | Spark | 21/09/2024 | 21/09/2024 | 22/10/2024 |
+| 11 | Shaky | 22/10/2024 | 22/10/2024 | null |
+|———-|————–|—————|—————-|————–|</p>
+<p>The most up-to-date record will have a value of <code>null</code> in the <code>dbt_valid_to</code> field. Here is a description of the last two fields and those used internally by dbt.</p>
 <ol style="list-style-type: decimal">
-<li><p>Data sources - this refers to the origins of the data that lands in your data warehouse.</p></li>
-<li><p>Extract, Transform and Load (ETL) Processes - these are the processes involved in extracting, transforming and loading the data into your data warehouse.</p></li>
-<li><p>Data warehouse database - this is the central repository where the cleansed, integrate and historical data is stored.</p></li>
-<li><p>Metadata repository - metadata is essentially data about data. Metadata will typically contain the source, usage, values and other features that comprise your data.</p></li>
-<li><p>Access tools - imagine having to figure a way how to write a document in your computer without Microsoft Word. How hard would that be? Access tools are similar to Microsoft Word in the aformentioned allegory. These are the tools that enable a user to interact with the data. They include querying, reporting and visualization tools.</p></li>
+<li><p><code>dbt_valid_from</code> - The timestamp when this snapshot row was first inserted. This column can be used to order the different “versions” of a record.</p></li>
+<li><p><code>dbt_valid_to</code> - The timestamp when this row became invalidated. The most recent snapshot record will have dbt_valid_to set to null.</p></li>
+<li><p><code>dbt_scd_id</code> - A unique key generated for each snapshotted record. This is used internally by dbt.</p></li>
+<li><p><code>dbt_updated_at</code> - The updated_at timestamp of the source record when this snapshot row was inserted. This is used internally by dbt.</p></li>
 </ol>
-<p>As you can see from above, a data warehouse is more than just a storage area for your data. It is like a whole community that will provide the services that you desire, so long as they are present in the data warehouse.</p>
-<p><img src="images/data_warehouse.png" alt="Data warehouse" />
-Source: <a href="https://www.databricks.com/blog/2021/05/19/evolution-to-the-data-lakehouse.html">Reference</a></p>
-</div>
-<div id="data-lake" class="section level2 hasAnchor" number="4.2">
-<h2><span class="header-section-number">4.2</span> Data lake<a href="data-storage.html#data-lake" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>A data lake is a centralized repository that ingests and stores large volumes of data in its original form. Due to its open, scalable architecture, a data lake can store structured (database tables, excel sheets), semi-structured (xml, json and web pages) and unstructured data (images, audio, tweets) all in one place. Data in the data lake is stored in its original format.</p>
-<p>So if data lakes and data warehouses store data, then what is the difference? For one, a data lake can store data of any type, so long as it falls within the three classes of structured, semi-structured and unstructured. On the other hand, data warehouses deal with more standardized data. That is, data in a data warehouse has undergone some refinement of some kind to be in a structure that fits the organizations’s goals.</p>
-<p><img src="images/data_lake.png" alt="Data lake" />
-Source: <a href="https://www.databricks.com/blog/2021/05/19/evolution-to-the-data-lakehouse.html">Reference</a></p>
-</div>
-<div id="data-lakehouse" class="section level2 hasAnchor" number="4.3">
-<h2><span class="header-section-number">4.3</span> Data lakehouse<a href="data-storage.html#data-lakehouse" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>A data lakehouse is simply a hybrid of both a data warehouse and data lake. It is like a product that combines the best from both worlds. This is what a data lakehouse provides the following characteristics: scalability of large sums of data from the data lake and the application of a structural schema to data as seen in data warehouses.</p>
-<p>Even with the above definition, it is still hard to decipher the advantage that a data lakehouse offers above that of a data warehouse. Apart from allowing the querying of unstructured data, storage costs are lower in a data lakehouse compared to a data warehouse.</p>
+<p>Slowly Changing Dimension (SCD) refers to the way data changes over time in a data warehouse. In today’s world, one wouldn’t say that data changes slowly, but the term arises from the fact that even though data may change infrequently, such as makeups and breakups in your relationship, they are significant over time even to the future of the relationship or the continuity of your business!</p>
+<p>SCDs are typically of three types:</p>
+<ul>
+<li><p><strong>Type 1</strong>: This is where old data is overwritten without any preservation of its history. Old data ceases to exist with update of new data.</p></li>
+<li><p><strong>Type 2</strong>: When a new record of data is added, the old record is preserved as historical data. This is the most common type of SCD and which dbt implements.</p></li>
+<li><p><strong>Type 3</strong>: This approach adds a new column for the new data and preserves the old data in the original column. This type is best used to see the progression of changes <em>rather</em> than when a change happened.</p></li>
+</ul>
+<p>Therefore, when <em>snapshoting</em> in dbt, when a change occurs in the source data, instead of overwriting the existing record (Type 1) or a dding a new column (Type 3), dbt adds a new record with the new data (Type 2). The <code>dbt_valid_from</code> and <code>dbt_valid_to</code> columns in the snapshot table indicate when each version of the record was valid, allowing you to track the full history of changes over time. This looks much like git commits, only that the commits are in tabular form.</p>
+<div id="create-a-snapshot" class="section level2 hasAnchor" number="13.1">
+<h2><span class="header-section-number">13.1</span> Create a snapshot<a href="snapshots.html#create-a-snapshot" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Creating a snapshot in dbt to some extent depends on the version you are using. Starting from version 1.9, you will actually need two files to perform a dbt snapshot. These are the YAML and sql files. However, this tutorial was written using version 1.8.7. To know the dbt version you are using, type <code>dbt debug</code>. You will see your version listed like so:</p>
+<pre><code>--snip--
+19:41:25  Running with dbt=1.8.7
+19:41:25  dbt version: 1.8.7
+19:41:25  python version: 3.10.12
+--snip--</code></pre>
+<p>Now to create a snapshot using dbt versions lower than for 1.9, you will create a snapshot SQL file with the following configurations.</p>
+<pre><code>{% snapshot tripdata_snapshot %}
+
+{{
+  config(      
+    target_schema=&#39;snapshots&#39;,      
+    strategy=&#39;check&#39;,      
+    unique_key=&#39;_id&#39;,      
+    check_cols=&#39;all&#39;    
+  )  
+}}  
+
+SELECT * FROM {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
+
+{% endsnapshot %}</code></pre>
+<p>Let’s go through it line by line. The macros <code>{% snapshot tripdata_snapshot %}</code> and <code>{% endsnapshot %}</code> indicate that this is a snapshot file. Your configurations will go inside the <code>config()</code> function.</p>
+<p><code>target_schema</code> - this is the schema in which your snapshot will be stored.</p>
+<p><code>strategy</code> - this is the mechanism by which dbt will know that a row has changed. The <code>timestamp</code> strategy, and the most recommended for that matter, uses an <code>updated_at</code> column to determine if a row has changed. On the other hand, the <code>check</code> strategy compares a list of columns between their current and historical state to determine what has changed. Use the <code>check</code> strategy if there is no reliable <code>updated_at</code> column for tracking changes with time, as in our case.</p>
+<p><code>unique_key</code> - this is the unique key in your table that dbt will use.</p>
+<p><code>check_cols</code> - These are the columns to check for changes. The <code>all</code> parameter can be passed in case you want to track changes in all the columns of the row.</p>
+<p>One can also add an additional <code>invalidate_hard_deletes</code> <a href="https://docs.getdbt.com/docs/build/snapshots">configuration</a> to track rows that have been deleted. The <code>dbt_valid_to</code> column of deleted rows will be set to the current snapshot time.</p>
+<p>Finally, the <code>SELECT</code> statement. You will insert inside the <code>source()</code> function the table in which you would like to track changes.</p>
+<p>Thereafter, run <code>dbt snapshot</code>. Below is the output.</p>
+<pre><code>21:01:01  Concurrency: 1 threads (target=&#39;dev&#39;)
+21:01:01  
+21:01:01  1 of 1 START snapshot snapshots.tripdata_snapshot .............................. [RUN]
+21:01:11  1 of 1 OK snapshotted snapshots.tripdata_snapshot .............................. [CREATE TABLE (224.7k rows, 33.3 MiB processed) in 10.03s]
+21:01:11  
+21:01:11  Finished running 1 snapshot in 0 hours 0 minutes and 17.65 seconds (17.65s).
+21:01:12  
+21:01:12  Completed successfully
+21:01:12  
+21:01:12  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1</code></pre>
+<p>A new table should appear under the <code>snapshots</code> schema in BigQuery.</p>
 <div class="float">
-<img src="images/data_lakehouse.png" alt="Data lakehouse" />
-<div class="figcaption">Data lakehouse</div>
+<img src="images/snapshots_schema.png" alt="Snapshots schema" />
+<div class="figcaption">Snapshots schema</div>
 </div>
-<p>Source: <a href="https://www.databricks.com/blog/2021/05/19/evolution-to-the-data-lakehouse.html">Reference</a></p>
+<p>When you run <code>dbt snapshot</code> the first time, the <code>dbt_valid_to</code> column will be <code>null</code> for all records. Thereafter, when you run subsequent <code>dbt snapshot</code> executions for a table that has undergone a change, the <code>dbt_valid_to</code> will be populated with a timestamp value in the <code>dbt_valid_to</code> of the altered row.</p>
 </div>
-<div id="a-brief-history" class="section level2 hasAnchor" number="4.4">
-<h2><span class="header-section-number">4.4</span> A brief history<a href="data-storage.html#a-brief-history" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>At the very beginning, companies used to rely on relational databases and these were sufficient. However, they became too numerous as the needs and services of companies grew. Therefore, experts decided to look for a way of how they could merge all these single databases into one repository which would hold everything while allowing for permission controls to who gets access to what. Believe it or not, the concept of the data warehouse began in the 1960s but in the 1980s and 1990s is when it was hot. That’s until the need for storing unstructured data from emails, images and audio began to grow and data warehouses were not so efficient in storing this thanks to… their strict schema enforcement (read, they store data in a structured format).</p>
-<p>The beginning of 2000s saw the rise in the need to properly manage unstructured data with the growth of online platforms such as Google and Yahoo. Companies needed a way to store and retrieve unstructured data quickly and efficiently, which wasn’t possible with data warehouses. Data lakes excelled in storing all sorts of data, from structured to unstructured and everything in between in their raw format. If you read on the history of data lakes, you will come across the word ‘Hadoop’ quite often. This was the pioneer of the data lakes we use today.</p>
-<p>However, despite being a good storage for any sort of data, the pesky question of maintaining some quality and order resurfaced again! How could we maintain some structure while allowing the data to be in any structure?!</p>
-<p>From 2010s and onwards, after a decade of success with data lakes, companies wanted a better storage system from which to run their machine learning models but had the best capabilities of both a data warehouse and a data lake. Before lakehouses, companies would first ingest data into a data lake, then load into a data warehouse from where analytics would be done. But how could we just merge it into one place where storage and analytics could happen? This is how the data lakehouse concept came to be. Data lakehouses provided the following benefits:</p>
-<ol style="list-style-type: decimal">
-<li><p>ACID (Atomicity, Consistency, Isolation and Durability) transactions. ACID transactions promote integrity during data transfer.</p></li>
-<li><p>Delta lake - initially developed by the Databricks team, this is a layer on top of your data in the data lake that provides a schema, keeps a record of changes in your data (versioning) and stores metadata.</p></li>
-<li><p>Machine learning support - because a data lakehouse can store more data types than the data warehouse, it is a better place to perform machine learning modeling.</p></li>
-</ol>
-<p>For more information on the evolution of data storage systems, this is a <a href="https://www.databricks.com/blog/2021/05/19/evolution-to-the-data-lakehouse.html">definitive guide</a>.</p>
-<p><img src="images/data_storages.png" alt="Data storage systems" />
-Source: <a href="https://www.databricks.com/blog/2021/05/19/evolution-to-the-data-lakehouse.html">Reference</a></p>
+<div id="record-row-changes" class="section level2 hasAnchor" number="13.2">
+<h2><span class="header-section-number">13.2</span> Record row changes<a href="snapshots.html#record-row-changes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Now is the time to truly test if our snapshots work. Go to the SQL tab of your Big Query and insert a new row using this query:</p>
+<pre><code>INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata` (`_id`, `tripduration`, `start station name`) 
+VALUES (000000, 1000, &#39;Nowhere Near Station&#39;);</code></pre>
+<p>Thereafter run <code>dbt snapshot</code>.</p>
+<p>Ensure that the new row has been added by crosschecking its existence via:</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+WHERE `start station name` = &#39;Nowhere Near Station&#39;;</code></pre>
+<p>Now check if our <code>tripdata_snapshot</code> table has captured the new row using the below query.</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
+WHERE `start station name` = &#39;Nowhere Near Station&#39;;</code></pre>
+<p>Its a new row of data, which means all columns have been affected with a new value in each. Remember we set the <code>check_cols=all</code>.</p>
+<div class="float">
+<img src="images/inserted_new_row.png" alt="Recorded change" />
+<div class="figcaption">Recorded change</div>
+</div>
+<p>Let’s go on.</p>
+<p>Insert a new row, with an additional extra change in the <code>_id</code> column.</p>
+<pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+SET `start station name` = &#39;Even Further Station&#39;, `_id` = 1001995
+WHERE `_id` = 0;</code></pre>
+<p>Again, run <code>dbt snapshot</code>. Always run <code>dbt snapshot</code> when you suspect, or where in actual sense your table has been updated, even if through automatic scheduling.</p>
+<p>Let’s check if the new row with two updates has been recorded in our snapshots table.</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
+WHERE `start station name` = &#39;Even Further Station&#39;;</code></pre>
+<p>If you run this, you will notice that the <code>dbt_valid_to</code> is still <code>null</code>. We presume this is because we have added a new unique key and thus dbt will still treat this as a new recorded rather than one which was changed from 0 to 1001995.</p>
+<p>Now, update the row with <code>_id</code> 1001995 using the below SQL query.</p>
+<pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+SET `start station name` = &#39;Furth East Station&#39;
+WHERE `_id` = 1001995;</code></pre>
+<p>Now after running <code>dbt snapshot</code> (we hope you remembered), let’s see if our snapshot table will have tracked the historical change of <code>Even Further Station</code> and <code>Furth East Station</code> of row <code>_id</code> 1001995. Use the below query to unravel the results, drumrolls please…</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
+WHERE `_id` = 1001995;</code></pre>
+<div class="float">
+<img src="images/snapshot_example.png" alt="Snapshot example" />
+<div class="figcaption">Snapshot example</div>
+</div>
+<p>Yes it did! For row 1, which stands for when the ‘start station name’ was <code>Even Further Station</code>, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the ‘start station name’ was switched to <code>Furth East Station</code>, we can see it became valid from 2024-10-24 20:02, the exact time when row was updated.</p>
 
 </div>
 </div>
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="the-dbt-architecture.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="our-data-in-bigquery.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="sources-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -356,7 +435,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/03-data-storage.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/12-snapshots.Rmd",
 "text": "Edit"
 },
 "history": {

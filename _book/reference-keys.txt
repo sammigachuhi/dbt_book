@@ -72,3 +72,6 @@ sources-1
 defining-a-source
 referencing-sources
 defining-properties-in-a-sources-file
+snapshots
+create-a-snapshot
+record-row-changes

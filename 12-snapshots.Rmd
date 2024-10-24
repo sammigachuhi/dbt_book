@@ -189,7 +189,12 @@ WHERE `_id` = 1001995;
 
 Yes it did! For row 1, which stands for when the 'start station name' was `Even Further Station`, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the 'start station name' was switched to `Furth East Station`, we can see it became valid from 2024-10-24 20:02, the exact time when row was updated. 
 
+You can indeed check if the latest change is in the `2014-tripdata` table via:
 
+```
+SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+WHERE `start station name` = 'Furth East Station';
+```
 
 
 
