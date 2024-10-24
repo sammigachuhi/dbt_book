@@ -54,6 +54,18 @@ Therefore, when *snapshoting* in dbt, when a change occurs in the source data, i
 
 ## Create a snapshot
 
+Creating a snapshot in dbt to some extent depends on the version you are using. Starting from version 1.9, you will actually need two files to perform a dbt snapshot. These are the YAML and sql files. However, this tutorial was written using version 1.8.7. To know the dbt version you are using, type `dbt debug`. You will see your version listed like so:
+
+```
+--snip--
+19:41:25  Running with dbt=1.8.7
+19:41:25  dbt version: 1.8.7
+19:41:25  python version: 3.10.12
+--snip--
+```
+
+Now to create a snapshot using dbt versions lower than for 1.9, you will create a snapshot SQL file with the following configurations.
+
 ```
 {% snapshot tripdata_snapshot %}
 
@@ -71,7 +83,21 @@ SELECT * FROM {{ source('nyc_bikes_nyc_bikes2014', '2014-tripdata') }}
 {% endsnapshot %}
 ```
 
-Output
+Let's go through it line by line. The macros `{% snapshot tripdata_snapshot %}` and `{% endsnapshot %}` indicate that this is a snapshot file. Your configurations will go inside the `config()` function. 
+
+`target_schema` - this is the schema in which your snapshot will be stored. 
+
+`strategy` - this is the mechanism by which dbt will know that a row has changed. The `timestamp` strategy, and the most recommended for that matter, uses an `updated_at` column to determine if a row has changed. On the other hand, the `check` strategy compares a list of columns between their current and historical state to determine what has changed. Use the `check` strategy if there is no reliable `updated_at` column for tracking changes with time, as in our case.
+
+`unique_key` - this is the unique key in your table that dbt will use.
+
+`check_cols` - These are the columns to check for changes. The `all` parameter can be passed in case you want to track changes in all the columns of the row. 
+
+One can also add an additional `invalidate_hard_deletes` [configuration](https://docs.getdbt.com/docs/build/snapshots) to track rows that have been deleted. The `dbt_valid_to` column of deleted rows will be set to the current snapshot time.
+
+Finally, the `SELECT` statement. You will insert inside the `source()` function the table in which you would like to track changes. 
+
+Thereafter, run `dbt snapshot`. Below is the output. 
 
 ```
 21:01:01  Concurrency: 1 threads (target='dev')
@@ -85,6 +111,92 @@ Output
 21:01:12  
 21:01:12  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
 ```
+
+A new table should appear under the `snapshots` schema in BigQuery. 
+
+![Snapshots schema](./images/snapshots_schema.png)
+
+When you run `dbt snapshot` the first time, the `dbt_valid_to` column will be `null` for all records. Thereafter, when you run subsequent `dbt snapshot` executions for a table that has undergone a change, the `dbt_valid_to` will be populated with a timestamp value in the `dbt_valid_to` of the altered row. 
+
+## Record row changes 
+
+Now is the time to truly test if our snapshots work. Go to the SQL tab of your Big Query and insert a new row using this query:
+
+```
+INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata` (`_id`, `tripduration`, `start station name`) 
+VALUES (000000, 1000, 'Nowhere Near Station');
+```
+
+Thereafter run `dbt snapshot`. 
+
+Ensure that the new row has been added by crosschecking its existence via:
+
+```
+SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+WHERE `start station name` = 'Nowhere Near Station';
+```
+
+Now check if our `tripdata_snapshot` table has captured the new row using the below query.
+
+```
+SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
+WHERE `start station name` = 'Nowhere Near Station';
+```
+
+Its a new row of data, which means all columns have been affected with a new value in each. Remember we set the `check_cols=all`. 
+
+![Recorded change](./images/inserted_new_row.png)
+
+Let's go on.
+
+Insert a new row, with an additional extra change in the `_id` column.
+
+```
+UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+SET `start station name` = 'Even Further Station', `_id` = 1001995
+WHERE `_id` = 0;
+```
+
+Again, run `dbt snapshot`. Always run `dbt snapshot` when you suspect, or where in actual sense your table has been updated, even if through automatic scheduling. 
+
+Let's check if the new row with two updates has been recorded in our snapshots table.
+
+```
+SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
+WHERE `start station name` = 'Even Further Station';
+```
+
+If you run this, you will notice that the `dbt_valid_to` is still `null`. We presume this is because we have added a new unique key and thus dbt will still treat this as a new recorded rather than one which was changed from 0 to 1001995. 
+
+
+Now, update the row with `_id` 1001995 using the below SQL query.
+
+```
+UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+SET `start station name` = 'Furth East Station'
+WHERE `_id` = 1001995;
+```
+
+Now after running `dbt snapshot` (we hope you remembered), let's see if our snapshot table will have tracked the historical change of `Even Further Station` and `Furth East Station` of row `_id` 1001995. Use the below query to unravel the results, drumrolls please...
+
+```
+SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
+WHERE `_id` = 1001995;
+```
+
+![Snapshot example](./images/snapshot_example.png)
+
+
+Yes it did! For row 1, which stands for when the 'start station name' was `Even Further Station`, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the 'start station name' was switched to `Furth East Station`, we can see it became valid from 2024-10-24 20:02, the exact time when row was updated. 
+
+
+
+
+
+
+
+
+
 
 
 
