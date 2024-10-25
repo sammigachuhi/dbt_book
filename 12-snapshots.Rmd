@@ -196,11 +196,82 @@ SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
 WHERE `start station name` = 'Furth East Station';
 ```
 
+## Using timestamp strategy
+
+```
+19:08:14  Concurrency: 1 threads (target='dev')
+19:08:14  
+19:08:14  1 of 4 START sql view model nyc_bikes.nyc_bikes_male ........................... [RUN]
+19:08:16  1 of 4 OK created sql view model nyc_bikes.nyc_bikes_male ...................... [CREATE VIEW (0 processed) in 2.45s]
+19:08:16  2 of 4 START sql table model nyc_bikes_nyc_bikes_nyc_bikes2014.nyc_bikes_timestamp  [RUN]
+19:08:22  2 of 4 OK created sql table model nyc_bikes_nyc_bikes_nyc_bikes2014.nyc_bikes_timestamp  [CREATE TABLE (224.7k rows, 33.3 MiB processed) in 5.31s]
+19:08:22  3 of 4 START sql view model nyc_bikes.nyc_female_2014 .......................... [RUN]
+19:08:24  3 of 4 OK created sql view model nyc_bikes.nyc_female_2014 ..................... [CREATE VIEW (0 processed) in 2.22s]
+19:08:24  4 of 4 START sql view model nyc_bikes.nyc_male_2014 ............................ [RUN]
+19:08:26  4 of 4 OK created sql view model nyc_bikes.nyc_male_2014 ....................... [CREATE VIEW (0 processed) in 2.39s]
+19:08:26  
+19:08:26  Finished running 3 view models, 1 table model in 0 hours 0 minutes and 29.78 seconds (29.78s).
+19:08:26  
+19:08:26  Completed successfully
+19:08:26  
+19:08:26  Done. PASS=4 WARN=0 ERROR=0 SKIP=0 TOTAL=4
+```
 
 
+Run `dbt snapshot`
+
+```
+19:31:54  Concurrency: 1 threads (target='dev')
+19:31:54  
+19:31:54  1 of 2 START snapshot snapshots.timestamp_snapshot ............................. [RUN]
+19:32:02  1 of 2 OK snapshotted snapshots.timestamp_snapshot ............................. [CREATE TABLE (224.7k rows, 35.0 MiB processed) in 8.10s]
+19:32:02  2 of 2 START snapshot snapshots.tripdata_snapshot .............................. [RUN]
+19:32:15  2 of 2 OK snapshotted snapshots.tripdata_snapshot .............................. [MERGE (0.0 rows, 44.0 MiB processed) in 12.54s]
+19:32:15  
+19:32:15  Finished running 2 snapshots in 0 hours 0 minutes and 28.86 seconds (28.86s).
+19:32:15  
+19:32:15  Completed successfully
+19:32:15  
+19:32:15  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2
+```
 
 
+Insert row using:
 
+```
+INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp` (`_id`, `tripduration`, `start station name`, `updated_at`) 
+VALUES (21001995, 2000, 'Sumwhere Near Station', '2024-10-25 23:09:47.169668 UTC');
+```
+
+Note the `updated_at` column. Omit this and your snapshot won't be able to track any changes. Run `dbt snapshot`.
+
+Check `timestamp_snapshot` table.
+
+```
+SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
+WHERE `_id` = 21001995;
+```
+
+Now change the station name from 'Sumwhere Here Station` to 'Somewhere Near Station' to demonstrate tracking a change.
+
+```
+UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
+SET `start station name` = 'Somewhere Here Station', `updated_at` = '2024-10-25 23:14:47.169668 UTC'
+WHERE `_id` = 21001995;
+```
+
+Run `dbt snapshot`. Don't omit the `updated_at` column since this is what the `timestamp` strategy relies on.
+
+Now check if dbt has been able to track changes, showing the validity of the two station names we have defined. 
+
+```
+SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
+WHERE `_id` = 21001995;
+```
+
+You should see we've been able to track changes. 
+
+![Timestamp tracking](./images/timestamp_tracking.png)
 
 
 
