@@ -118,7 +118,7 @@ A new table should appear under the `snapshots` schema in BigQuery.
 
 When you run `dbt snapshot` the first time, the `dbt_valid_to` column will be `null` for all records. Thereafter, when you run subsequent `dbt snapshot` executions for a table that has undergone a change, the `dbt_valid_to` will be populated with a timestamp value in the `dbt_valid_to` of the altered row. 
 
-## Record row changes 
+## The `check` strategy 
 
 Now is the time to truly test if our snapshots work. Go to the SQL tab of your Big Query and insert a new row using this query:
 
@@ -196,7 +196,36 @@ SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
 WHERE `start station name` = 'Furth East Station';
 ```
 
-## Using timestamp strategy
+## The `timestamp` strategy
+
+The `timestamp` strategy in snapshoting relies on an `updated_at` column to check if any changes have occurred on the row. If the configured `updated_at` column is more recent than when the table was last run, dbt will invalidate the old record and record a new one. If the timestamps are unchanged, dbt will not take any action.
+
+The `timestamp` strategy requires an `updated_at` column which represents when the row was last updated. In order to work with `timestamp` strategy, we need to recreate our `2014-tripdata` but now with an additional `updated_at` column. It can be any table, so long as there is an `updated_at` column, but we settled on this one because it is lightweight and plus, we already have it as a seed. We will use a dbt model to recreated the `2014-tripdata` seed but with an extra `updated_at` column.
+
+Create a `nyc_bikes_timestamp` SQL model inside the `sources` folder. Copy paste the following contents into the model.
+
+```
+{{ config(
+    materialized="table",
+    schema="nyc_bikes_nyc_bikes2014"
+) }}
+
+WITH nyc_bikes_timestamp AS (
+  SELECT *, CURRENT_TIMESTAMP() AS updated_at FROM {{ source('nyc_bikes_nyc_bikes2014', '2014-tripdata') }}
+)
+
+SELECT
+  *
+FROM nyc_bikes_timestamp
+```
+
+![Timestamp table](./images/timestamp_table.png)
+
+
+
+We are configuring it as a table because for some reason, when trying to update fields into this model using BigQuery, an error came up simply because it was a view!
+
+Now run `dbt run --select sources`. You will get the below output.
 
 ```
 19:08:14  Concurrency: 1 threads (target='dev')
@@ -217,8 +246,41 @@ WHERE `start station name` = 'Furth East Station';
 19:08:26  Done. PASS=4 WARN=0 ERROR=0 SKIP=0 TOTAL=4
 ```
 
+Now that we have already created a table of `nyc_bikes_timestamp`, we would also want to reference it in downstream models. As you read in an earlier chapter, dbt sources are what make models to be referenced in other queries using the `source()` function. Therefore in the `sources/sources_bikes.yml`, add the following:
 
-Run `dbt snapshot`
+```
+- name: nyc_bikes_nyc_bikes_nyc_bikes2014
+        schema: nyc_bikes_nyc_bikes_nyc_bikes2014
+        tables:
+          - name: nyc_bikes_timestamp
+            description: ''
+```
+
+Now is the time to create a dbt snapshot relying on the `timestamp` strategy. 
+
+Create a `timestamp_snapshot` in the `snapshots` directory with the following SQL contents.
+
+```
+{% snapshot timestamp_snapshot %}
+
+{{
+  config(      
+    target_schema='snapshots',      
+    strategy='timestamp',      
+    unique_key='_id',      
+    updated_at='updated_at'    
+  )  
+}}  
+
+SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
+
+{% endsnapshot %}
+
+```
+
+You may wonder why we are not using something like `{{ source("schema", "table") }}` in the SELECT statement. We had initially run that with `nyc_bikes_nyc_bikes_nyc_bikes2014` and `nyc_bikes_timestamp` as the schema and table names respectively. However, dbt kept throwing an error that it couldn't find a table therefore we resulted in the unorthodox way of hardcoding the entire dataset-schema-table namespace. 
+
+Now run `dbt snapshot` to create the `nyc_bikes_timestamp` table.
 
 ```
 19:31:54  Concurrency: 1 threads (target='dev')
@@ -235,17 +297,19 @@ Run `dbt snapshot`
 19:32:15  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2
 ```
 
+![Timestamp snapshot](./images/timestamp_snapshot_created.png)
 
-Insert row using:
+
+Now to check if our timestamp table can snapshot changes, let's insert a new row and make some changes to it. Paste the following in a SQL tab in BigQuery.
 
 ```
 INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp` (`_id`, `tripduration`, `start station name`, `updated_at`) 
 VALUES (21001995, 2000, 'Sumwhere Near Station', '2024-10-25 23:09:47.169668 UTC');
 ```
 
-Note the `updated_at` column. Omit this and your snapshot won't be able to track any changes. Run `dbt snapshot`.
+Note the `updated_at` column. Unlike when working with the `check` strategy which could still work well with several fields as `null`, omitting the `updated_at` column in the `timestamp` strategy is costly as dbt will be unable to track any change. All you will get just a new field but with several `null` values in the snapshot table. 
 
-Check `timestamp_snapshot` table.
+Now run `dbt snapshot` and when it succesfully runs, check `timestamp_snapshot` table using this SELECT statement in BigQuery.
 
 ```
 SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
@@ -260,9 +324,9 @@ SET `start station name` = 'Somewhere Here Station', `updated_at` = '2024-10-25 
 WHERE `_id` = 21001995;
 ```
 
-Run `dbt snapshot`. Don't omit the `updated_at` column since this is what the `timestamp` strategy relies on.
+Run `dbt snapshot`. Again, we are careful not to omit the `updated_at` column! 
 
-Now check if dbt has been able to track changes, showing the validity of the two station names we have defined. 
+Now check if dbt has been able to track changes. We expect that the row with the station name 'Sumwhere Near Station' was valid for a short period (see the `dbt_valid_from` and `dbt_valid_to` columns) while the 'Somewhere Here Station' is the most current.
 
 ```
 SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
@@ -275,7 +339,7 @@ You should see we've been able to track changes.
 
 
 
-
+The downside of using the `timestamp` strategy is that you have to use the `updated_at` column or whatever timestamp column you defined. Nevertheless, based on our exercise so far, the `check` strategy is far much better and less taxing.
 
 
 
