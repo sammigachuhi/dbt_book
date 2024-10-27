@@ -1,0 +1,38 @@
+# Analyses 
+
+In dbt, analyses are those kind of queries that might not exactly be very much needed as a model but can be used for data exploration and visualization. Typically, any SQL model that is for analytical rather than modeling purposes is stored within the `analyses` directory. Thereafter, running the code `dbt compile` will create the compiled SQL file inside the `target/compiled/{project name}/analyses/sql_file_name.sql` directory. The code inside this directory can be pasted in a data visualization tool but it will not appear in the data warehouse. Yes it will not. 
+
+## Creating an `analysis`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

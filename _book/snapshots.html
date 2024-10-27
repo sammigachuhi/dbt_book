@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-10-24" />
+<meta name="date" content="2024-10-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,7 +37,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="sources-1.html"/>
-
+<link rel="next" href="analyses.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -245,7 +245,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="13" data-path="snapshots.html"><a href="snapshots.html"><i class="fa fa-check"></i><b>13</b> Snapshots</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="snapshots.html"><a href="snapshots.html#create-a-snapshot"><i class="fa fa-check"></i><b>13.1</b> Create a snapshot</a></li>
-<li class="chapter" data-level="13.2" data-path="snapshots.html"><a href="snapshots.html#record-row-changes"><i class="fa fa-check"></i><b>13.2</b> Record row changes</a></li>
+<li class="chapter" data-level="13.2" data-path="snapshots.html"><a href="snapshots.html#the-check-strategy"><i class="fa fa-check"></i><b>13.2</b> The <code>check</code> strategy</a></li>
+<li class="chapter" data-level="13.3" data-path="snapshots.html"><a href="snapshots.html#the-timestamp-strategy"><i class="fa fa-check"></i><b>13.3</b> The <code>timestamp</code> strategy</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="analyses.html"><a href="analyses.html"><i class="fa fa-check"></i><b>14</b> Analyses</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="analyses.html"><a href="analyses.html#creating-an-analysis"><i class="fa fa-check"></i><b>14.1</b> Creating an <code>analysis</code></a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -349,8 +354,8 @@ SELECT * FROM {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#3
 </div>
 <p>When you run <code>dbt snapshot</code> the first time, the <code>dbt_valid_to</code> column will be <code>null</code> for all records. Thereafter, when you run subsequent <code>dbt snapshot</code> executions for a table that has undergone a change, the <code>dbt_valid_to</code> will be populated with a timestamp value in the <code>dbt_valid_to</code> of the altered row.</p>
 </div>
-<div id="record-row-changes" class="section level2 hasAnchor" number="13.2">
-<h2><span class="header-section-number">13.2</span> Record row changes<a href="snapshots.html#record-row-changes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="the-check-strategy" class="section level2 hasAnchor" number="13.2">
+<h2><span class="header-section-number">13.2</span> The <code>check</code> strategy<a href="snapshots.html#the-check-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Now is the time to truly test if our snapshots work. Go to the SQL tab of your Big Query and insert a new row using this query:</p>
 <pre><code>INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata` (`_id`, `tripduration`, `start station name`) 
 VALUES (000000, 1000, &#39;Nowhere Near Station&#39;);</code></pre>
@@ -388,23 +393,121 @@ WHERE `_id` = 1001995;</code></pre>
 <div class="figcaption">Snapshot example</div>
 </div>
 <p>Yes it did! For row 1, which stands for when the ‘start station name’ was <code>Even Further Station</code>, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the ‘start station name’ was switched to <code>Furth East Station</code>, we can see it became valid from 2024-10-24 20:02, the exact time when row was updated.</p>
+<p>You can indeed check if the latest change is in the <code>2014-tripdata</code> table via:</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
+WHERE `start station name` = &#39;Furth East Station&#39;;</code></pre>
+</div>
+<div id="the-timestamp-strategy" class="section level2 hasAnchor" number="13.3">
+<h2><span class="header-section-number">13.3</span> The <code>timestamp</code> strategy<a href="snapshots.html#the-timestamp-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The <code>timestamp</code> strategy in snapshoting relies on an <code>updated_at</code> column to check if any changes have occurred on the row. If the configured <code>updated_at</code> column is more recent than when the table was last run, dbt will invalidate the old record and record a new one. If the timestamps are unchanged, dbt will not take any action.</p>
+<p>The <code>timestamp</code> strategy requires an <code>updated_at</code> column which represents when the row was last updated. In order to work with <code>timestamp</code> strategy, we need to recreate our <code>2014-tripdata</code> but now with an additional <code>updated_at</code> column. It can be any table, so long as there is an <code>updated_at</code> column, but we settled on this one because it is lightweight and plus, we already have it as a seed. We will use a dbt model to recreated the <code>2014-tripdata</code> seed but with an extra <code>updated_at</code> column.</p>
+<p>Create a <code>nyc_bikes_timestamp</code> SQL model inside the <code>sources</code> folder. Copy paste the following contents into the model.</p>
+<pre><code>{{ config(
+    materialized=&quot;table&quot;,
+    schema=&quot;nyc_bikes_nyc_bikes2014&quot;
+) }}
+
+WITH nyc_bikes_timestamp AS (
+  SELECT *, CURRENT_TIMESTAMP() AS updated_at FROM {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
+)
+
+SELECT
+  *
+FROM nyc_bikes_timestamp</code></pre>
+<div class="float">
+<img src="images/timestamp_table.png" alt="Timestamp table" />
+<div class="figcaption">Timestamp table</div>
+</div>
+<p>We are configuring it as a table because for some reason, when trying to update fields into this model using BigQuery, an error came up simply because it was a view!</p>
+<p>Now run <code>dbt run --select sources</code>. You will get the below output.</p>
+<pre><code>19:08:14  Concurrency: 1 threads (target=&#39;dev&#39;)
+19:08:14  
+19:08:14  1 of 4 START sql view model nyc_bikes.nyc_bikes_male ........................... [RUN]
+19:08:16  1 of 4 OK created sql view model nyc_bikes.nyc_bikes_male ...................... [CREATE VIEW (0 processed) in 2.45s]
+19:08:16  2 of 4 START sql table model nyc_bikes_nyc_bikes_nyc_bikes2014.nyc_bikes_timestamp  [RUN]
+19:08:22  2 of 4 OK created sql table model nyc_bikes_nyc_bikes_nyc_bikes2014.nyc_bikes_timestamp  [CREATE TABLE (224.7k rows, 33.3 MiB processed) in 5.31s]
+19:08:22  3 of 4 START sql view model nyc_bikes.nyc_female_2014 .......................... [RUN]
+19:08:24  3 of 4 OK created sql view model nyc_bikes.nyc_female_2014 ..................... [CREATE VIEW (0 processed) in 2.22s]
+19:08:24  4 of 4 START sql view model nyc_bikes.nyc_male_2014 ............................ [RUN]
+19:08:26  4 of 4 OK created sql view model nyc_bikes.nyc_male_2014 ....................... [CREATE VIEW (0 processed) in 2.39s]
+19:08:26  
+19:08:26  Finished running 3 view models, 1 table model in 0 hours 0 minutes and 29.78 seconds (29.78s).
+19:08:26  
+19:08:26  Completed successfully
+19:08:26  
+19:08:26  Done. PASS=4 WARN=0 ERROR=0 SKIP=0 TOTAL=4</code></pre>
+<p>Now that we have already created a table of <code>nyc_bikes_timestamp</code>, we would also want to reference it in downstream models. As you read in an earlier chapter, dbt sources are what make models to be referenced in other queries using the <code>source()</code> function. Therefore in the <code>sources/sources_bikes.yml</code>, add the following:</p>
+<pre><code>- name: nyc_bikes_nyc_bikes_nyc_bikes2014
+        schema: nyc_bikes_nyc_bikes_nyc_bikes2014
+        tables:
+          - name: nyc_bikes_timestamp
+            description: &#39;&#39;</code></pre>
+<p>Now is the time to create a dbt snapshot relying on the <code>timestamp</code> strategy.</p>
+<p>Create a <code>timestamp_snapshot</code> in the <code>snapshots</code> directory with the following SQL contents.</p>
+<pre><code>{% snapshot timestamp_snapshot %}
+
+{{
+  config(      
+    target_schema=&#39;snapshots&#39;,      
+    strategy=&#39;timestamp&#39;,      
+    unique_key=&#39;_id&#39;,      
+    updated_at=&#39;updated_at&#39;    
+  )  
+}}  
+
+SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
+
+{% endsnapshot %}
+</code></pre>
+<p>You may wonder why we are not using something like <code>{{ source("schema", "table") }}</code> in the SELECT statement. We had initially run that with <code>nyc_bikes_nyc_bikes_nyc_bikes2014</code> and <code>nyc_bikes_timestamp</code> as the schema and table names respectively. However, dbt kept throwing an error that it couldn’t find a table therefore we resulted in the unorthodox way of hardcoding the entire dataset-schema-table namespace.</p>
+<p>Now run <code>dbt snapshot</code> to create the <code>nyc_bikes_timestamp</code> table.</p>
+<pre><code>19:31:54  Concurrency: 1 threads (target=&#39;dev&#39;)
+19:31:54  
+19:31:54  1 of 2 START snapshot snapshots.timestamp_snapshot ............................. [RUN]
+19:32:02  1 of 2 OK snapshotted snapshots.timestamp_snapshot ............................. [CREATE TABLE (224.7k rows, 35.0 MiB processed) in 8.10s]
+19:32:02  2 of 2 START snapshot snapshots.tripdata_snapshot .............................. [RUN]
+19:32:15  2 of 2 OK snapshotted snapshots.tripdata_snapshot .............................. [MERGE (0.0 rows, 44.0 MiB processed) in 12.54s]
+19:32:15  
+19:32:15  Finished running 2 snapshots in 0 hours 0 minutes and 28.86 seconds (28.86s).
+19:32:15  
+19:32:15  Completed successfully
+19:32:15  
+19:32:15  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2</code></pre>
+<div class="float">
+<img src="images/timestamp_snapshot_created.png" alt="Timestamp snapshot" />
+<div class="figcaption">Timestamp snapshot</div>
+</div>
+<p>Now to check if our timestamp table can snapshot changes, let’s insert a new row and make some changes to it. Paste the following in a SQL tab in BigQuery.</p>
+<pre><code>INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp` (`_id`, `tripduration`, `start station name`, `updated_at`) 
+VALUES (21001995, 2000, &#39;Sumwhere Near Station&#39;, &#39;2024-10-25 23:09:47.169668 UTC&#39;);</code></pre>
+<p>Note the <code>updated_at</code> column. Unlike when working with the <code>check</code> strategy which could still work well with several fields as <code>null</code>, omitting the <code>updated_at</code> column in the <code>timestamp</code> strategy is costly as dbt will be unable to track any change. All you will get just a new field but with several <code>null</code> values in the snapshot table.</p>
+<p>Now run <code>dbt snapshot</code> and when it succesfully runs, check <code>timestamp_snapshot</code> table using this SELECT statement in BigQuery.</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
+WHERE `_id` = 21001995;</code></pre>
+<p>Now change the station name from ‘Sumwhere Here Station` to ’Somewhere Near Station’ to demonstrate tracking a change.</p>
+<pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
+SET `start station name` = &#39;Somewhere Here Station&#39;, `updated_at` = &#39;2024-10-25 23:14:47.169668 UTC&#39;
+WHERE `_id` = 21001995;</code></pre>
+<p>Run <code>dbt snapshot</code>. Again, we are careful not to omit the <code>updated_at</code> column!</p>
+<p>Now check if dbt has been able to track changes. We expect that the row with the station name ‘Sumwhere Near Station’ was valid for a short period (see the <code>dbt_valid_from</code> and <code>dbt_valid_to</code> columns) while the ‘Somewhere Here Station’ is the most current.</p>
+<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
+WHERE `_id` = 21001995;</code></pre>
+<p>You should see we’ve been able to track changes.</p>
+<div class="float">
+<img src="images/timestamp_tracking.png" alt="Timestamp tracking" />
+<div class="figcaption">Timestamp tracking</div>
+</div>
+<p>The downside of using the <code>timestamp</code> strategy is that you have to use the <code>updated_at</code> column or whatever timestamp column you defined. Nevertheless, based on our exercise so far, the <code>check</code> strategy is far much better and less taxing.</p>
 
 </div>
 </div>
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="sources-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="sources-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="analyses.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
