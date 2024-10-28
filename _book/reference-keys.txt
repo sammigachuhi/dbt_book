@@ -78,3 +78,4 @@ the-check-strategy
 the-timestamp-strategy
 analyses
 creating-an-analysis
+definitions-for-analyses
