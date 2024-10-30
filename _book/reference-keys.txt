@@ -79,3 +79,6 @@ the-timestamp-strategy
 analyses
 creating-an-analysis
 definitions-for-analyses
+exposures
+creating-an-exposure
+visualizing-the-exposure

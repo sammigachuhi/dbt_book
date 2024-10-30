@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 13 Snapshots | dbt Book</title>
+  <title>Chapter 15 Exposures | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 13 Snapshots | dbt Book" />
+  <meta property="og:title" content="Chapter 15 Exposures | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 13 Snapshots | dbt Book" />
+  <meta name="twitter:title" content="Chapter 15 Exposures | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="sources-1.html"/>
-<link rel="next" href="analyses.html"/>
+<link rel="prev" href="analyses.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -278,242 +278,148 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="snapshots" class="section level1 hasAnchor" number="13">
-<h1><span class="header-section-number">Chapter 13</span> Snapshots<a href="snapshots.html#snapshots" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Picture this, there is this lady you have been eyeing, after many nights of turning and tossing, you decide to visit her place because she is currently not anywhere interested in being taken out. When you visit her at the rendezvous, you decide to ask her to take a ‘selfie’ of you and her (big mistake). You think she will send the selfie to you, she never does. Well, that’s a true story of yours truly and even though no hard feelings over the incident, snapshots in dbt work in much the same way.</p>
-<p>A snapshot in dbt is a recorded change of a mutable table over time. Think of a snapshot as a way to track changes in your data over time. For example, you could be a having a crazy table that logs your relationship status with your girlfriend or boyfriend over time. The first row could be as follows:</p>
-<pre><code>|----------|--------------|---------------|
-| id       |  Status      | updated-at    |
-| 11       |  Spark       | 21/09/2024    |
-|----------|--------------|---------------|</code></pre>
-<p>Now let’s say, you realise something about your girlfriend and boyfriend that puts a freeze on the relationship, so in your relationship table it would have the following update.</p>
-<pre><code>|----------|--------------|---------------|
-| id       |  Status      | updated-at    |
-| 11       |  Shaky       | 22/10/2024    |
-|----------|--------------|---------------|</code></pre>
-<p>The relationship would now be ‘shaky’ subject to external forces and internal will, but our update may have overwritten the previous record of ‘Spark’ when the relationship was at cloud nine. dbt offers a way to preserve these past records so that they can be used for further analysis, or for posterity purposes. For example, keeping a record of the change can be used to analyse how long the relationship lasted from its hey days to when the waves started beating the ship. This kind of analysis can be used for more serious matters, such as when analyzing the time it takes from sending to receiving an order. dbt will help you record these changes and log the time when the change took place. For example, our dbt snapshot for our relationship would be:</p>
-<p>|———-|————–|—————|—————-|————–|
-| id | Status | updated-at | dbt_valid_from | dbt_valid_to |
-| 11 | Spark | 21/09/2024 | 21/09/2024 | 22/10/2024 |
-| 11 | Shaky | 22/10/2024 | 22/10/2024 | null |
-|———-|————–|—————|—————-|————–|</p>
-<p>The most up-to-date record will have a value of <code>null</code> in the <code>dbt_valid_to</code> field. Here is a description of the last two fields and those used internally by dbt.</p>
-<ol style="list-style-type: decimal">
-<li><p><code>dbt_valid_from</code> - The timestamp when this snapshot row was first inserted. This column can be used to order the different “versions” of a record.</p></li>
-<li><p><code>dbt_valid_to</code> - The timestamp when this row became invalidated. The most recent snapshot record will have dbt_valid_to set to null.</p></li>
-<li><p><code>dbt_scd_id</code> - A unique key generated for each snapshotted record. This is used internally by dbt.</p></li>
-<li><p><code>dbt_updated_at</code> - The updated_at timestamp of the source record when this snapshot row was inserted. This is used internally by dbt.</p></li>
-</ol>
-<p>Slowly Changing Dimension (SCD) refers to the way data changes over time in a data warehouse. In today’s world, one wouldn’t say that data changes slowly, but the term arises from the fact that even though data may change infrequently, such as makeups and breakups in your relationship, they are significant over time even to the future of the relationship or the continuity of your business!</p>
-<p>SCDs are typically of three types:</p>
-<ul>
-<li><p><strong>Type 1</strong>: This is where old data is overwritten without any preservation of its history. Old data ceases to exist with update of new data.</p></li>
-<li><p><strong>Type 2</strong>: When a new record of data is added, the old record is preserved as historical data. This is the most common type of SCD and which dbt implements.</p></li>
-<li><p><strong>Type 3</strong>: This approach adds a new column for the new data and preserves the old data in the original column. This type is best used to see the progression of changes <em>rather</em> than when a change happened.</p></li>
-</ul>
-<p>Therefore, when <em>snapshoting</em> in dbt, when a change occurs in the source data, instead of overwriting the existing record (Type 1) or a dding a new column (Type 3), dbt adds a new record with the new data (Type 2). The <code>dbt_valid_from</code> and <code>dbt_valid_to</code> columns in the snapshot table indicate when each version of the record was valid, allowing you to track the full history of changes over time. This looks much like git commits, only that the commits are in tabular form.</p>
-<div id="create-a-snapshot" class="section level2 hasAnchor" number="13.1">
-<h2><span class="header-section-number">13.1</span> Create a snapshot<a href="snapshots.html#create-a-snapshot" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Creating a snapshot in dbt to some extent depends on the version you are using. Starting from version 1.9, you will actually need two files to perform a dbt snapshot. These are the YAML and sql files. However, this tutorial was written using version 1.8.7. To know the dbt version you are using, type <code>dbt debug</code>. You will see your version listed like so:</p>
-<pre><code>--snip--
-19:41:25  Running with dbt=1.8.7
-19:41:25  dbt version: 1.8.7
-19:41:25  python version: 3.10.12
---snip--</code></pre>
-<p>Now to create a snapshot using dbt versions lower than for 1.9, you will create a snapshot SQL file with the following configurations.</p>
-<pre><code>{% snapshot tripdata_snapshot %}
+<div id="exposures" class="section level1 hasAnchor" number="15">
+<h1><span class="header-section-number">Chapter 15</span> Exposures<a href="exposures.html#exposures" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Imagine a soldier dropping a piece of paper containing their camp, trails they use and the military equipment that is due to arrive only for it to be picked up by a wondering enemy. That would be catastrophic, right? That is akin to exposing them into the line of fire. However, exposures in dbt serve a good purpose. They show how your data is used by downstream project, be they be notebooks, a dashboard or another data pipeline. They only thing that sets apart exposures from other models is that this time round you are the one who defines which projects will be used downstream.</p>
+<div id="creating-an-exposure" class="section level2 hasAnchor" number="15.1">
+<h2><span class="header-section-number">15.1</span> Creating an exposure<a href="exposures.html#creating-an-exposure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Exposures are written in YAML files but nested under the <code>exposures:</code> key. Below is an exposure created in the <code>exposure/exposures.yml</code> path.</p>
+<pre><code>version: 2
 
-{{
-  config(      
-    target_schema=&#39;snapshots&#39;,      
-    strategy=&#39;check&#39;,      
-    unique_key=&#39;_id&#39;,      
-    check_cols=&#39;all&#39;    
-  )  
-}}  
+exposures:
 
-SELECT * FROM {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
+  - name: station_bikes_exposure
+    label: A join of station tables and bike rides
+    type: dashboard
+    maturity: high
+    url: https://public-toilets-in-australia-infomap.onrender.com/
+    description: &#39;{{ doc(&quot;citi_trips_round&quot;) }}&#39;
 
-{% endsnapshot %}</code></pre>
-<p>Let’s go through it line by line. The macros <code>{% snapshot tripdata_snapshot %}</code> and <code>{% endsnapshot %}</code> indicate that this is a snapshot file. Your configurations will go inside the <code>config()</code> function.</p>
-<p><code>target_schema</code> - this is the schema in which your snapshot will be stored.</p>
-<p><code>strategy</code> - this is the mechanism by which dbt will know that a row has changed. The <code>timestamp</code> strategy, and the most recommended for that matter, uses an <code>updated_at</code> column to determine if a row has changed. On the other hand, the <code>check</code> strategy compares a list of columns between their current and historical state to determine what has changed. Use the <code>check</code> strategy if there is no reliable <code>updated_at</code> column for tracking changes with time, as in our case.</p>
-<p><code>unique_key</code> - this is the unique key in your table that dbt will use.</p>
-<p><code>check_cols</code> - These are the columns to check for changes. The <code>all</code> parameter can be passed in case you want to track changes in all the columns of the row.</p>
-<p>One can also add an additional <code>invalidate_hard_deletes</code> <a href="https://docs.getdbt.com/docs/build/snapshots">configuration</a> to track rows that have been deleted. The <code>dbt_valid_to</code> column of deleted rows will be set to the current snapshot time.</p>
-<p>Finally, the <code>SELECT</code> statement. You will insert inside the <code>source()</code> function the table in which you would like to track changes.</p>
-<p>Thereafter, run <code>dbt snapshot</code>. Below is the output.</p>
-<pre><code>21:01:01  Concurrency: 1 threads (target=&#39;dev&#39;)
-21:01:01  
-21:01:01  1 of 1 START snapshot snapshots.tripdata_snapshot .............................. [RUN]
-21:01:11  1 of 1 OK snapshotted snapshots.tripdata_snapshot .............................. [CREATE TABLE (224.7k rows, 33.3 MiB processed) in 10.03s]
-21:01:11  
-21:01:11  Finished running 1 snapshot in 0 hours 0 minutes and 17.65 seconds (17.65s).
-21:01:12  
-21:01:12  Completed successfully
-21:01:12  
-21:01:12  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1</code></pre>
-<p>A new table should appear under the <code>snapshots</code> schema in BigQuery.</p>
-<div class="float">
-<img src="images/snapshots_schema.png" alt="Snapshots schema" />
-<div class="figcaption">Snapshots schema</div>
-</div>
-<p>When you run <code>dbt snapshot</code> the first time, the <code>dbt_valid_to</code> column will be <code>null</code> for all records. Thereafter, when you run subsequent <code>dbt snapshot</code> executions for a table that has undergone a change, the <code>dbt_valid_to</code> will be populated with a timestamp value in the <code>dbt_valid_to</code> of the altered row.</p>
-</div>
-<div id="the-check-strategy" class="section level2 hasAnchor" number="13.2">
-<h2><span class="header-section-number">13.2</span> The <code>check</code> strategy<a href="snapshots.html#the-check-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Now is the time to truly test if our snapshots work. Go to the SQL tab of your Big Query and insert a new row using this query:</p>
-<pre><code>INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata` (`_id`, `tripduration`, `start station name`) 
-VALUES (000000, 1000, &#39;Nowhere Near Station&#39;);</code></pre>
-<p>Thereafter run <code>dbt snapshot</code>.</p>
-<p>Ensure that the new row has been added by crosschecking its existence via:</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
-WHERE `start station name` = &#39;Nowhere Near Station&#39;;</code></pre>
-<p>Now check if our <code>tripdata_snapshot</code> table has captured the new row using the below query.</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
-WHERE `start station name` = &#39;Nowhere Near Station&#39;;</code></pre>
-<p>Its a new row of data, which means all columns have been affected with a new value in each. Remember we set the <code>check_cols=all</code>.</p>
-<div class="float">
-<img src="images/inserted_new_row.png" alt="Recorded change" />
-<div class="figcaption">Recorded change</div>
-</div>
-<p>Let’s go on.</p>
-<p>Insert a new row, with an additional extra change in the <code>_id</code> column.</p>
-<pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
-SET `start station name` = &#39;Even Further Station&#39;, `_id` = 1001995
-WHERE `_id` = 0;</code></pre>
-<p>Again, run <code>dbt snapshot</code>. Always run <code>dbt snapshot</code> when you suspect, or where in actual sense your table has been updated, even if through automatic scheduling.</p>
-<p>Let’s check if the new row with two updates has been recorded in our snapshots table.</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
-WHERE `start station name` = &#39;Even Further Station&#39;;</code></pre>
-<p>If you run this, you will notice that the <code>dbt_valid_to</code> is still <code>null</code>. We presume this is because we have added a new unique key and thus dbt will still treat this as a new recorded rather than one which was changed from 0 to 1001995.</p>
-<p>Now, update the row with <code>_id</code> 1001995 using the below SQL query.</p>
-<pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
-SET `start station name` = &#39;Furth East Station&#39;
-WHERE `_id` = 1001995;</code></pre>
-<p>Now after running <code>dbt snapshot</code> (we hope you remembered), let’s see if our snapshot table will have tracked the historical change of <code>Even Further Station</code> and <code>Furth East Station</code> of row <code>_id</code> 1001995. Use the below query to unravel the results, drumrolls please…</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
-WHERE `_id` = 1001995;</code></pre>
-<div class="float">
-<img src="images/snapshot_example.png" alt="Snapshot example" />
-<div class="figcaption">Snapshot example</div>
-</div>
-<p>Yes it did! For row 1, which stands for when the ‘start station name’ was <code>Even Further Station</code>, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the ‘start station name’ was switched to <code>Furth East Station</code>, we can see it became valid from 2024-10-24 20:02, the exact time when row was updated.</p>
-<p>You can indeed check if the latest change is in the <code>2014-tripdata</code> table via:</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
-WHERE `start station name` = &#39;Furth East Station&#39;;</code></pre>
-</div>
-<div id="the-timestamp-strategy" class="section level2 hasAnchor" number="13.3">
-<h2><span class="header-section-number">13.3</span> The <code>timestamp</code> strategy<a href="snapshots.html#the-timestamp-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The <code>timestamp</code> strategy in snapshoting relies on an <code>updated_at</code> column to check if any changes have occurred on the row. If the configured <code>updated_at</code> column is more recent than when the table was last run, dbt will invalidate the old record and record a new one. If the timestamps are unchanged, dbt will not take any action.</p>
-<p>The <code>timestamp</code> strategy requires an <code>updated_at</code> column which represents when the row was last updated. In order to work with <code>timestamp</code> strategy, we need to recreate our <code>2014-tripdata</code> but now with an additional <code>updated_at</code> column. It can be any table, so long as there is an <code>updated_at</code> column, but we settled on this one because it is lightweight and plus, we already have it as a seed. We will use a dbt model to recreated the <code>2014-tripdata</code> seed but with an extra <code>updated_at</code> column.</p>
-<p>Create a <code>nyc_bikes_timestamp</code> SQL model inside the <code>sources</code> folder. Copy paste the following contents into the model.</p>
-<pre><code>{{ config(
-    materialized=&quot;table&quot;,
-    schema=&quot;nyc_bikes_nyc_bikes2014&quot;
-) }}
+    depends_on:
+      - ref(&#39;citi_trips_round&#39;)
+      - ref(&#39;citi_trips_minutes&#39;) # Added this just to increase complexity of lineage graph
+      - source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;)
 
-WITH nyc_bikes_timestamp AS (
-  SELECT *, CURRENT_TIMESTAMP() AS updated_at FROM {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
-)
-
-SELECT
-  *
-FROM nyc_bikes_timestamp</code></pre>
-<div class="float">
-<img src="images/timestamp_table.png" alt="Timestamp table" />
-<div class="figcaption">Timestamp table</div>
-</div>
-<p>We are configuring it as a table because for some reason, when trying to update fields into this model using BigQuery, an error came up simply because it was a view!</p>
-<p>Now run <code>dbt run --select sources</code>. You will get the below output.</p>
-<pre><code>19:08:14  Concurrency: 1 threads (target=&#39;dev&#39;)
-19:08:14  
-19:08:14  1 of 4 START sql view model nyc_bikes.nyc_bikes_male ........................... [RUN]
-19:08:16  1 of 4 OK created sql view model nyc_bikes.nyc_bikes_male ...................... [CREATE VIEW (0 processed) in 2.45s]
-19:08:16  2 of 4 START sql table model nyc_bikes_nyc_bikes_nyc_bikes2014.nyc_bikes_timestamp  [RUN]
-19:08:22  2 of 4 OK created sql table model nyc_bikes_nyc_bikes_nyc_bikes2014.nyc_bikes_timestamp  [CREATE TABLE (224.7k rows, 33.3 MiB processed) in 5.31s]
-19:08:22  3 of 4 START sql view model nyc_bikes.nyc_female_2014 .......................... [RUN]
-19:08:24  3 of 4 OK created sql view model nyc_bikes.nyc_female_2014 ..................... [CREATE VIEW (0 processed) in 2.22s]
-19:08:24  4 of 4 START sql view model nyc_bikes.nyc_male_2014 ............................ [RUN]
-19:08:26  4 of 4 OK created sql view model nyc_bikes.nyc_male_2014 ....................... [CREATE VIEW (0 processed) in 2.39s]
-19:08:26  
-19:08:26  Finished running 3 view models, 1 table model in 0 hours 0 minutes and 29.78 seconds (29.78s).
-19:08:26  
-19:08:26  Completed successfully
-19:08:26  
-19:08:26  Done. PASS=4 WARN=0 ERROR=0 SKIP=0 TOTAL=4</code></pre>
-<p>Now that we have already created a table of <code>nyc_bikes_timestamp</code>, we would also want to reference it in downstream models. As you read in an earlier chapter, dbt sources are what make models to be referenced in other queries using the <code>source()</code> function. Therefore in the <code>sources/sources_bikes.yml</code>, add the following:</p>
-<pre><code>- name: nyc_bikes_nyc_bikes_nyc_bikes2014
-        schema: nyc_bikes_nyc_bikes_nyc_bikes2014
-        tables:
-          - name: nyc_bikes_timestamp
-            description: &#39;&#39;</code></pre>
-<p>Now is the time to create a dbt snapshot relying on the <code>timestamp</code> strategy.</p>
-<p>Create a <code>timestamp_snapshot</code> in the <code>snapshots</code> directory with the following SQL contents.</p>
-<pre><code>{% snapshot timestamp_snapshot %}
-
-{{
-  config(      
-    target_schema=&#39;snapshots&#39;,      
-    strategy=&#39;timestamp&#39;,      
-    unique_key=&#39;_id&#39;,      
-    updated_at=&#39;updated_at&#39;    
-  )  
-}}  
-
-SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
-
-{% endsnapshot %}
+    owner:
+      name: Mr Fantastic
+      email: mrfantastic@unlike.com
 </code></pre>
-<p>You may wonder why we are not using something like <code>{{ source("schema", "table") }}</code> in the SELECT statement. We had initially run that with <code>nyc_bikes_nyc_bikes_nyc_bikes2014</code> and <code>nyc_bikes_timestamp</code> as the schema and table names respectively. However, dbt kept throwing an error that it couldn’t find a table therefore we resulted in the unorthodox way of hardcoding the entire dataset-schema-table namespace.</p>
-<p>Now run <code>dbt snapshot</code> to create the <code>nyc_bikes_timestamp</code> table.</p>
-<pre><code>19:31:54  Concurrency: 1 threads (target=&#39;dev&#39;)
-19:31:54  
-19:31:54  1 of 2 START snapshot snapshots.timestamp_snapshot ............................. [RUN]
-19:32:02  1 of 2 OK snapshotted snapshots.timestamp_snapshot ............................. [CREATE TABLE (224.7k rows, 35.0 MiB processed) in 8.10s]
-19:32:02  2 of 2 START snapshot snapshots.tripdata_snapshot .............................. [RUN]
-19:32:15  2 of 2 OK snapshotted snapshots.tripdata_snapshot .............................. [MERGE (0.0 rows, 44.0 MiB processed) in 12.54s]
-19:32:15  
-19:32:15  Finished running 2 snapshots in 0 hours 0 minutes and 28.86 seconds (28.86s).
-19:32:15  
-19:32:15  Completed successfully
-19:32:15  
-19:32:15  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2</code></pre>
-<div class="float">
-<img src="images/timestamp_snapshot_created.png" alt="Timestamp snapshot" />
-<div class="figcaption">Timestamp snapshot</div>
+<p>Below is the definition of each property used above.</p>
+<p><strong>Required</strong></p>
+<ul>
+<li><p><code>name</code>: a unique exposure name written in snake case</p></li>
+<li><p><code>type</code>: one of dashboard, notebook, analysis, ml, application (used to organize in docs site)</p></li>
+<li><p><code>owner</code>: name or email required; additional properties allowed</p></li>
+</ul>
+<p><strong>Expected</strong></p>
+<p><code>depends_on</code>: list of refable nodes, including <code>metric</code>, <code>ref</code>, and <code>source</code>. While possible, it is highly unlikely you will ever need an <code>exposure</code> to depend on a <code>source</code> directly.</p>
+<p><strong>Optional</strong></p>
+<ul>
+<li><p><code>label</code>: May contain spaces, capital letters, or special characters.</p></li>
+<li><p><code>url</code>: Activates and populates the link to View this exposure in the upper right corner of the generated documentation site</p></li>
+<li><p><code>maturity</code>: Indicates the level of confidence or stability in the exposure. One of high, medium, or low. For example, you could use high maturity for a well-established dashboard, widely used and trusted within your organization. Use low maturity for a new or experimental analysis.</p></li>
+</ul>
+<p><strong>General properties (optional)</strong></p>
+<ul>
+<li>description</li>
+<li>tags</li>
+<li>meta</li>
+</ul>
+<p>Running an exposure</p>
+<p>To run the exposure we just created, we use the following one liner. The plus line is there to indicate to dbt to include all models used to feed into the <code>station_bikes_exposure</code> exposure.</p>
+<pre><code>dbt run --select +exposure:station_bikes_exposure</code></pre>
+<p>It is noteworthy to mention that you run the <code>name</code> value under the <code>exposures</code> key. The name of the YAML is not used when running exposures.</p>
+<p>Here is the output:</p>
+<pre><code>20:31:06  Concurrency: 1 threads (target=&#39;dev&#39;)
+20:31:06  
+20:31:06  1 of 2 START sql view model nyc_bikes.citi_trips_minutes ....................... [RUN]
+20:31:09  1 of 2 OK created sql view model nyc_bikes.citi_trips_minutes .................. [CREATE VIEW (0 processed) in 3.10s]
+20:31:09  2 of 2 START sql view model nyc_bikes.citi_trips_round ......................... [RUN]
+20:31:12  2 of 2 OK created sql view model nyc_bikes.citi_trips_round .................... [CREATE VIEW (0 processed) in 2.80s]
+20:31:12  
+20:31:12  Finished running 2 view models in 0 hours 0 minutes and 13.36 seconds (13.36s).
+20:31:12  
+20:31:12  Completed successfully
+20:31:12  
+20:31:12  Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2
+</code></pre>
+<p>One can also decide to test all the upstream models for our exposure. The below code will display test results for all the three models defined by the <code>depends_on</code> key.</p>
+<pre><code>19:37:44  Concurrency: 1 threads (target=&#39;dev&#39;)
+19:37:44  
+19:37:44  1 of 23 START test dbt_expectations_expect_column_max_to_be_between_citi_trips_minutes_trip_duration_min__326000__16  [RUN]
+19:37:49  1 of 23 PASS dbt_expectations_expect_column_max_to_be_between_citi_trips_minutes_trip_duration_min__326000__16  [PASS in 5.51s]
+19:37:49  2 of 23 START test dbt_expectations_expect_column_max_to_be_between_citi_trips_round_trip_duration_min__326000__16  [RUN]
+19:37:53  2 of 23 PASS 
+-- snip --
+</code></pre>
+<p>Nevertheless, we remain with visualizing our exposure.</p>
 </div>
-<p>Now to check if our timestamp table can snapshot changes, let’s insert a new row and make some changes to it. Paste the following in a SQL tab in BigQuery.</p>
-<pre><code>INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp` (`_id`, `tripduration`, `start station name`, `updated_at`) 
-VALUES (21001995, 2000, &#39;Sumwhere Near Station&#39;, &#39;2024-10-25 23:09:47.169668 UTC&#39;);</code></pre>
-<p>Note the <code>updated_at</code> column. Unlike when working with the <code>check</code> strategy which could still work well with several fields as <code>null</code>, omitting the <code>updated_at</code> column in the <code>timestamp</code> strategy is costly as dbt will be unable to track any change. All you will get just a new field but with several <code>null</code> values in the snapshot table.</p>
-<p>Now run <code>dbt snapshot</code> and when it succesfully runs, check <code>timestamp_snapshot</code> table using this SELECT statement in BigQuery.</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
-WHERE `_id` = 21001995;</code></pre>
-<p>Now change the station name from ‘Sumwhere Here Station` to ’Somewhere Near Station’ to demonstrate tracking a change.</p>
-<pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
-SET `start station name` = &#39;Somewhere Here Station&#39;, `updated_at` = &#39;2024-10-25 23:14:47.169668 UTC&#39;
-WHERE `_id` = 21001995;</code></pre>
-<p>Run <code>dbt snapshot</code>. Again, we are careful not to omit the <code>updated_at</code> column!</p>
-<p>Now check if dbt has been able to track changes. We expect that the row with the station name ‘Sumwhere Near Station’ was valid for a short period (see the <code>dbt_valid_from</code> and <code>dbt_valid_to</code> columns) while the ‘Somewhere Here Station’ is the most current.</p>
-<pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
-WHERE `_id` = 21001995;</code></pre>
-<p>You should see we’ve been able to track changes.</p>
+<div id="visualizing-the-exposure" class="section level2 hasAnchor" number="15.2">
+<h2><span class="header-section-number">15.2</span> Visualizing the exposure<a href="exposures.html#visualizing-the-exposure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Visualizing exposures is as simple as just generating your dbt documentation. This is actually the default way of displaying exposures. It begins with <code>dbt docs generate</code> and <code>dbt docs serve</code>. Afterwards, open the dbt documentation static web page in the port number provided. Ours is <code>localhost:/8080</code>.</p>
 <div class="float">
-<img src="images/timestamp_tracking.png" alt="Timestamp tracking" />
-<div class="figcaption">Timestamp tracking</div>
+<img src="images/exposure_webpage.png" alt="Exposure" />
+<div class="figcaption">Exposure</div>
 </div>
-<p>The downside of using the <code>timestamp</code> strategy is that you have to use the <code>updated_at</code> column or whatever timestamp column you defined. Nevertheless, based on our exercise so far, the <code>check</code> strategy is far much better and less taxing.</p>
+<p>You will notice that there is a dedicated section for exposures called <code>Exposures</code>. The exposure title is <code>Dashboard</code> and the label for the exposure is the label provided in the YAML.</p>
+<p>If you click on the blue lineage graph button, you will see the upstream models that feed into our exposure.</p>
+<div class="float">
+<img src="images/exposure_lineage_graph.png" alt="Exposure lineage graph" />
+<div class="figcaption">Exposure lineage graph</div>
+</div>
+<p>Still at the bottom of the webpage, the <strong>Depends on</strong> section contains links to all the upstream models and references for your exposure. Clicking on any takes you to the dbt documentation site for that model.</p>
+<p>Finally, there is the <strong>View this exposure</strong> button. Clicking on it will take you to the url you specified in the <code>url:</code> key of the exposures file. In our case, the url leads to a Dashboard showing all the public sanitation facilities in Australia. Obviously there is no relation between bikes and sanitation facilities as this is just for demonstration purposes only!</p>
+<div class="float">
+<img src="images/exposure_hyperlink.png" alt="Exposure" />
+<div class="figcaption">Exposure</div>
+</div>
+<p>Working with exposures can be fun. You can add as many exposures as you wish. Below we extended the <code>exposures</code> YAML to also include the following <code>station_bikes_application</code> exposure.</p>
+<pre><code>-- snip --
+- name: station_bikes_application
+    label: An app of stations and bike rides
+    type: application
+    maturity: high
+    url: https://data-visualization-for-diarrhoea-deaths.onrender.com/
+    description: &#39;{{ doc(&quot;citi_trips_round&quot;) }}&#39;
+
+    depends_on:
+      - ref(&#39;citi_trips_long&#39;)
+      - ref(&#39;citi_trips_minutes&#39;) # Added this just to increase complexity of lineage graph
+      - source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;)
+
+    owner:
+      name: Mr Fantastic
+      email: mrfantastic@unlike.com
+</code></pre>
+<p>Once again, to include this exposure, we run <code>dbt run --select +exposure:station_bikes_application</code>. Thereafter create a documentation using the two sesame magic characters of <code>dbt docs generate</code> and <code>dbt docs serve</code>.</p>
+<p>The above exposure of <code>station_bikes_application</code> falls under the <strong>Application</strong> section as specified in the <code>type</code> key.</p>
+<div class="float">
+<img src="images/exposure_application.png" alt="Exposure application" />
+<div class="figcaption">Exposure application</div>
+</div>
+<p>The lineage graph and the <strong>View this exposure</strong> buttons work for this exposure as well. In fact the lineage graph is the most complex so far. The exposure took into consideration that the <code>citi_trips_long</code> model is depedent on the <code>citi_trips_minutes</code> and <code>citi_trips_round</code> models!</p>
+<div class="float">
+<img src="images/exposure_lineage_graph2.png" alt="Exposure lineage graph" />
+<div class="figcaption">Exposure lineage graph</div>
+</div>
+<p>The exposure button also leads to a dashboard showing rates of some sanitation related disease. Again, not related to bikes and stations but serves the purpose of demonstration.</p>
 
 </div>
 </div>
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="sources-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="analyses.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="analyses.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -544,7 +450,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/12-snapshots.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/14-exposures.Rmd",
 "text": "Edit"
 },
 "history": {
