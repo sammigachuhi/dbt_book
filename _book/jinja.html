@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>dbt Book</title>
+  <title>Chapter 16 Jinja | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="dbt Book" />
+  <meta property="og:title" content="Chapter 16 Jinja | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="dbt Book" />
+  <meta name="twitter:title" content="Chapter 16 Jinja | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="exposures.html"/>
 
-<link rel="next" href="introduction.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -284,45 +284,284 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">dbt Book</h1>
-<p class="author"><em>Samuel Gachuhi Ngugi</em></p>
-<p class="date"><em>2024-11-03</em></p>
+<div id="jinja" class="section level1 hasAnchor" number="16">
+<h1><span class="header-section-number">Chapter 16</span> Jinja<a href="jinja.html#jinja" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><a href="https://docs.getdbt.com/docs/build/jinja-macros">Jinja</a> in dbt is used to perform functions that regular SQL is unable to do, such as iterating over columns using a <code>for</code> loop and also <code>if</code> statements. Jinja is also used to hold environment variables which can be (re)used all over your project. A simple example of jinja use in dbt is when calling the <code>ref()</code> function. If you see anything with double curly brackets (<code>{{ }}</code>) or with brackets and percentage sign(s) in them (<code>{% %}</code>) then you are dealing with jinja.</p>
+<p>Let’s start by explaining some jinja concepts.</p>
+<ul>
+<li><p><strong>Expressions {{ … }}</strong>: Expressions are used when you want to output a string. You can use expressions to reference variables and call macros.</p></li>
+<li><p><strong>Statements {% … %}</strong>: Statements don’t output a string. They are used for control flow, for example, to set up for loops and if statements, to set or modify variables, or to define macros.</p></li>
+<li><p><strong>Comments {# … #}</strong>: Jinja comments are used to prevent the text within the comment from executing or outputing a string. Don’t use – for comment.</p></li>
+</ul>
+<p>To make the point sink home since jinja can at time look mind boggling to the novice beginner, we’ll start with explaining a for loop. This is the skeleton of a <code>for</code> loop in jinja.</p>
+<pre><code>{% for item in sequence %}
+-- SQL Code for {{ item }}
+{% endfor %}
+</code></pre>
+<div id="a-simple-jinja-statement" class="section level2 hasAnchor" number="16.1">
+<h2><span class="header-section-number">16.1</span> A simple jinja statement<a href="jinja.html#a-simple-jinja-statement" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Going by the above cue, let’s create a jinja statement that will select all those rows whose bike riders’ birth years are any of the following: 1995, 1997 and 2002. Nothing special about these years, just that they stem from the unprofitable notion that they correspond to my birth year and those of my siblings!</p>
+<p>Create a new folder called <code>jinja</code> under the <code>models</code> directory and within it create a <code>years</code> SQL file. Copy past the following contents into <code>years.sql</code>.</p>
+<pre><code>{% set years = [1995, 1997, 2002] %}
+
+{% for year in years %}
+SELECT * 
+FROM {{ ref(&#39;citi_trips_long&#39;) }}
+WHERE birth_year = {{ year }}
+
+
+{% endfor %}
+</code></pre>
+<p>Let’s go through the above line by line. It may look a bit more cryptic that the go lucky SQL statements we write, but it is quite easy, especially if you know a bit of python.</p>
+<ul>
+<li><p><code>{% set years = [1995, 1997, 2002] %}</code> - this sets the variables we will use to extract some data from our tables. The <code>years</code> variable consists of three years which we will use to filter our tables.</p></li>
+<li><p><code>{% for year in years %}</code> - the SQL statement that will be repeated is placed inside the <code>for ...</code> loop. In this statement, for every year in the <code>years</code> variable list, we will repeat the following sql statement, where <code>{{ year }}</code> will be each year in the <code>years</code> variable:</p></li>
+</ul>
+<pre><code>SELECT * 
+FROM {{ ref(&#39;citi_trips_long&#39;) }}
+WHERE birth_year = {{ year }}
+</code></pre>
+<ul>
+<li><code>{% endfor %}</code> - nothing more than marking the end of the for loop.</li>
+</ul>
+<p>Now, if we run the code <code>dbt compile --select jinja</code>, you will see a new <code>years.sql</code> appear under the <code>target/compiled/dbt_book/models/jinja/</code> directory.</p>
+<p>Here is how the code looks like:</p>
+<pre><code>SELECT * 
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+WHERE birth_year = 1995
+
+
+
+SELECT * 
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+WHERE birth_year = 1997
+
+
+
+SELECT * 
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+WHERE birth_year = 2002
+</code></pre>
+<p>What the <code>for</code> loop did was avoid the redundancy of selecting each <code>birth_year</code> in its own <code>SELECT</code> statement and instead put it inside one <code>for</code> loop statement. Going a step further, also the redundancy of hardcoding the <code>year</code> is removed. This formula, though a bit complicated, toes in line with the Do not Repeat Yourself (DRY) principle in programming.</p>
 </div>
-<div id="about" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This is a <em>sample</em> book written in <strong>Markdown</strong>. You can use anything that Pandoc’s Markdown supports; for example, a math equation <span class="math inline">\(a^2 + b^2 = c^2\)</span>.</p>
-<div id="usage" class="section level2 hasAnchor" number="1.1">
-<h2><span class="header-section-number">1.1</span> Usage<a href="index.html#usage" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Each <strong>bookdown</strong> chapter is an .Rmd file, and each .Rmd file can contain one (and only one) chapter. A chapter <em>must</em> start with a first-level heading: <code># A good chapter</code>, and can contain one (and only one) first-level heading.</p>
-<p>Use second-level and higher headings within chapters like: <code>## A short section</code> or <code>### An even shorter section</code>.</p>
-<p>The <code>index.Rmd</code> file is required, and is also your first book chapter. It will be the homepage when you render the book.</p>
+<div id="a-more-complex-jinja-query" class="section level2 hasAnchor" number="16.2">
+<h2><span class="header-section-number">16.2</span> A more complex jinja query<a href="jinja.html#a-more-complex-jinja-query" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>One can also create more complex jinja queries that leverage other functionalities of SQL such as aggregation and CASE WHEN statements. Now suppose, for purely selfish reasons, this author wants to compare the bike ride durations against those of other people who are age mates as his siblings. Below is an <code>age.sql</code> file that creates a table that has a column showing the trip duration for each value in the <code>years</code> variable.</p>
+<pre><code>{% set years = [1995, 1997, 2002] %}
+
+SELECT birth_year, 
+{% for year in years %}
+SUM (CASE WHEN birth_year = {{ year }} THEN trip_min_round ELSE 0 END) AS trip_min_round_{{ year }},
+{% endfor %}
+SUM(trip_min_round) AS totals_trip_min_round
+FROM {{ ref(&#39;citi_trips_long&#39;) }}
+GROUP BY birth_year
+</code></pre>
+<p>In the corresponding <code>age.sql</code> in the <code>target</code> directory, this is the compiled SQL query result.</p>
+<pre><code>SELECT birth_year, 
+
+SUM(CASE WHEN birth_year = 1995 THEN trip_min_round ELSE 0 END) AS trip_min_round_1995,
+
+SUM(CASE WHEN birth_year = 1997 THEN trip_min_round ELSE 0 END) AS trip_min_round_1997,
+
+SUM(CASE WHEN birth_year = 2002 THEN trip_min_round ELSE 0 END) AS trip_min_round_2002,
+
+SUM(trip_min_round) AS totals_trip_min_round
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+WHERE birth_year IN (
+  
+  
+    1995, 
+  
+  
+    1997, 
+  
+  
+    2002
+  
+)
+GROUP BY birth_year</code></pre>
+<p>Pasting this query in BigQuery gives us the following table.</p>
+<div class="float">
+<img src="images/age_query.png" alt="Age query" />
+<div class="figcaption">Age query</div>
 </div>
-<div id="render-book" class="section level2 hasAnchor" number="1.2">
-<h2><span class="header-section-number">1.2</span> Render book<a href="index.html#render-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>You can render the HTML version of this example book without changing anything:</p>
-<ol style="list-style-type: decimal">
-<li><p>Find the <strong>Build</strong> pane in the RStudio IDE, and</p></li>
-<li><p>Click on <strong>Build Book</strong>, then select your output format, or select “All formats” if you’d like to use multiple formats from the same book source files.</p></li>
-</ol>
-<p>Or build the book from the R console:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a>bookdown<span class="sc">::</span><span class="fu">render_book</span>()</span></code></pre></div>
-<p>To render this example to PDF as a <code>bookdown::pdf_book</code>, you’ll need to install XeLaTeX. You are recommended to install TinyTeX (which includes XeLaTeX): <a href="https://yihui.org/tinytex/" class="uri">https://yihui.org/tinytex/</a>.</p>
+<p>We can see a column for trip duration in minutes for each of the three select years of 1995, 1997 and 2002. However, other years not set in our <code>years</code> variable are included as well, but with the value <code>0</code> in each of the three columns. Before one starts getting confused and blaming the universe for not wanting us to succeed, there is a way we can sort this pesky issue: enter the <code>if not loop.last</code> statement!</p>
+<p>In our previous SQL query, and if you are experienced with SQL queries a bit, you already know that one can sort the issue of excluding unnecessary years using the <code>WHERE</code> clause. For example, we would have used the clause <code>WHERE birth_year IN (1995, 1997, 2002)</code>. However, we frowned on this approach because it is making break the DRY principle by hardcoding the years by hand. Taking a more complex approach to fulfil the DRY principle sounds like we are exhibiting Obsessive Compulsive Disorder (OCD) but being obsessed in doing things in a higher way is not all too bad in programming.</p>
+<p>The <a href="https://docs.y42.com/docs/how-to-use-jinja"><code>if not loop.last</code> statement</a> separates the values of interest with a comma, thus effectively fulfilling the work of where the <code>WHERE</code> clause failed. The <code>age2.sql</code> shows this in action.</p>
+<pre><code>{% set years = [1995, 1997, 2002] %}
+
+SELECT birth_year, 
+{% for year in years %}
+SUM(CASE WHEN birth_year = {{ year }} THEN trip_min_round ELSE 0 END) AS trip_min_round_{{ year }},
+{% endfor %}
+SUM(trip_min_round) AS totals_trip_min_round
+FROM {{ ref(&#39;citi_trips_long&#39;) }}
+WHERE birth_year IN (
+  {% for year in years %}
+  {# this will separate the years 1995, 1997 and 2002 with a comma, nothing out of this world #}
+    {{ year }}{% if not loop.last %}, {% endif %}
+  {% endfor %}
+)
+GROUP BY birth_year</code></pre>
+<p>Running the <code>dbt compile --select jinja</code> code will compile the <code>age2.sql</code> inside the <code>target</code> directory. It’s contents are as follows. Notice the effect of the <code>if not loop.last</code> statement at the end and how it is a replicate of hardcoding <code>WHERE birth_year IN (1995, 1997, 2002)</code>.</p>
+<pre><code>SELECT birth_year, 
+
+SUM(CASE WHEN birth_year = 1995 THEN trip_min_round ELSE 0 END) AS trip_min_round_1995,
+
+SUM(CASE WHEN birth_year = 1997 THEN trip_min_round ELSE 0 END) AS trip_min_round_1997,
+
+SUM(CASE WHEN birth_year = 2002 THEN trip_min_round ELSE 0 END) AS trip_min_round_2002,
+
+SUM(trip_min_round) AS totals_trip_min_round
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+WHERE birth_year IN (
+  
+  
+    1995, 
+  
+  
+    1997, 
+  
+  
+    2002
+  
+)
+GROUP BY birth_year</code></pre>
+<p>Copy pasting the above compiled SQL into BigQuery you get a cleaner table with all the other birth years left out.</p>
+<div class="float">
+<img src="images/age2_query.png" alt="Age2 query" />
+<div class="figcaption">Age2 query</div>
 </div>
-<div id="preview-book" class="section level2 hasAnchor" number="1.3">
-<h2><span class="header-section-number">1.3</span> Preview book<a href="index.html#preview-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>As you work, you may start a local server to live preview this HTML book. This preview will update as you edit the book when you save individual .Rmd files. You can start the server in a work session by using the RStudio add-in “Preview book”, or from the R console:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" tabindex="-1"></a>bookdown<span class="sc">::</span><span class="fu">serve_book</span>()</span></code></pre></div>
+</div>
+<div id="improvising-using-dry-principle" class="section level2 hasAnchor" number="16.3">
+<h2><span class="header-section-number">16.3</span> Improvising using DRY Principle<a href="jinja.html#improvising-using-dry-principle" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We can go a step further and make our table leaner, by eliminating all the <code>trip_min_round_&lt;year&gt;</code> columns and having just one <code>trip_min_round</code> summation column for the three years 1995, 1997 and 2002. The <code>ages3.sql</code> exemplifies this.</p>
+<pre><code>{% set years = [1995, 1997, 2002] %}
+
+SELECT birth_year, 
+SUM(trip_min_round) AS totals_trip_min_round
+FROM {{ ref(&#39;citi_trips_long&#39;) }}
+WHERE birth_year IN (
+  {% for year in years %}
+  {# this will separate the years 1995, 1997 and 2002 with a comma, nothing out of this world #}
+    {{ year }}{% if not loop.last %}, {% endif %}
+  {% endfor %}
+)
+GROUP BY birth_year</code></pre>
+<p>After running <code>dbt compile --select jinja</code>, the compiled <code>age3.sql</code> in the target directory is as follows:</p>
+<pre><code>SELECT birth_year, 
+SUM(trip_min_round) AS totals_trip_min_round
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+WHERE birth_year IN (
+  
+  
+    1995, 
+  
+  
+    1997, 
+  
+  
+    2002
+  
+)
+GROUP BY birth_year</code></pre>
+<p>For sure you get a leaner table which is far less verbose.</p>
+<div class="float">
+<img src="images/age3_query.png" alt="Age3 query" />
+<div class="figcaption">Age3 query</div>
+</div>
+<p>One more thing, you can create views from the SQL jinja queries by simply running the trusty <code>dbt run --select jinja</code>. This is the resulting output.</p>
+<pre><code>
+--snip--
+10:37:54  1 of 4 START sql view model nyc_bikes.age ...................................... [RUN]
+10:37:59  1 of 4 OK created sql view model nyc_bikes.age ................................. [CREATE VIEW (0 processed) in 4.98s]
+10:37:59  2 of 4 START sql view model nyc_bikes.age2 ..................................... [RUN]
+10:38:04  2 of 4 OK created sql view model nyc_bikes.age2 ................................ [CREATE VIEW (0 processed) in 4.26s]
+10:38:04  3 of 4 START sql view model nyc_bikes.age3 ..................................... [RUN]
+10:38:06  3 of 4 OK created sql view model nyc_bikes.age3 ................................ [CREATE VIEW (0 processed) in 2.77s]
+10:38:06  4 of 4 START sql view model nyc_bikes.years .................................... [RUN]
+10:38:09  BigQuery adapter: https://console.cloud.google.com/bigquery?project=dbt-project-437116&amp;j=bq:africa-south1:ed8f842b-8077-418b-8222-f5e4cb9438d3&amp;page=queryresults
+10:38:09  4 of 4 ERROR creating sql view model nyc_bikes.years ........................... [ERROR in 2.78s]
+10:38:09  
+10:38:09  Finished running 4 view models in 0 hours 0 minutes and 23.66 seconds (23.66s).
+10:38:09  
+10:38:09  Completed with 1 error and 0 warnings:
+10:38:09  
+10:38:09    Database Error in model years (models/jinja/years.sql)
+  Syntax error: Expected end of input but got keyword SELECT at [15:1]
+  compiled code at target/run/dbt_book/models/jinja/years.sql
+  
+--snip--</code></pre>
+<p>The same views can be called out in BigQuery like the <code>age3</code> view shown below.</p>
+<div class="float">
+<img src="images/age3_bigquery.png" alt="Age3 view in bigquery" />
+<div class="figcaption">Age3 view in bigquery</div>
+</div>
+<p>Now that the <code>{% if not loop.last %}</code> and its closing <code>{% endif %}</code> statements have ceased being cryptic, we can now sort out why the <code>years</code> view could not be created as seen in this <code>dbt run --select jinja</code> error.</p>
+<pre><code>10:38:09  4 of 4 ERROR creating sql view model nyc_bikes.years ........................... [ERROR in 2.78s]</code></pre>
+<p>If you look at the compiled SQL for the <code>years.sql</code> in the target directory, there are multiple SELECT statements each for a single year in the <code>years</code> variable. All those three SELECT statements cannot be run simoultaneously to produce a single table in BigQuery. But tweaking the <code>jinja/years.sql</code> a bit and using the <code>loop.last</code> statement will make all the difference. Here is the <code>jinja/years2.sql</code>.</p>
+<pre><code>
+{% set years = [1995, 1997, 2002] %}
+
+
+SELECT * 
+FROM {{ ref(&#39;citi_trips_long&#39;) }}
+
+WHERE birth_year IN (
+    {% for year in years %}
+    
+    {{ year }}
+    {% if not loop.last %},{% endif %}
+    {% endfor %}
+
+)</code></pre>
+<p>The <code>for</code> loop begins when we want to specify the years, jinja tells our computer to add a comma until the last one and the <code>endfor</code> statement tells our computer to break out of the looping. Here is the corresponding compiled SQL in the <code>years2.sql</code> in the target directory. When this query is pasted, into BigQuery, it only filters the rows matching to the specified birth years.</p>
+<pre><code>SELECT * 
+FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
+
+WHERE birth_year IN (
+    
+    
+    1995
+    ,
+    
+    
+    1997
+    ,
+    
+    
+    2002
+    
+    
+
+)</code></pre>
+<div class="float">
+<img src="images/years2_query.png" alt="Years 2 query" />
+<div class="figcaption">Years 2 query</div>
+</div>
+<p>When we run <code>dbt run --select jinja</code>, this time round the <code>years2</code> view is created.</p>
+<pre><code>--snip--
+11:45:10  5 of 5 START sql view model nyc_bikes.years2 ................................... [RUN]
+11:45:12  5 of 5 OK created sql view model nyc_bikes.years2 .............................. [CREATE VIEW (0 processed) in 2.29s]
+--snip--</code></pre>
 
 </div>
 </div>
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
+<a href="exposures.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="introduction.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -353,7 +592,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/index.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/15-jinja.Rmd",
 "text": "Edit"
 },
 "history": {

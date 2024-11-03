@@ -82,3 +82,7 @@ definitions-for-analyses
 exposures
 creating-an-exposure
 visualizing-the-exposure
+jinja
+a-simple-jinja-statement
+a-more-complex-jinja-query
+improvising-using-dry-principle
