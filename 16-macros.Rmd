@@ -1,0 +1,106 @@
+# Macros
+
+A macro in dbt is a reusable piece of code. That's it. A macro in dbt is what a function is to Python or JavaScript. The building block of a macro is the jinja template. Below is the structure of a dbt macro.
+
+```
+{% macro macro_name(arg1, arg2, ..., argN) %}
+
+    SQL logic here, using the parameters as needed.
+
+{% endmacro %}
+
+```
+
+You begin a macro with the name `macro` and end it with `endmacro`. Macros are defined in SQL files and stored inside the already shipped `macros` folder in dbt. 
+
+
+## Invoking a macro
+
+There are three ways to call a macro. They are:
+
+1. Using expression blocks
+
+2. Call blocks
+
+3. Run operation command 
+
+### Invoking a macro using expression blocks
+
+If the macro does not have any parameters, it can be invoked as a solo object like so:
+
+```
+{{ macro_name() }}
+
+```
+
+But if it has parameters, we have to call it with it's entire entourage.
+
+```
+{{ macro_name(arg1, arg2, argN) }}
+
+```
+
+### Invoke a macro using call blocks
+
+In this method, one can invoke a macro inside another macro. Here is the template.
+
+```
+{% call called_macro( arg1, arg2, . . argN) %}
+
+    Code to be accessed by the macro called_macro
+
+{% endcall %}
+
+```
+
+
+The above code calls a macro called `called_macro` and everything in between the `{ %call% }` and `{% endcall %}` statements can be accessed using the `caller()` method. 
+
+
+Here is an example of a macro.
+
+```
+{% macro select_all_columns_macro(table_name) %}
+
+    SELECT *
+    FROM {{ table_name }}
+    WHERE {{ caller() }}
+
+{% endmacro %}
+
+```
+
+Now, call the macro using call blocks.
+
+```
+{% call select_all_columns_macro('EVENT_TABLE') %}
+
+CREATE_DATE >= '2020-02-18'::DATE
+
+{%- endcall %}
+
+```
+
+When it is called it would render:
+
+```
+SELECT *
+FROM EVENT_TABLE
+WHERE CREATE_DATE >= '2020-02-18'::DATE
+```
+
+### Invoke a macro from the Command Line Interface (CLI)
+
+To run a macro from the CLI or terminal, we use the `dbt run-operation {macro} --args '{args}'{macro}:` command. The macro will run with the arguments provided. The below macro being run from the CLI selects all columns from a table called `my_table`.
+
+```
+dbt run-operation select_all_columns --args '{table_name: my_table}'
+
+```
+
+
+
+
+
+
+
