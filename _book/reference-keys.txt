@@ -86,3 +86,10 @@ jinja
 a-simple-jinja-statement
 a-more-complex-jinja-query
 improvising-using-dry-principle
+macros
+invoking-a-macro
+invoking-a-macro-using-expression-blocks
+invoke-a-macro-using-call-blocks
+invoke-a-macro-from-the-command-line-interface-cli
+simple-macro
+complex-macro

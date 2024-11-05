@@ -1,6 +1,6 @@
 # Macros
 
-A macro in dbt is a reusable piece of code. That's it. A macro in dbt is what a function is to Python or JavaScript. The building block of a macro is the jinja template. Below is the structure of a dbt macro.
+A [macro](https://www.phdata.io/blog/what-are-dbt-macros/?utm_source=pocket_saves) in dbt is a reusable piece of code. That's it. A macro in dbt is what a function is to Python or JavaScript. The building block of a macro is the jinja template. Below is the structure of a dbt macro.
 
 ```
 {% macro macro_name(arg1, arg2, ..., argN) %}
@@ -98,9 +98,44 @@ dbt run-operation select_all_columns --args '{table_name: my_table}'
 
 ```
 
+The above are ways to invoke a macro but for simplicity purposes, for life is too complicated to add more complications from something miniature as macros, we shall rely on the first method of invoking macros using expressions.
+
+
+## Simple macro
 
 
 
+## Complex macro
+
+```
+dbt compile --select age_trip_totals2
+```
+
+```
+19:53:44  Concurrency: 1 threads (target='dev')
+19:53:44  
+19:53:44  Compiled node 'age_trip_totals2' is:
+
+
+SELECT AGE, 
+SUM(trip_min_round) AS totals_trip_min_round
+FROM `dbt-project-437116`.`nyc_bikes`.`biker_age`
+WHERE AGE IN (
+  
+  
+    22, 
+  
+  
+    27, 
+  
+  
+    29
+  
+)
+GROUP BY AGE
+ORDER BY AGE DESC
+
+```
 
 
 
