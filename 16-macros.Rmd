@@ -259,6 +259,15 @@ Pasting the above in BigQuery gives us an aggregation of the total trip duration
 
 As mentioned earlier, and as show with a quick example of `age_trip_totals` model, we can create views of each of our macro reliant models. Since they are all within the jinja directory, the following does the trick: `dbt run --select jinja`. This should create a view of each of our models created in this chapter.
 
+Below is a snippet of the creation of views.
+
+```
+-- snip --
+20:15:05  8 of 8 START sql view model nyc_bikes.age_trip_totals2 ......................... [RUN]
+20:15:07  8 of 8 OK created sql view model nyc_bikes.age_trip_totals2 .................... [CREATE VIEW (0 processed) in 2.28s]
+-- snip --
+```
+
 ![All macro reliant models](./images/macro_reliant.png)
 
 
