@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 The dbt architecture | dbt Book</title>
+  <title>Chapter 18 Hooks | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 The dbt architecture | dbt Book" />
+  <meta property="og:title" content="Chapter 18 Hooks | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 The dbt architecture | dbt Book" />
+  <meta name="twitter:title" content="Chapter 18 Hooks | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="introduction.html"/>
-<link rel="next" href="data-storage.html"/>
+<link rel="prev" href="macros.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -299,173 +299,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="the-dbt-architecture" class="section level1 hasAnchor" number="3">
-<h1><span class="header-section-number">Chapter 3</span> The <code>dbt</code> architecture<a href="the-dbt-architecture.html#the-dbt-architecture" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In my first time working with dbt, I was overwhelmed with its architecture. Similarly to Django, if one didn’t understand a particular component, it would be enough to break your app. Same case with dbt. Sometimes it feels like that individual who is sitting before that large screen in a nuclear power plant and in charge of all the controls. Sometimes it feels like that, like you have to be on top of everything in dbt, like the chap in that nuclear power plant who has to be on top of all the dials and valves.</p>
-<p>The main components that make up dbt, and which are used in most cases are:</p>
-<ul>
-<li><p>models</p></li>
-<li><p>tests</p></li>
-<li><p>documentation</p></li>
-<li><p>sources</p></li>
-</ul>
-<p>Let’s go through each one.</p>
-<div id="models" class="section level3 hasAnchor" number="3.0.1">
-<h3><span class="header-section-number">3.0.1</span> Models<a href="the-dbt-architecture.html#models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>This is the component of dbt that you will most likely work with. In dbt, a model is simply a SQL statement. As simple as that. dbt will use the SQL statements to perform the transformations in your data warehouse that have been defined in your SQL statement. For example, say I want to create a new column of the table in my Google BigQuery. I will create a SQL statement that does just that. That SQL statement is what is referred to as a model in dbt.</p>
-<p>Below is an example of a model that creates a table called <code>customers</code>. The model is saved as <code>customers.sql</code>.</p>
-<pre><code>with customer_orders as (
-    select
-        customer_id,
-        min(order_date) as first_order_date,
-        max(order_date) as most_recent_order_date,
-        count(order_id) as number_of_orders
+<div id="hooks" class="section level1 hasAnchor" number="18">
+<h1><span class="header-section-number">Chapter 18</span> Hooks<a href="hooks.html#hooks" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>At one time, I posed a question to a well-versed data engineer of why the technological space seems to be awash with exotic outlandish names. Although I can’t remember what he replied, but it was after a hearty laughter. Hooks in dbt seems to fit into the calibre of these outlandish names, for there is nothing regarding its purpose in dbt which seems to suggest it will lure and capture your data, read the prey in this case.</p>
+<p>You could take hooks as customized SQL models that are out of the box when it comes to dbt. There are various forms of hooks, namely:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>pre-hook</code> - executed before a model, snapshot or seed is built.</p></li>
+<li><p><code>post-hook</code> - executed after a model, snapshot or seed is built.</p></li>
+<li><p><code>on-run-start</code> - executed at the start of implementing the following code executions: <code>dbt build</code>, <code>dbt compile</code>, <code>dbt docs generate</code>, <code>dbt run</code>, <code>dbt seed</code>, <code>dbt snapshot</code> or <code>dbt test</code>.</p></li>
+<li><p><code>on-run-end</code> - executed at the end of the following code executions: <code>dbt build</code>, <code>dbt compile</code>, <code>dbt docs generate</code>, <code>dbt run</code>, <code>dbt seed</code>, <code>dbt snapshot</code> or <code>dbt test</code>.</p></li>
+</ol>
+<p>A confession to make: since I have minimal experience using hooks, I shall play in the ‘safe’ zone.</p>
+<div id="post-hooks" class="section level2 hasAnchor" number="18.1">
+<h2><span class="header-section-number">18.1</span> Post-hooks<a href="hooks.html#post-hooks" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The format of writing a hook is:</p>
+<pre><code>{{ config(
+  post_hook=[
+    &quot;&lt;Place your SQl query here&gt;&quot;
+  ]
+) }}
 
-    from jaffle_shop.orders
-
-    group by 1
-)
-
-select
-    customers.customer_id,
-    customers.first_name,
-    customers.last_name,
-    customer_orders.first_order_date,
-    customer_orders.most_recent_order_date,
-    coalesce(customer_orders.number_of_orders, 0) as number_of_orders
-
-from jaffle_shop.customers
-
-left join customer_orders using (customer_id)</code></pre>
-</div>
-<div id="tests" class="section level3 hasAnchor" number="3.0.2">
-<h3><span class="header-section-number">3.0.2</span> Tests<a href="the-dbt-architecture.html#tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>“Do not put me to test”, is a familiar statement we have heard from an already impatient person. However, dbt allows us to test our data and see if it meets certain assertions. In other words, does our data meet the requirements that have been set for it?</p>
-<p>dbt offers two ways to perform your tests: 1) generic and, 2) custom tests. Generic tests involve just using a pre-defined test that comes packaged in dbt. For example, for every field key you place in a yml file in dbt, you can specify which kind of test to perform on that particular field from the following options: <code>unique</code>, <code>not_null</code>, <code>accepted_values</code> and <code>relationships</code>.</p>
-<ul>
-<li><code>unique</code> - the values should be radically distinctive all through</li>
-<li><code>not_null</code> - there shouldn’t be a missing value in the particular column name in the table
-<em><code>accepted_values</code> - only the values contained in the accepted values key will be considered valid. Anything outside of this will result in an error
-</em><code>relationships</code> - the values in this field can be referenced in a different column elsewhere in the table or on a different table altogether.</li>
-</ul>
-<p>An example of a generic test is below:</p>
-<pre><code>version: 2
-
-models:
-  - name: orders
-    columns:
-      - name: order_id
-        tests:
-          - unique
-          - not_null
-      - name: status
-        tests:
-          - accepted_values:
-              values: [&#39;placed&#39;, &#39;shipped&#39;, &#39;completed&#39;, &#39;returned&#39;]
-      - name: customer_id
-        tests:
-          - relationships:
-              to: ref(&#39;customers&#39;)
-              field: id</code></pre>
-<p>For custom tests, these involve one creating a SQL model and referencing it in a yml file using Jinja template language.</p>
-<p>For example, here is a custom test written a SQL file called <code>transaction_limit_test.sql</code>.</p>
-<pre><code>-- tests/transaction_limit_test.sql
-select user_id, sum(transaction_amount) as total_spent
-from {{ ref(&#39;transactions&#39;) }}
-group by user_id
-having total_spent &gt; 10000  -- Assuming the limit is 10,000
-
+SELECT * FROM raw_table
 </code></pre>
-<p>The test is referenced in a yml file and called over a column called <code>transactions</code>.</p>
-<pre><code>models:
-  - name: transactions
-    tests:
-      - transaction_limit_test
-</code></pre>
-</div>
-<div id="documentation" class="section level3 hasAnchor" number="3.0.3">
-<h3><span class="header-section-number">3.0.3</span> Documentation<a href="the-dbt-architecture.html#documentation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Now the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the <code>description</code> key is used.</p>
-<p>For example here is a description of a field called <code>event_id</code> inside a yml file.</p>
-<pre><code>version: 2
-
-models:
-  - name: events
-    description: This table contains clickstream events from the marketing website
-
-    columns:
-      - name: event_id
-        description: The D-day is the Deed day
-        tests:
-          - unique
-          - not_null
-</code></pre>
-<p>Documentation will be performed where you have placed your tests. There is also a more complex, but scalable manner of writing descriptions. It uses jinja template tags. It works well for large data where the descriptions are many or the descriptions are shared across several tables.</p>
-<p>A short example of the jinja templates’ documentation is this. I will write the description in a different file, a markdown file (<code>.md</code>) for the matter, other than the one containing my field names. The descriptions will be like so:</p>
-<pre><code>{% docs table_events %}
-
-I am not so very robust, but I’ll do the best I can.
-
-Some text here
-
-1) and here
-2) and here
-3) and also here
-
-{% enddocs %}
-</code></pre>
-<p>So when one returns to their yml file, they will reference the particular field of interest with the above description like so:</p>
-<pre><code>version: 2
-
-models:
-  - name: events
-    description: &#39;{{ doc(&quot;table_events&quot;) }}&#39;
-
-    columns:
-      - name: event_id
-        description: The D-day is the Deed day
-        tests:
-            - unique
-            - not_null
-</code></pre>
-</div>
-<div id="sources" class="section level3 hasAnchor" number="3.0.4">
-<h3><span class="header-section-number">3.0.4</span> Sources<a href="the-dbt-architecture.html#sources" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><code>sources</code> enable one query the data in your datawarehouse. Once you specify the existing table in your datawarehouse under the <code>sources</code> key, you can access every data from within this table using SQL. To work with a source table, you first have to wrap it inside a <code>{{ source(table-name) }}</code> jinja template. Below is an example of declaring a source.</p>
-<pre><code>version: 2
-
-sources:
-  - name: jaffle_shop
-    database: raw  
-    schema: jaffle_shop  
-    tables:
-      - name: orders
-      - name: customers
-
-  - name: stripe
-    tables:
-      - name: payments
-</code></pre>
-<p>You can reference the above source inside a SQL model like so:</p>
-<pre><code>select
-  ...
-
-from {{ source(&#39;jaffle_shop&#39;, &#39;orders&#39;) }}
-
-left join {{ source(&#39;jaffle_shop&#39;, &#39;customers&#39;) }} using (customer_id)
-
-</code></pre>
-<p>dbt will thereafter know that it will perform some operations using data from the <code>orders</code> and <code>customers</code> data from the <code>jaffle_shop</code> –the origin of all our data in this example.</p>
+<p>On how to write hooks, see <a href="https://docs.getdbt.com/docs/build/hooks-operations">here</a> and <a href="https://www.y42.com/docs/dbt-models/hooks">here</a>.</p>
 
 </div>
 </div>
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="data-storage.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="macros.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -496,7 +369,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/02-dbt-structure.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/17-hooks.Rmd",
 "text": "Edit"
 },
 "history": {

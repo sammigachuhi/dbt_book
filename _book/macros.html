@@ -29,7 +29,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-06" />
+<meta name="date" content="2024-11-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,7 +37,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="jinja.html"/>
-
+<link rel="next" href="hooks.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -275,6 +275,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="17.2" data-path="macros.html"><a href="macros.html#simple-macro"><i class="fa fa-check"></i><b>17.2</b> Simple macro</a></li>
 <li class="chapter" data-level="17.3" data-path="macros.html"><a href="macros.html#complex-macro"><i class="fa fa-check"></i><b>17.3</b> Complex macro</a></li>
 </ul></li>
+<li class="chapter" data-level="18" data-path="hooks.html"><a href="hooks.html"><i class="fa fa-check"></i><b>18</b> Hooks</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="hooks.html"><a href="hooks.html#post-hooks"><i class="fa fa-check"></i><b>18.1</b> Post-hooks</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -475,6 +479,11 @@ ORDER BY AGE DESC
 <div class="figcaption">Age trip total 2 view</div>
 </div>
 <p>As mentioned earlier, and as show with a quick example of <code>age_trip_totals</code> model, we can create views of each of our macro reliant models. Since they are all within the jinja directory, the following does the trick: <code>dbt run --select jinja</code>. This should create a view of each of our models created in this chapter.</p>
+<p>Below is a snippet of the creation of views.</p>
+<pre><code>-- snip --
+20:15:05  8 of 8 START sql view model nyc_bikes.age_trip_totals2 ......................... [RUN]
+20:15:07  8 of 8 OK created sql view model nyc_bikes.age_trip_totals2 .................... [CREATE VIEW (0 processed) in 2.28s]
+-- snip --</code></pre>
 <div class="float">
 <img src="images/macro_reliant.png" alt="All macro reliant models" />
 <div class="figcaption">All macro reliant models</div>
@@ -482,20 +491,13 @@ ORDER BY AGE DESC
 
 </div>
 </div>
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="jinja.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="jinja.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="hooks.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

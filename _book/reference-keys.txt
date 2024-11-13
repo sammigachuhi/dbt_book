@@ -93,3 +93,5 @@ invoke-a-macro-using-call-blocks
 invoke-a-macro-from-the-command-line-interface-cli
 simple-macro
 complex-macro
+hooks
+post-hooks
