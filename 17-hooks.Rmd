@@ -30,7 +30,7 @@ SELECT * FROM raw_table
 
 ```
 
-On how to write hooks, see [here](https://docs.getdbt.com/docs/build/hooks-operations) and [here](https://www.y42.com/docs/dbt-models/hooks).
+We tried creating a simple post-hook but no matter what we tried, `dbt` kept throwing back errors. Nevertheless, on more on how to set up hooks, see  [here](https://docs.getdbt.com/docs/build/hooks-operations) and [here](https://www.y42.com/docs/dbt-models/hooks).
 
 
 
