@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Documentation | dbt Book</title>
+  <title>Chapter 19 Hosting dbt generated documentation | dbt Book</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Documentation | dbt Book" />
+  <meta property="og:title" content="Chapter 19 Hosting dbt generated documentation | dbt Book" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Documentation | dbt Book" />
+  <meta name="twitter:title" content="Chapter 19 Hosting dbt generated documentation | dbt Book" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="models-1.html"/>
-<link rel="next" href="tests-1.html"/>
+<link rel="prev" href="hooks.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -309,258 +309,65 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="documentation-1" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Documentation<a href="documentation-1.html#documentation-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In the book <em>The voyages and adventures of Captain Hatteras</em> the survivors of a ship whose expedition was to the North Pole relied on the writing of former captains, explorers and sailsmen to not only find the best possible route to the North Pole, but also the hazards and the places where coal was hidden for future explorers like they who were keen on finding the coveted North Pole. So how does this tie to data engineering and dbt? Well, in any digital organization, there is sure to be some turnover. There is sure to be some new chap who would want to wrap their heads around what the organization was doing, and the data was using. Documentation is one way to enable these experts start on a sure footing, but it is rarely the norm. The good thing with dbt is that it provides a way to create documentation at the same place you write code to transform it, not in a separed pdf<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> as we all do!</p>
-<div id="the-yml-files" class="section level2 hasAnchor" number="8.1">
-<h2><span class="header-section-number">8.1</span> The yml files<a href="documentation-1.html#the-yml-files" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In dbt, yml files can do a lot of things. One of the stuff it does is documentation and creation of tests for your data. But first, here are the rules of writing a yml file.</p>
-<ol style="list-style-type: decimal">
-<li><p>Indents should be two spaces</p></li>
-<li><p>List items should be indented</p></li>
-<li><p>Use a new line to separate list items that are dictionaries where appropriate</p></li>
-</ol>
-<p>For this case, we shall use the yml files to create documentation for our data. There is hardly any information on a rule-based methodology to create a <code>yml</code> file. However, for documentation and testing purposes, we already have a template to start us off with. This is the <code>schema.yml</code> file inside the <code>models/example</code> directory.</p>
-<pre><code>version: 2
-
-models:
-  - name: my_first_dbt_model
-    description: &quot;A starter dbt model&quot;
-    columns:
-      - name: id
-        description: &quot;The primary key for this table&quot;
-        data_tests:
-          - unique
-          - not_null
-
-  - name: my_second_dbt_model
-    description: &quot;A starter dbt model&quot;
-    columns:
-      - name: id
-        description: &quot;The primary key for this table&quot;
-        data_tests:
-          - unique
-          - not_null</code></pre>
-<p>Let’s go through the above structure briefly.</p>
-<div id="version-2" class="section level3 hasAnchor" number="8.1.1">
-<h3><span class="header-section-number">8.1.1</span> <code>version: 2</code><a href="documentation-1.html#version-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>There is a story behind this. It is that at the very beginning of dbt development, the structure was very different and inserting <code>version: 2</code> enabled developers know which version of dbt they were working. Don’t expect a <code>version: 3</code> to come any time soon, but this is just a required necessity.</p>
+<div id="hosting-dbt-generated-documentation" class="section level1 hasAnchor" number="19">
+<h1><span class="header-section-number">Chapter 19</span> Hosting dbt generated documentation<a href="hosting-dbt-generated-documentation.html#hosting-dbt-generated-documentation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Imagine you have put blood, sweat and tears into your book, you have said everything you wanted to say, divulged what was secret, and unearthed what was incomprehensible. Except for one thing: you can’t publish it. That would be a disaster, a mockery of your efforts, yet that would be our portion if we had not published the dbt documentation we had created in Chapter 7. After all is said and done, it has to be printed somewhere, and obviously the world wide web is our playground.</p>
+<p>There are various ways to publish your dbt generated documentation, such as in Github, Google Cloud and Azure Devops. We would have loved to host our dbt generated documentation in Google cloud as that would have put us in the league of astute developers, but the process and costs were a bit too much. Therefore, we slid back to <a href="https://medium.com/dbt-local-taiwan/host-dbt-documentation-site-with-github-pages-in-5-minutes-7b80e8b62feb">Github</a> which is easier and totally free.</p>
+<div id="preparations" class="section level2 hasAnchor" number="19.1">
+<h2><span class="header-section-number">19.1</span> Preparations<a href="hosting-dbt-generated-documentation.html#preparations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="creating-a-gh-pages-branch" class="section level3 hasAnchor" number="19.1.1">
+<h3><span class="header-section-number">19.1.1</span> Creating a <code>gh-pages</code> branch<a href="hosting-dbt-generated-documentation.html#creating-a-gh-pages-branch" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If hosting dbt documentation were easy, then we would have simply done so from the <code>main</code> branch. However, including taking into account the process of hosting on a more sophisticated platform such as Google Cloud, hosting dbt process seems like a thing for the top-tier tech gurus. It is for this reason we have to create a separate branch, by the name of <code>gh-pages</code>. Github can autodetect the <code>index.html</code> file under this branch automatically compared to a branch by any other name.</p>
+<p>To create a new branch run <code>git checkout --orphan gh-pages</code>.</p>
+<p>The purpose of the <code>--orphan</code> command is to create a branch from a clean slate; it has no connection to previous commits.</p>
 </div>
-<div id="models-2" class="section level3 hasAnchor" number="8.1.2">
-<h3><span class="header-section-number">8.1.2</span> <code>models</code><a href="documentation-1.html#models-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Remember when we said that a model in dbt is simply a sql file? Well, next to the <code>name</code> key which is under this key you specify the name of your sql file, minus the <code>.sql</code> extension.</p>
+<div id="tracking-the-target-folder" class="section level3 hasAnchor" number="19.1.2">
+<h3><span class="header-section-number">19.1.2</span> Tracking the <code>target</code> folder<a href="hosting-dbt-generated-documentation.html#tracking-the-target-folder" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Now run <code>dbt docs generate</code> in order to create the dependency files of your dbt documentation under the <code>target</code> folder. Once the <code>catalog.json</code> is rewritten, we add this branch for tracking but we include the <code>-f</code> keyword to make the files under the <code>target</code> branch trackable. This is because by default they are set to not be tracked right within <code>.gitignore</code> file.</p>
+<pre><code>git add -f target</code></pre>
+<p>Now let’s commit our <code>target</code> folder contents within our local <code>gh-pages</code> branch.</p>
+<pre><code>git commit -m &#39;hosting dbt docs in github&#39; target</code></pre>
+<p>Our terminal did get a huge list of outputs!</p>
 </div>
-<div id="description" class="section level3 hasAnchor" number="8.1.3">
-<h3><span class="header-section-number">8.1.3</span> <code>description</code><a href="documentation-1.html#description" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>This is where you insert the description of your table.</p>
-</div>
-<div id="columns" class="section level3 hasAnchor" number="8.1.4">
-<h3><span class="header-section-number">8.1.4</span> <code>columns</code><a href="documentation-1.html#columns" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>These are the fields contained in your table. You name them here and under each column are three mappings.</p>
-<ul>
-<li><p><code>name</code> - this is the name of the field in your table. In other words, it is the column name.</p></li>
-<li><p><code>description</code> - this is a short explanation of your column.</p></li>
-<li><p><code>data_test</code> - the kind of tests that you would like to perform on your field are inserted here. dbt comes with generic tests such as <code>unique</code>, <code>not_null</code> and <code>integer</code> but you can create your own custom tests too.</p></li>
-</ul>
+<div id="pushing-to-github" class="section level3 hasAnchor" number="19.1.3">
+<h3><span class="header-section-number">19.1.3</span> Pushing to Github<a href="hosting-dbt-generated-documentation.html#pushing-to-github" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Next, we only want to take the contents of our <code>target</code> folder and push them into the <code>gh_pages</code> branch. We use the following code: <code>git subtree push --prefix target origin gh-pages</code>. A subtree is like a sub-folder in Github. We use subtree when we want to save certain directories from one repository into another. In our case we only want the contents of the <code>target</code> folder and this we specified using the <code>--prefix</code> keyword. Sometimes, one could have been saving their work at a higher level, such as yours truly. We got the below error when we tried:</p>
+<pre><code>You need to run this command from the toplevel of the working tree.</code></pre>
+<p>In this case, just specify the top-level folder and the target folder, separated with slash(es) like so:</p>
+<pre><code>git subtree push --prefix dbt_book/target origin gh-pages</code></pre>
+<p>Once you receive a message that the push operation was successful, you can checkout to the main branch like so: <code>git checkout main</code> or for any other branch for that matter.</p>
 </div>
 </div>
-<div id="definition-for-our-model" class="section level2 hasAnchor" number="8.2">
-<h2><span class="header-section-number">8.2</span> Definition for our model<a href="documentation-1.html#definition-for-our-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Alright, having gone through the template, we can create our own <code>yml</code> file under the <code>my_models</code> directory. Let’s call it <code>my_models.yml</code>. Copy past the yml structure from <code>schema.yml</code> to the <code>my_models.yml</code> and let the first yml structure for <code>citi_trips_minutes.sql</code> look like below.</p>
-<pre><code>version: 2
-
-models:
-  - name: citi_trips_minutes
-    description: &quot;This is a table with an extra column showing the trip duration in minutes&quot;
-    columns:
-      - name: tripduration
-        description: &quot;Trip Duration (in seconds)&quot;
-
-      - name: starttime
-        description: &quot;Start Time, in NYC local time.&quot;
-      
-      - name: stoptime
-        description: &quot;Stop Time, in NYC local time.&quot;
-
-      - name: start_station_id
-        description: &quot;Start Station ID&quot;
-      
-      - name: start_station_name
-        description: &quot;Start Station Name&quot;
-
-      - name: start_station_latitude
-        description: &quot;Start Station Latitude&quot;
-      
-      - name: start_station_longitude
-        description: &quot;Start Station Longitude&quot;
-
-      - name: end_station_id
-        description: &quot;End Station ID&quot;
-
-      - name: end_station_name
-        description: &quot;End Station Name&quot;
-
-      - name: end_station_latitude
-        description: &quot;End Station Latitude&quot;
-
-      - name: end_station_longitude
-        description: &quot;End Station Longitude&quot;
-      
-      - name: bike_id
-        description: &quot;Bike ID&quot;
-      
-      - name: usertype
-        description: &quot;User Type (Customer = 24-hour pass or 7-day pass user, Subscriber = Annual Member)&quot;
-
-      - name: birth_year
-        description: &quot;Year of Birth&quot;
-
-      - name: gender
-        description: &quot;Gender (unknown, male, female)&quot;
-
-      - name: customer_plan
-        description: &quot;The name of the plan that determines the rate charged for the trip&quot;
-
-      - name: trip_duration_min
-        description: &quot;The trip duration in minutes&quot;</code></pre>
-<p>What we’ve done is quite straightforward. We have simply typed out the descriptions in a verbose manner where they needed to be, next to the <code>description</code> mapping key.</p>
-<p>However, imagine you were working with hundreds of models which use similar definitions. Would you have the nerve to copy paste every definition to its respective model? I don’t think so. There is a function by the name of the <code>docs()</code> function which can reference to descriptions in a separate markdown file.</p>
-</div>
-<div id="using-the-doc-function" class="section level2 hasAnchor" number="8.3">
-<h2><span class="header-section-number">8.3</span> Using the <code>doc</code> function<a href="documentation-1.html#using-the-doc-function" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>To use the <code>doc()</code> function, we write our definitions in a separate markdown <code>(.md)</code> file and place the descriptions within <code>{% docs &lt;field-name&gt; %}</code> <Description-inside-here> <code>{% enddocs %}</code> tags. For this tutorial, we created three markdown tables.</p>
-<ul>
-<li><p><code>references.md</code> - this contains the descriptions for our column names of interest</p></li>
-<li><p><code>tables.md</code> - contains the descriptions for our tables of interest</p></li>
-<li><p><code>overview.md</code> - contains the text that will go to the overview page</p></li>
-</ul>
-<p>Here is what our <code>references.md</code> contains. As you can see, we have provided some textual information for some of our column names. We can also add some more style to our descriptions since they are now on a separate markdown. For example we could insert links, make the text italic, and bold if you wish!</p>
-<pre><code>{% docs tripduration %}
-
-Trip Duration (in seconds). Like:
-
-- How long did the trip take?
-- What is the time in seconds?
-- More info on time, see [here](https://www.poemhunter.com/poem/time-xxi/)
-
-*https://www.poemhunter.com/poem/time-xxi/*
-
-{% enddocs %}
-
-{% docs starttime %}
-
-Start Time, in NYC local time. As accurate as could ever be.
-
-{% enddocs %}
-
---snip--</code></pre>
-<p>The <code>tables.md</code> just contains a description of our <code>citi_trips_round</code> table.</p>
-<pre><code>{% docs citi_trips_round %}
-
-This table contains the trip duration in minutes to one decimal place only. 
-
-{% enddocs %}</code></pre>
-<p>Now, in order to enable dbt reference these descriptions from our yml file, we would simply use the <code>doc ()</code> function enclosed in single quotes and curly brackets like so:</p>
-<pre><code>- name: citi_trips_round
-    description: &#39;{{ doc(&quot;citi_trips_round&quot;) }}&#39;
-    columns:
-      - name: tripduration
-        description: &#39;{{ doc(&quot;tripduration&quot;) }}&#39;
-
-      - name: starttime
-        description: &#39;{{ doc(&quot;starttime&quot;) }}&#39;
-      
-      - name: stoptime
-        description: &#39;{{ doc(&quot;stoptime&quot;) }}&#39;
-
-      - name: start_station_id
-        description: &quot;Start Station ID&quot;
-        
---snip--</code></pre>
-<p>The file saved as <code>overview.md</code> in our project will be used to display the home page of our dbt documentation website. The markdowns created so far, including the one for overview, can go with any other name provided the wordings in the <code>docs</code> tags are reference correctly. A rose by any other name is still a rose!</p>
-<p>Back to the overview page. The overview page is simply the home page, but in dbt we use a slightly different syntax for the overview page, like so:</p>
-<pre><code>{% docs __overview__ %}
-
-Some more text here...
-
-{% enddocs %}
-</code></pre>
-<p>Therefore, here is some dummy text for our overview page.</p>
-<pre><code>{% docs __overview__ %}
-
-# Learning dbt
-
-Learning is not merely the acquisition of knowledge, but the cultivation of the mind. It is through the active engagement of our intellect that we develop the capacity for critical thought, discernment, and wisdom. 
-
---snip--
-
-{% enddocs %}
-</code></pre>
-</div>
-<div id="images-in-dbt-documentation" class="section level2 hasAnchor" number="8.4">
-<h2><span class="header-section-number">8.4</span> Images in dbt documentation<a href="documentation-1.html#images-in-dbt-documentation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>They say an image is worth a thousand words. Reading plain text can be boring, and saving it efficiently can also be painstaking. In dbt, we store images in a folder called <code>assets</code>. Ideally, one can create any folder in dbt to store images provided you reference it correctly in the documentation. However, it is preferably and strongly advised by the dbt team to store it inside an <code>assets</code> folder for versioning purposes. Furthermore, images in dbt, once run as part of your document generation, will also appear under the <code>targets/</code> folder just like your SQL models.</p>
-<p>Therefore, going with the recommended approach, create an <code>assets/</code> folder under <code>dbt_book</code>. Place you image in there.</p>
-<p>Go to the <code>dbt_projects.yml</code> file and create a new line with the following code:</p>
-<pre><code>asset-paths: [&quot;assets&quot;]</code></pre>
-<p>This path tells dbt to copy any images within <code>assets</code> into the <code>target</code> directory. Any image in a different directory will not get copied into the <code>target</code> directory when documents are generated.</p>
-<p>Finally, as the missing piece to the puzzle, insert a reference to your image in the <code>overview.md</code> file.</p>
-<pre><code>![Example image](assets/image_example.jpg)
-</code></pre>
-<p>One can also create <a href="https://docs.getdbt.com/docs/build/documentation#setting-a-custom-overview">custom overviews</a> for the dbt packages they used. However, since we didn’t use them, they weren’t placed here.</p>
-<p>Here is our complete <code>overview.md</code> file.</p>
-<pre><code>{% docs __overview__ %}
-
-# Learning dbt
-
-Learning is not merely the acquisition of knowledge, but the cultivation of the mind. It is through the active engagement of our intellect that we develop the capacity for critical thought, discernment, and wisdom. By examining the world around us with curiosity and rigor, we uncover the underlying principles that govern its workings. This intellectual pursuit not only broadens our understanding but also equips us to navigate life&#39;s challenges with greater clarity and purpose.
-
-![Example image](assets/image_example.jpg)
-
-Some more text here...
-
-{% enddocs %}
-</code></pre>
-</div>
-<div id="generating-the-document" class="section level2 hasAnchor" number="8.5">
-<h2><span class="header-section-number">8.5</span> Generating the document<a href="documentation-1.html#generating-the-document" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Now is the time where we ignite the rocket engines and shoot off. To generate a dbt documentation, first run <code>dbt docs generate</code>. This command tells dbt to compile the necessary information of your project into the <code>catalog.json</code> and <code>manifest.json</code> files. The ignition key for our documentation generation is <code>dbt docs serve</code>. dbt will generate a list of outputs and create a popup providing the browser link to open up your documentation. You can click on the popup or copy-paste the link. In this case, we used the former. Our documentation is in the host: <code>localhost:8080/</code>.</p>
+<div id="hosting-on-github" class="section level2 hasAnchor" number="19.2">
+<h2><span class="header-section-number">19.2</span> Hosting on Github<a href="hosting-dbt-generated-documentation.html#hosting-on-github" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>If you go to your specific repository on Github, such as <code>dbt_book_codes</code> in our case, you can use the dropdown right under the repository name to move into a different branch.</p>
 <div class="float">
-<img src="images/overview_page.png" alt="Model page" />
-<div class="figcaption">Model page</div>
+<img src="images/gh-pages-branch.png" alt="gh-pages branch" />
+<div class="figcaption">gh-pages branch</div>
 </div>
+<p>Once you are within the <code>gh-pages</code> branch, go to the <strong>Settings</strong> tab, and click on the <strong>Pages</strong> menu. You will find that Github already auto-detected the <code>index.html</code> file and proceeded to create a hosted webpage going by the name of your repository.</p>
 <div class="float">
-<img src="images/model_page.png" alt="Models page" />
-<div class="figcaption">Models page</div>
+<img src="images/gh-pages-hosting.png" alt="Hosting gh-pages" />
+<div class="figcaption">Hosting gh-pages</div>
 </div>
-<p>If you go to the <code>targets</code> directory, our image(s) will be there!</p>
-<p>There is also one more cool functionality of the dbt documentation. On the bottom right, there is a turquoise button for showing the lineage graph for each model. If you click on any model, such as <code>my_second_dbt_model</code>, you will see it shows a dependency on <code>my_first_dbt_model</code>. If you have worked on a model that has several dependencies, or children, the model will most likely be more complex. A good example will be for the <code>citi_trips_long</code> model.</p>
-<div class="float">
-<img src="images/lineage_graph.png" alt="Lineage graph" />
-<div class="figcaption">Lineage graph</div>
-</div>
-<p>It is highly encouraged to play around with the buttons <strong>resources</strong>, <strong>packages</strong>, <strong>tags</strong>, <strong>–select</strong> and <strong>–exclude</strong>. For the <strong>select</strong> button, play around with inserting <code>+</code> both before and after the name of the model. Clue: it has to do with showing or hiding the dependencies and/or children.</p>
-<p>Below is an example of the <code>citi_trips_long</code> model, which has more than one dependency.</p>
-<div class="float">
-<img src="images/lineage_graph2.png" alt="A model with more than one dependency" />
-<div class="figcaption">A model with more than one dependency</div>
-</div>
+<p>Click on the link to go to your hosted dbt documentation. Access the dbt generated documentation for this course from <a href="https://sammigachuhi.github.io/dbt_book_codes/#!/overview">here</a>.</p>
 
 </div>
 </div>
-<div class="footnotes">
-<hr />
-<ol start="2">
-<li id="fn2"><p>Portable Document Format<a href="documentation-1.html#fnref2" class="footnote-back">↩︎</a></p></li>
-</ol>
-</div>
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="models-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="tests-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="hooks.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -591,7 +398,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/07-documentation.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/18-dbt-publishing.Rmd",
 "text": "Edit"
 },
 "history": {
