@@ -14,7 +14,7 @@ The main components that make up dbt, and which are used in most cases are:
 
 Let's go through each one.
 
-### Models 
+## Models 
 
 This is the component of dbt that you will most likely work with. In dbt, a model is simply a SQL statement. As simple as that. dbt will use the SQL statements to perform the transformations in your data warehouse that have been defined in your SQL statement. For example, say I want to create a new column of the table in my Google BigQuery. I will create a SQL statement that does just that. That SQL statement is what is referred to as a model in dbt.
 
@@ -46,7 +46,7 @@ from jaffle_shop.customers
 left join customer_orders using (customer_id)
 ```
 
-### Tests
+## Tests
 
 "Do not put me to test", is a familiar statement we have heard from an already impatient person. However, dbt allows us to test our data and see if it meets certain assertions. In other words, does our data meet the requirements that have been set for it? 
 
@@ -105,7 +105,7 @@ models:
 
 ```
 
-### Documentation
+## Documentation
 
 Now the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the `description` key is used. 
 
@@ -165,7 +165,7 @@ models:
 
 ```
 
-### Sources 
+## Sources 
 
 `sources` enable one query the data in your datawarehouse. Once you specify the existing table in your datawarehouse under the `sources` key, you can access every data from within this table using SQL. To work with a source table, you first have to wrap it inside a `{{ source(table-name) }}` jinja template. Below is an example of declaring a source.
 
