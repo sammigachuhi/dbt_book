@@ -23,7 +23,7 @@ All the code used in this book has been uploaded to this [Github repository](htt
 
 https://github.com/sammigachuhi/dbt_book_codes 
 
-The online version of the book is available from this [link](https://bookdown.org/sammigachuhi/dbt_book/). The online book is better than the pdf as it does not have some pieces of code clipped out at the edges.
+The online version of the book is available from this [link](https://bookdown.org/sammigachuhi/dbt_book/). The online book is better than the Portable Document Format (PDF) version as the latter has some pieces of code clipped out on the sides.
 
 https://bookdown.org/sammigachuhi/dbt_book/
 
