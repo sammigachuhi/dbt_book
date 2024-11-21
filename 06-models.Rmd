@@ -1,14 +1,12 @@
 # Models
 
-If you have gone through previous chapters, you will by now know that a model in dbt is any SQL file. It is what dbt will use to build tables, views and any other transformations in your data warehouse (read BigQuery).
-
-In dbt, models are executed with the hit and run command: `dbt run`.
+A model in dbt is any SQL file. It is what dbt will use to build tables, views and any other transformations in your data warehouse. In dbt, models are executed with the hit and run command: `dbt run`.
 
 ## Running a model
 
-dbt did us a very big favour during installation, it came with two models already created for us. These are namely the `my_first_dbt_model.sql` and `my_second_dbt_model.sql` within the `models/example` directory. It also provided a `schema.yml` file within the same directory which provides definitions for the model's schema. 
+dbt did us a very big favour during installation; it came with two models already created for us. These are namely the `my_first_dbt_model.sql` and `my_second_dbt_model.sql` within the `models/example` directory. It also provided a `schema.yml` file within the same directory which provides definitions for the models' schema. 
 
-Alright. Assuming that you are within the `dbt_book` subdirectory and your virtual environment `(venv)` already activated, type the following in your terminal `dbt run`. 
+Alright. Assuming that you are within the `dbt_book` subdirectory and your virtual environment `(venv)` already activated, type `dbt run` in your terminal like so:
 
 
 ```
@@ -21,7 +19,7 @@ This will initiate a series of printouts. However, before we go to the expected 
 404 Not found: Dataset dbt-project-437116:nyc_bikes was not found in location US; reason: notFound, message: Not found: Dataset dbt-project-437116:nyc_bikes was not found in location US
 ```
 
-When we were initializing our project using `dbt init` we selected option 1 for US since there was no other option apart from EU. Luckily, there is a work around to this. It involves editing the `projects.yml` file. If you run `dbt debug` it will also show the path of your `projects.yml` alongside other configuration information. 
+When we were initializing our project using `dbt init` we selected option 1 for US. Luckily, there is a work around to this. It involves editing the `projects.yml` file. If you run `dbt debug` it will also show the path of your `projects.yml` alongside other configuration information. 
 
 
 ```
@@ -36,7 +34,7 @@ When we were initializing our project using `dbt init` we selected option 1 for 
 ```
 
 
-Go to the provided path for `profiles.yml` which is found at `/home/sammigachuhi/.dbt` in my case. Open it and change the line with `location` to read from `US` to `africa-south1`.
+Go to the provided path for `profiles.yml` which, in my case, is found at the path - `/home/sammigachuhi/.dbt`. Open it and change the line with `location` to read from `US` to `africa-south1`.
 
 ```
 dbt_book:
@@ -52,7 +50,7 @@ dbt_book:
 
 Now come back, and rerun `dbt run` again. dbt should now be able to run against your warehouse and create a table called `my_first_dbt_model` and a view `my_second_dbt_model` in BigQuery. 
 
-"How do I know that my queries ran successfully?", you may ask. One, the output of a successful dbt run is `Completed successfully`. Beneath this, message, will be a log of the number of models ran and if there have been any errors. We had two models, so we expect to see this reflect in the log. And it did.
+"How do I know that my queries ran successfully?", you may ask. It is when the terminal prints out: `Completed successfully`. Beneath this message, will be a single line statement of the number of models ran and if there have been any errors. We had two models, so we expect to see this reflect in the log. And it did.
 
 ```
 18:21:16  Running with dbt=1.8.7
@@ -119,7 +117,7 @@ models:
       +materialized: view
 ```
 
-This configuration simply says that for every model inside the `dbt_book/example` directory, as displayed by the new line and identations, materialize the result as a view^[A view is a virtual table, similar to the original table, the physical dataset it was created from]. However, inside our `my_first_dbt_model.sql` file, we set the materialization as `table`. What is in the sql model will override what is in the `dbt_project.yml`. However, for `my_second_dbt_model.sql`, we didn't specify the materialization. Like the case of the rat reigning in the cat's absence, the materialization specified in the `dbt_project.yml` will call the shots for the second model. That's why for `my_second_dbt_model` the materialization is a view, and not a table as its counterpart.
+This configuration simply says that for every model inside the `dbt_book/example` directory, materialize the result as a view^[A view is a virtual table, similar to the original table, the physical dataset it was created from]. However, inside our `my_first_dbt_model.sql` file, we set the materialization as `table`. What is in the sql model will override what is in the `dbt_project.yml`. However, for `my_second_dbt_model.sql`, we didn't specify the materialization. Therefore, by default, the materialization specified at the `dbt_project.yml` level will be used.
 
 [Materialization](https://docs.getdbt.com/docs/build/materializations) is the persistence of a model in the data warehouse. 
 
@@ -152,7 +150,7 @@ from {{ ref('my_first_dbt_model') }}
 where id = 1
 ```
 
-The `ref` function is part of the jinja templating language. It is used to reference a model that has been provided within the parentheses enclosed with quotes `('')`. Therefore, in essence, our model is simply returning the row(s) from `my_first_dbt_model` that contain the value `1` in the `id` column.
+The `ref` function is part of the jinja templating language. It is used to reference a model that has been provided within the parentheses and enclosed with quotes `('')`. Therefore, in essence, our model simply returns the row(s) from `my_first_dbt_model` that contain the value `1` in the `id` column.
 
 Here is the result of `my_second_dbt_model` view when I query BigQuery to show its contents.
 
@@ -160,11 +158,11 @@ Here is the result of `my_second_dbt_model` view when I query BigQuery to show i
 
 ## A custom model
 
-Now that we have seen how to run our models, and we have hit the ground running with some of the models preshipped with dbt, it's now time to fold our shirts and run our own custom model. 
+Now that we have seen how to run our models, it's now time to fold our shirts and run our own custom model. 
 
-Let's start easy. We will be no means delve into a complex model since that is only limited by your imagination. If you know SQL, there is no limit to the models, both in number and complexity, that you can do in dbt.
+Let's start easy. If you know SQL, there is no limit to the models, both in number and complexity, that you can do in dbt.
 
-Our first model will endeavour to perform a change on the `citi_trips` table within our `nyc_bikes` dataset. There is a very ripe column called `tripduration` which stands for the trip in second every cab ride took. Humans prefer to work in minutes so a trivial dbt job would involve creating a column that shows the `tripduration` in minutes. dbt would then be doing the Transform part in the ELT. 
+Our first model will endeavour to perform a change on the `citi_trips` table within our `nyc_bikes` dataset. In this dataset, there is a column called `tripduration` which shows the time in seconds for every cab trip. Humans prefer to read in minutes so a trivial dbt job would involve creating a column that shows the `tripduration` in minutes. By doing so, dbt would be performing the **T**ransform part in the ELT. 
 
 In the `citi_trips_minutes.sql` model, we have written a code that creates a view of this result. Remember, views are just virtual tables but they do save on storage!
 
@@ -182,9 +180,9 @@ SELECT * FROM citi_trips
 
 ```
 
-The above SQL statement is also a form of Common Table Expression (CTE). It's not that hard. The variable `citi_trips` just references the SQL statement in parentheses.
+The above SQL statement is also a form of Common Table Expression (CTE). The variable `citi_trips` just references the SQL statement in parentheses.
 
-There is another small trick of the trade. What if this very simple dbt model was just part of thousands, and longer running SQL models. If we wanted to just run this small, tiny winy model, would it have to be part of the entourage of the other model runs. Such would be a waste of time and resources, assuming some of them are heavy models. No. We can use the `--select` keyword to only select the model we want to run.
+There is another small trick of the trade. What if this very simple dbt model was just part of thousands, and longer running SQL models? Would we have to run the entire lot of models? No. To run only a specific model we use the `--select` keyword.
 
 Below we run the `citi_trips_minutes` model.
 
@@ -208,9 +206,9 @@ Concurrency: 1 threads (target='dev')
 18:50:37  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
 ```
 
-We are always glad when we see the soothing words "Completed successfully". If you go to BigQuery, our data warehouse, you will see a new view called `citi_trips_minutes` already created. By default, the name of the newly formed view or table in the data warehouse will be that of the model used to create it.
+We are always glad when we see the soothing words "Completed successfully". If you go to BigQuery, you will see a new view  `citi_trips_minutes` already created. By default, the name of the newly formed view or table in the data warehouse will be that of the model used to create it.
 
-Similar to the above, the below run command will also work.
+Similar to the above, the below run command will also work. It doesn't have the file type (`.sql`) suffix.
 
 ```
 dbt run --select citi_trips_minutes
@@ -231,7 +229,7 @@ SELECT * FROM `dbt-project-437116.nyc_bikes.citi_trips_minutes`
 Our `trip_duration_min` column of interest is onto the far right of our view.
 
 
-We had hinted earlier that there is no limit to the complexity or number of models you can create in dbt. Below is a sort of more complex model (but not much) compared to the earlier one. This model rounds of the minutes to one decimal place and also removes the null columns, thus reducing number of rows from 58, 937, 715 to 53, 108, 721. The model is saved as `citi_trips_round.sql`. 
+We had hinted earlier that there is no limit to the complexity or number of models you can create in dbt. Below is a more complex model. This model not only rounds off the minutes to one decimal place but also removes the null columns, thus reducing number of rows from 58, 937, 715 to 53, 108, 721. The model is saved as `citi_trips_round.sql`. 
 
 ```
 {{ config(materialized='view') }}
@@ -253,7 +251,7 @@ SELECT * FROM citi_trips_round
 
 Our model is saved as the `citi_trips_round` view in BigQuery. 
 
-Create a new query tab in BigQuery to view the results. Also use the query tab to count the number of rows and compare that with those from the `citibike_trips` table. It's a difference of 5.8 million rows of null value eliminated. 
+Create a new query tab in BigQuery to view the results. Also use the query tab to count the number of rows and compare them to those from the `citibike_trips` table. About 5.8 million rows with null value have been removed.
 
 ```
 SELECT * FROM `dbt-project-437116.nyc_bikes.citi_trips_round`; 
@@ -265,13 +263,13 @@ SELECT COUNT(*) FROM `dbt-project-437116.nyc_bikes.citibike_trips`;
 ```
 
 
-You may be wondering what the advantage that dbt provides. After all, can't one just use the SQL Query tab in BigQuery just to do the transformations and save the table? Fine, that can work. However, dbt offers a form of persistence to your models. You see, an SQL query tab can be erased or modified, but the SQL queries in dbt even if they too can be modified at will they are persisted longer if they are saved in a versioning environment such as Github.
+You may be wondering what's the advantage that dbt provides. After all, can't one just use the SQL Query tab in BigQuery just to do the transformations and save the table? Fine, that can work. However, dbt offers a form of persistence to your models. Though modifiable like those in BigQuery, they can be versioned when saved into a code versioning platform like Github.
 
-One more thing, you don't have to use the `models/example` folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine. In fact, like a stubbon mathematician who will want to battle-test his concepts though they are as robust as Zeus, let's do it.
+One more thing, you don't have to use the `models/example` folder. You can choose to rename this one, or save the two models we created in a different folder. They will still run fine. 
 
-Create a new folder within the `models` directory called `my_models`. Move the `citi_trips_minutes` and `citi_trips_round` models into the `my_models` directory. Thereafter, run these two models using `dbt run --select models/my_models`. The should run fine. 
+Create a new folder within the `models` directory called `my_models`. Move the `citi_trips_minutes` and `citi_trips_round` models into the `my_models` directory. Thereafter, run these two models using `dbt run --select models/my_models`. The models should run just fine. 
 
-As an extra bit of information, all successfull compile and run models will appear under the `/target` directory.
+As an extra bit of information, all successfully compiled and ran models will appear under the `/target` directory.
 
 
 
