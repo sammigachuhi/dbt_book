@@ -2,17 +2,17 @@
 
 Seeds are Comma Separated Values (csv) files stored inside your `seeds` directory which can be loaded into your data warehouse using the `dbt seed` command. 
 
-Seeds can also be referenced by your SQL models using the `ref()` function. Seeds in dbt are version controlled, that is, you can revert them to a previous state. 
+Seeds can also be referenced by your SQL models using the `ref()` function. Seeds in dbt are version controlled. That is, you can revert them to a previous state. 
 
 Seeds are best used for data that changes infrequently. A good example is country codes, email accounts and station names. However, seeds should not be used to store sensitive information such as passwords.
 
 To demonstrate about seeds in dbt, we will try to upload a [New York City (NYC) bike history data](https://www.civicdata.com/dataset/nyc-bike-share-trip-data/resource/3e7acf34-19ba-4bf4-8dd2-cf349623dc6b) for 2014.
 
-Extract the zip folder and copy the `3e7acf34-19ba-4bf4-8dd2-cf349623dc6b.csv` inside the `dbt_book/seeds` directory. To avoid being verbose, let's rename it to `2014-tripdata.csv`. 
+Extract the zip folder and copy the `3e7acf34-19ba-4bf4-8dd2-cf349623dc6b.csv` inside the `dbt_book/seeds` directory. To reduce the verbosity of its name, rename it to `2014-tripdata.csv`. 
 
 ## Uploading a seed into your data warehouse
 
-Believe you me we had a better csv table to upload, one much more related to the NYC bikes dataset. However, because it was ~320MB and we want to be economical in upload times, we settled for this historical data. Nevertheless, keeping on with this chapter, to upload a seed into a data warehouse, we use this command:
+Believe you me we had a better csv table to upload, one much more related to the NYC bikes dataset. However, because it was ~320MB and we want to be economical in upload times and bandwith, we settled for this historical data. Nevertheless, keeping on with this chapter, to upload a seed into a data warehouse, we use this command:
 
 ```
 dbt seed
@@ -82,7 +82,7 @@ Here is the view of the `citi_stations_2014` model in BigQuery.
 
 ## Seed Configurations at project level
 
-Though it may sound like there is a lot to do here, there actually isn't. Suffice to only say that seeds are configurable as much as our normal models are. There are two ways to [configure seeds](https://docs.getdbt.com/reference/seed-configs) in dbt, either in the `dbt_project` YAML file or a t the individual seed's YAML properties. 
+Though it may sound like there is a lot to do here, there actually isn't. Suffice to only say that seeds are configurable as much as our normal models are. There are two ways to [configure seeds](https://docs.getdbt.com/reference/seed-configs) in dbt: either in the `dbt_project` YAML file or at the individual seed's YAML properties. 
 
 For the purposes of this exercise, at the project level we will set a dictionary that looks as follows:
 
@@ -113,7 +113,7 @@ Thereafter run `dbt seed`.
 
 Think of a schema as a folder or container for storing your data (read tables). Therefore, if you were in a company, there would be a schema (read it as folder or container) for sales, customers, products and clients. Inside the schema, (read folder or container) for sales, there would be tables for `january_sales`, `february_sales` and so on. 
 
-Just a *nota bene*, don't use hyphens `(-)` for your schema names, otherwise an error will result. 
+Just a *nota bene*, don't use hyphens `(-)` for your schema names, otherwise it will result in an error. 
 
 Here is our seed data appearing under the `nyc_bikes_nyc2014_data` dataset. 
 
@@ -171,7 +171,7 @@ If you have additional seeds, simply add them to the properties files much like 
 
 ## Performing tests on seeds 
 
-Tests on seeds are performed in much the same way as for the other models. The only trick is to insert the name of the csv file. For example, to run a test of our `2014-tripdata.csv` which is our seed model, we execute `dbt test --select 2014-tripdata`. 
+Tests on seeds are performed in much the same way as other models. The only trick is to insert the name of the csv file. For example, to run a test of our `2014-tripdata.csv` which is our seed model, we execute `dbt test --select 2014-tripdata`. 
 
 ```
 -- snip --
@@ -188,7 +188,7 @@ Tests on seeds are performed in much the same way as for the other models. The o
 -- snip --
 ```
 
-As you can see, the two tests we defined in our `nyc_bikes2014` YAML properties' file of `dbt_expectations.expect_table_column_count_to_be_between` and `dbt_expectations.expect_column_values_to_be_unique` have passed. 
+As you can see, the two tests of `dbt_expectations.expect_table_column_count_to_be_between` and `dbt_expectations.expect_column_values_to_be_unique` passed. 
 
 ## Viewing documentation for dbt seeds
 
