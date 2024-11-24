@@ -2,9 +2,9 @@
 
 What is dbt-expectations? dbt-expectations is an extension package for dbt which works much akin to the Great Expectations package for Python. It was intentionally designed to provide Great Expectations like features in dbt, but now from dbt itself rather than integrating Great Expectations (GE).
 
-Unless you've used GE, you may be wondering what this is in the first place, and its okay to feel lost. GE is much like tests in the previous chapter, it conducts quality tests on your data flagging those that deviate from the set assertions. 
+Unless you've used GE, you may be wondering what this is in the first place, and its okay to feel lost. GE is much like tests in the previous chapter, it conducts quality tests on your data, thus flagging those that deviate from the set assertions. 
 
-I would put dbt-expectations and GE on the same plane and use an allegory to drive the point home; that of a car. When buying a car, there are some common checklist items, and others bespoke depending on your car model. For example, an ordinary car must have the following features (at least most of them):
+I would put dbt-expectations and GE on the same plane and use an allegory to drive the point home: that of a car. When buying a car, there are some common checklist items, and others bespoke depending on your car model. For example, an ordinary car must have the following features (at least most of them):
 
 * have four wheels
 * have a driver's seat
@@ -12,13 +12,13 @@ I would put dbt-expectations and GE on the same plane and use an allegory to dri
 * have headlights
 * have a windshield
 
-The above list can go on and on depending on your knowledge of cars. But your checklist can also contain some unique items, but must-have lists depending on your car make. For example, here is a checklist of the Volvo XC60 T6 (sorry, my bias!):
+The above list can go on and on depending on your knowledge of cars. But your checklist can also contain some unique items, but which are a must-have depending on your car make. For example, here is a checklist of the Volvo XC60 T6:
 
 * 0.9l/100km fuel consumption
 * Allowed emissions 22g/km (the less the better)
 * Hybrid fuel type
 
-So if you go to a showrooms and the beautiful or handsome sales agent takes you to the Volvo XC60, you will be viewing it as you cross your checklist items. dbt-expectations and GE work in the same way.
+So if you go to a showrooms and the beautiful or handsome sales agent takes you to the Volvo XC60, you will be perusing it as you cross your checklist. dbt-expectations and GE work in the same way.
 
 
 ## `dbt-expectations` installation
@@ -50,14 +50,14 @@ packages:
 ```
 
 
-Apart from that, the `dbt-date` dependency must also be installed. This is because `dbt-expectations` references to it. However, this will be installed in the `dbt_project.yml` file rather than the `packages.yml` file. So inside the `dbt_project.yml` paste the following just before the `materializations` dictionary.
+Apart from that, the `dbt-date` dependency must also be installed. This is because `dbt-expectations` references it. However, this will be installed in the `dbt_project.yml` file rather than the `packages.yml` file. So inside the `dbt_project.yml` paste the following just before the `materializations` dictionary.
 
 ```
 vars:
   'dbt_date:time_zone': 'Africa/Nairobi'
 ```
 
-You may insert any valid timezone apart from the one specified above.
+You may insert any valid timezone apart from the one specified above, but we highly suggest that you use your timezone.
 
 Now run `dbt deps` to seal the deal by installing the `dbt-expectations` package.
 
@@ -65,7 +65,7 @@ Now run `dbt deps` to seal the deal by installing the `dbt-expectations` package
 dbt deps
 ```
 
-Here is output showing the successful installation of the package in our environment, and `dbt-date` too.
+Here is the output showing the successful installation of the package in our environment.
 
 ```
 19:31:10  Running with dbt=1.8.7
@@ -116,7 +116,7 @@ Here is the output.
 
 This leaves one puzzled, why?
 
-A close look at the model for `citi_trips_round` reveals the answer. This model was designed to only work on non-null rows, unlike the `citi_trips_minutes` which worked on all rows, null or not. Therefore the `citi_trips_round` had less rows and thus the generated error. In case your tests results seem incongruent, it is always good to recheck the models to refresh your memory, as we did here.
+A close look at the model for `citi_trips_round` reveals the answer. This model was designed to only work on non-null rows, unlike the `citi_trips_minutes` which worked on all rows, null or not. Therefore the `citi_trips_round` had less rows and thus the generated the error. In case your tests results seem incongruent, it is always good to recheck the models to refresh your memory, as we did here.
 
 In fact, dbt did a good job of generating an SQL to show us the error:
 
@@ -137,7 +137,7 @@ If you click on the destination of the SQL statement and copy the contents to th
 
 Description: Expect column values to not be null.
 
-This is a *no-brainer* kind of test. Can you guess which columns in any of our tables in the `nyc_bikes` dataset that should never be null? Here is a clue, station_id and station names, unless the biker teleports to or from somewhere!
+This is a *no-brainer* kind of test. Can you guess which columns in any of our tables in the `nyc_bikes` dataset should never be null? Here is a clue, station_id and station names, unless the biker teleports to or from somewhere!
 
 So on the `my_models` YAML file, insert the below test on the `start_station_id`, `start_station_name`, `end_station_id` and `end_station_name` fields.
 
@@ -156,7 +156,7 @@ A caveat when using the `dbt_expectations.expect_column_values_to_not_be_null`, 
 
 Description: Expect each column value to be in a given set.
 
-This test works best for where you are sure that a certain column will only accept certain values. A good example is the `gender` column. Here we insert the test in our `citi_trips_minutes` and `citi_trips_round` models.
+This test works best for where you are sure that a certain column will only accept certain values. A good example is the `gender` column. There can only be three results: male, female and other. Here we insert the test in our `citi_trips_minutes` and `citi_trips_round` models.
 
 ```
 - name: gender
@@ -167,7 +167,7 @@ This test works best for where you are sure that a certain column will only acce
 
 ```
 
-If you run the above test for both the `citi_trips_minutes` and `citi_trips_round` models, the test will fail for the former? Why, because of the pesky null rows. However, to take the null rows into consideration and take them as accepted values in the `citi_trips_minutes` model only, we simply add an empty quotation marks, like so (`''`). Here is our modified test: `value_set: ['', 'unknown','male','female']`. The test will then pass for our `citi_trips_minutes` table.
+If you run the above test for both the `citi_trips_minutes` and `citi_trips_round` models, the test will fail for the former. Why, because of the pesky null rows. However, to take the null rows into consideration and take them as accepted values in the `citi_trips_minutes` model only, we simply add an empty quotation marks, like so (`''`). Here is our modified test: `value_set: ['', 'unknown','male','female']`. The test will then pass for our `citi_trips_minutes` table.
 
 ### String matching
 
@@ -175,20 +175,7 @@ If you run the above test for both the `citi_trips_minutes` and `citi_trips_roun
 
 Description: Expect column entries to be strings with length between a min_value value and a max_value value (inclusive).
 
-In one of our generic tests, called the `long_characters.sql` inside the `tests/generic` folder, we set out to alert ourselves of any tests above the 15 word threshold. Now of course, we got some results, so let's use this as the upper limit of our station names. Additionally, we will add `1` as the minimum value to flag off those station names without a single character. The null values should be easy to catch with this.
-
-Because our `citi_trips_minutes` table has several null rows, we used some fine-grained creativity to take this into account also for the station names. So for both the `start_station_name` and the `end_station_name`, we inserted the following test:
-
-```
-tests:
-  - dbt_expectations.expect_column_values_to_not_be_null
-  - dbt_expectations.expect_column_value_lengths_to_be_between:
-      min_value: 0
-```
-
-The minimum character length for a station name is 0, thus even null values will be accepted.
-
-However, we were more brutal for the `citi_trips_round` model, but used a high maximum character of length to be lenient to those stations very long names.
+Because our `citi_trips_minutes` table has several null rows, we will put the minimum expected value to be 0. Since we also want to catch those station names with overly long names, we will put the max value as 70. So for both the `start_station_name` and the `end_station_name`, we inserted the following test:
 
 ```
 tests:
@@ -228,7 +215,7 @@ tests:
       max_value: 100000 # (Optional)
 ```
 
-That will flag off some errors, but if you change the `max_value` parameter to `360000`, the tests will pass. We used some fine-grained creativity in this case where all `trip_duration_min` fields in both the `citi_trips_minutes` and `citi_trips_round` had 360000 as their `max_value` parameter. However, in the `trip_min_round` field of the `citi_trips_round` model, we set the `max_value` as 100000 to demonstrate the error.
+That will flag off some errors, but if you change the `max_value` parameter to `360000`, the tests will pass. However, in the `trip_min_round` field of the `citi_trips_round` model, we set the `max_value` as 100000 to demonstrate an error of this test.
 
 ### Multi-column
 
@@ -236,7 +223,7 @@ That will flag off some errors, but if you change the `max_value` parameter to `
 
 Description: Expect values in column A to be greater than column B.
 
-This kind of test comes in handy when you want to ensure that one of your columnar values is greater than, or less than that of a different column. A good example is a comparison of trip duration in seconds in the `tripduration` column versus the trip duration in minutes from `trip_min_round` column in our `citi_trips_round` table. Surely time in seconds will always have a greater value in terms of length than the more concise minutes values!
+This kind of test comes in handy when you want to ensure that one of your columnar values is greater than, or less than that of a different column. A good example is a comparison of trip duration in seconds in the `tripduration` column versus the trip duration in minutes from `trip_min_round` column in our `citi_trips_round` table. Definitely time in seconds will always have a greater value in terms of length than the more concise minutes values!
 
 In our `citi_trips_round` model, insert the test as follows:
 
