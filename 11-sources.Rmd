@@ -1,7 +1,8 @@
 # Sources 
 
-In the all-time favourite book *The voyages and adventures of Captain Hatteras*, an intelligent second-in-command captain of the sturdy ship --*The Forward*, would receive letters on almost every morning of the instructions that he and the crew should follow. The instructions were from an unknown source but they would detail which bearings the ship should follow, or what to do to navigate the high seas. In dbt, sources are what make your data in the data warehouse be referenced in dbt operations such as running models, tests and checking the 'freshness' of your data. 
-Just like in the above anecdote where, if any person in the crew would ask Sir Richard Shandon, the second-in-command for justification of any task they were commanded to do, Richard would always refer to the authoratative letter from an anonymous source. Likewise, when working with sources, dbt will perform operations by referencing the sources using the `source` function (`{{ source("schema", "table") }}`).
+In the all-time favourite book *The voyages and adventures of Captain Hatteras*, every morning, the second-in-command, a well versed captain of the high seas, Richard Shandon by name, would receive a letter from an anonymous sender directing him on which direction to steer the ship. In dbt, sources are what make your data in the data warehouse be referenced in dbt operations such as running models, tests and checking the 'freshness' of your data. 
+
+Just like in the above anecdote where, if any person in the crew would ask Sir Richard Shandon for justification of any task they were commanded to do, Richard would always refer to the authoritative letter from an anonymous source. Likewise, when working with sources, dbt will perform operations by referencing the sources using the `source` function (`{{ source("schema", "table") }}`).
 
 Sources in dbt are defined inside YAML files, and they are referenced inside SQL files, just like regular models again!
 
@@ -9,7 +10,7 @@ Sources in dbt are defined inside YAML files, and they are referenced inside SQL
 
 To demonstrate defining sources, we will work with two tables already in our data warehouse. These are the `2014-tripdata` and `citi_trips_round` tables under `nyc_bikes_nyc_bikes2014` (`nyc_bikes_nyc_bikes2014/2014-tripdata`) and `nyc_bikes` tree structures in BigQuery respectively. 
 
-Create a new sibling directory next to the `docs`, `example`, and `my_models` folders. Inside it, create a new YAML file called `sources_bikes.yml`. The path to this file should be `models/sources/sources_bikes.yml`. 
+Create a new sibling directory called `sources` next to the `docs`, `example`, and `my_models` folders. Inside it, create a new YAML file called `sources_bikes.yml`. The path to this file should be `models/sources/sources_bikes.yml`. 
 
 Copy paste these contents into the newly created YAML file.
 
@@ -29,14 +30,14 @@ sources:
 
 ```
 
-If you've worked with YAML property files in the previous chapters, this should be all too familiar. Nevertheless, the `name` and `schema` values refer to the schema name in your data warehouse, but they can be different. For the `tables` dictionary, we refer to the names of those tables under a particular schema. For example, the `citi_trips_round` is definitely under the `nyc_bikes` schema. 
+The above should be all too familiar since we've worked with several YAML files so far. Nevertheless, the `name` and `schema` values refer to the schema names in your data warehouse. For the `tables` dictionary, we refer to the names of those tables under a particular schema. For example, the `citi_trips_round` is definitely under the `nyc_bikes` schema. 
 
 
 ## Referencing sources 
 
 Sources in our data warehouse are referenced using the `source()` function. Remember when referencing other models within models we used the `ref()` function? When working with sources, the `ref()` is now `source()`. 
 
-Below is a demonstration of referencing a source to only select male bike riders. Notice the arrangement of the schema and table names within quotation markes (`''`) and separated by a comman. This is how we reference other data acting as the *source* in our `nyc_bikes_male.sql`. 
+Below is a demonstration of referencing a source to only select male bike riders. Notice the arrangement of the schema and table names within quotation marks (`''`) and separated by a comma. This is how we reference other data acting as the *source* in our `nyc_bikes_male.sql`. 
 
 ```
 SELECT * FROM 
@@ -77,7 +78,7 @@ If you check under the `nyc_bikes` schema in your BigQuery, you will notice two 
 
 ![Sources](./images/sources.png)
 
-One would have expected the `nyc_male_2014` view to be under the `nyc_bikes_nyc_bikes2014` schema because that's the seed dataset. Our assumption is that we set the `nyc_bikes` as the dataset to work with when setting up dbt, and thus it's very hard to deviate from this. But we stand to be corrected. One more thing, though its obvious --the dbt source can also work inside a `WITH` SQL statement like so in the `nyc_female_2014` model.
+One would have expected the `nyc_male_2014` view to be under the `nyc_bikes_nyc_bikes2014` schema because that's the seed dataset. Our assumption is that we set the `nyc_bikes` as the dataset to work with when setting up dbt, and thus it's very hard to deviate from this. But we stand to be corrected. One more thing, the dbt source can also work inside a `WITH` SQL statement like so in the `nyc_female_2014` model.
 
 ```
 WITH nyc_female_2014 AS (
@@ -91,7 +92,7 @@ SELECT * FROM nyc_female_2014
 
 ## Defining properties in a `sources` file
 
-Just like you would craft the properties for a given models YAML file, the same can likewise be done for the sources YAML file. You can define descriptions and tests for your fields in a `sources` file. Again, what's good for the goose is good for the gander also applies here. Below is our enriched `sources` YAML file. 
+Just like you would craft the properties for a given models' YAML file, the same can likewise be done for the sources YAML file. You can define descriptions and tests for your fields in a `sources` file. Again, what's good for the goose is good for the gander. Below is our enriched `sources` YAML file. 
 
 ```
 version: 2
@@ -159,9 +160,9 @@ sources:
       - name: citi_trips_round
 ```
 
-Let's start by running the sole test at the trusty `tripduration` key via our one liner slingshot code: `dbt test --select sources`. 
+Let's start by running the sole test at the trusty `tripduration` key via our single-line slingshot code: `dbt test --select sources`. 
 
-Everything run fine meaning there were no null values in this field. 
+Everything ran fine meaning there were no null values in this field. 
 
 ```
 19:32:18  Concurrency: 1 threads (target='dev')
@@ -175,7 +176,7 @@ To see if our descriptions will be updated in the dbt documentation, simply run 
 ![Sources descriptions](./images/sources_definitions.png)
 
 
-You should see your dbt documentation updated with the descriptions for `nyc_bikes_nyc_bikes2014` table. Since the `citi_trips_round` table has been defined twice, once in the `my_models` YAML and now in the `sources` YAML, you will notice one of the `citi_trips_round` table does not have any definition. We can decide to copy paste the definitons of `citi_trip_round` table from `my_models` into the `sources` YAML file. The `2014-tripdata` table inside the `nyc_bikes_nyc_bikes2014` YAML also suffers from the same issue. 
+You should see your dbt documentation updated with the descriptions for `nyc_bikes_nyc_bikes2014` table. 
 
 Below is our `sources` YAML file in full with additional descriptions and tests.
 
