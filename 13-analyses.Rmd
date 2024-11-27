@@ -1,10 +1,10 @@
 # Analyses 
 
-In dbt, analyses are those kind of queries that might not exactly be very much needed as a model but can be used for data exploration and visualization. Typically, any SQL model that is for analytical rather than modeling purposes is stored within the `analyses` directory. Thereafter, running the code `dbt compile` will create the compiled SQL file inside the `target/compiled/{project name}/analyses/sql_file_name.sql` directory. The code inside this directory can be pasted in a data visualization tool but it will not appear in the data warehouse. Yes it will not. 
+In dbt, analyses are those kind of queries that might not exactly be very much needed as a model but can be used for data exploration and visualization. Typically, any SQL model that is for analytical rather than modeling purposes is stored within the `analyses` directory. Thereafter, running the code `dbt compile` will create the compiled SQL file inside the `target/compiled/{project name}/analyses/sql_file_name.sql` directory. The code inside this directory can be pasted in a data visualization tool but it will not appear in the data warehouse. You read that well: it will not. 
 
 ## Creating an `analysis`
 
-As mentioned earlier, analyses queries are sttored within the `analysis` folder. To begin with, we shall create a SQL queries that performs a join. The below query will join the rows in `nyc_bikes_nyc_bikes2014`.`2014-tripdata` with those in `nyc_bikes`.`citi_trips_round` based on station id. The aforementioned contents are found within the `start_join_bikes` SQL within the analyses folder. 
+As mentioned earlier, analyses queries are stored within the `analysis` folder. To begin with, we shall create a SQL query that performs a join. The below query will join the rows in `nyc_bikes_nyc_bikes2014`.`2014-tripdata` with those in `nyc_bikes`.`citi_trips_round` based on station id. The aforementioned contents are found within the `start_join_bikes` SQL within the `analyses` folder. 
 
 ```
 WITH `2014-tripdata` AS (
@@ -71,8 +71,7 @@ ON cs.`start station id` = ct.start_station_id
 WHERE ct.trip_min_round > 50000;
 ```
 
-The full table path has expanded and pasting this query into BigQuery produces the results without a fuss. 
-
+The full table path was expanded and pasting this query into BigQuery produces the results without a fuss. 
 
 
 ## Definitions for `analyses`
