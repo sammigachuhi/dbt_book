@@ -1,6 +1,6 @@
 # Exposures 
 
-Imagine a soldier dropping a piece of paper containing their camp, trails they use and the military equipment that is due to arrive only for it to be picked up by a wondering enemy. That would be catastrophic, right? That is akin to exposing them into the line of fire. However, exposures in dbt serve a good purpose. They show how your data is used by downstream project, be they be notebooks, a dashboard or another data pipeline. They only thing that sets apart exposures from other models is that this time round you are the one who defines which projects will be used downstream.
+Imagine a soldier dropping a piece of paper containing their camp location, trails and military equipment only for it to be picked up by a wandering enemy. That would be catastrophic, right? That is akin to exposing them into the line of fire. However, exposures in dbt serve a good purpose. They show how your data is used by downstream projects, be they be notebooks, a dashboard or another data pipeline. They only thing that sets apart exposures from other models is that this time round you are the one who defines which projects will be used downstream. For example, if you want to show your CEO which models were used to create the dashboard, instead of showing the ten models you sifted through, you only show the three that made it to the dashboard.
 
 
 ## Creating an exposure 
@@ -36,14 +36,14 @@ Below is the definition of each property used above.
 
 * `name`: a unique exposure name written in snake case
 
-* `type`: one of dashboard, notebook, analysis, ml, application (used to organize in docs site)
+* `type`: one of dashboard, notebook, analysis, ml or application
 
 * `owner`: name or email required; additional properties allowed
 
 
 **Expected**
 
-`depends_on`: list of refable nodes, including `metric`, `ref`, and `source`. While possible, it is highly unlikely you will ever need an `exposure` to depend on a `source` directly.
+`depends_on`: list of nodes, including `metric`, `ref`, and `source`. While possible, it is highly unlikely you will ever need an `exposure` to depend on a `source` directly.
 
 
 **Optional**
@@ -63,10 +63,9 @@ Below is the definition of each property used above.
 * meta
 
 
+## Running an exposure
 
-Running an exposure
-
-To run the exposure we just created, we use the following one liner. The plus line is there to indicate to dbt to include all models used to feed into the `station_bikes_exposure` exposure. 
+To run the exposure we just created, we use the following one liner. The plus sign is there to indicate to dbt to include all models used to feed into the `station_bikes_exposure` exposure. 
 
 
 ```
@@ -115,8 +114,7 @@ Visualizing exposures is as simple as just generating your dbt documentation. Th
 ![Exposure](./images/exposure_webpage.png)
 
 
-
-You will notice that there is a dedicated section for exposures called `Exposures`. The exposure title is `Dashboard` and the label for the exposure is the label provided in the YAML. 
+You will notice that there is a dedicated section for exposures called `Exposures`. The exposure title is `Dashboard` and the label for the exposure is the `label` value provided in the YAML. 
 
 If you click on the blue lineage graph button, you will see the upstream models that feed into our exposure.
 
@@ -124,7 +122,7 @@ If you click on the blue lineage graph button, you will see the upstream models 
 
 Still at the bottom of the webpage, the **Depends on** section contains links to all the upstream models and references for your exposure. Clicking on any takes you to the dbt documentation site for that model.
 
-Finally, there is the **View this exposure** button. Clicking on it will take you to the url you specified in the `url:` key of the exposures file. In our case, the url leads to a Dashboard showing all the public sanitation facilities in Australia. Obviously there is no relation between bikes and sanitation facilities as this is just for demonstration purposes only!
+Finally, there is the **View this exposure** button. Clicking on it will take you to the url you specified in the `url:` key of the exposures file. In our case, the url leads to a Dashboard showing all the public sanitation facilities in Australia. Obviously there is no relation between bikes and sanitation facilities. This was just for demonstration purposes only!
 
 ![Exposure](./images/exposure_hyperlink.png)
 
@@ -157,12 +155,12 @@ The above exposure of `station_bikes_application` falls under the **Application*
 
 ![Exposure application](./images/exposure_application.png)
 
-The lineage graph and the **View this exposure** buttons work for this exposure as well. In fact the lineage graph is the most complex so far. The exposure took into consideration that the `citi_trips_long` model is depedent on the `citi_trips_minutes` and `citi_trips_round` models!
+The lineage graph and the **View this exposure** buttons work for this exposure as well. In fact this lineage graph is the most complex we've encountered in the course so far. The exposure took into consideration that the `citi_trips_long` model is dependent on the `citi_trips_minutes` and `citi_trips_round` models!
 
 ![Exposure lineage graph](./images/exposure_lineage_graph2.png)
 
 
-The exposure button also leads to a dashboard showing rates of some sanitation related disease. Again, not related to bikes and stations but serves the purpose of demonstration.
+The exposure button also leads to a dashboard showing rates of some sanitation related disease. Again, this dashboard is not related to bikes and stations but serves the purpose of demonstration.
 
 
 
