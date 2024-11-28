@@ -8,10 +8,10 @@ Let's start by explaining some jinja concepts.
 
 - **Statements {% ... %}**: Statements don't output a string. They are used for control flow, for example, to set up for loops and if statements, to set or modify variables, or to define macros.
 
-- **Comments {# ... #}**: Jinja comments are used to prevent the text within the comment from executing or outputing a string. Don't use -- for comment.
+- **Comments {# ... #}**: Jinja comments are used to prevent the text within the comment from executing or outputing a string. 
 
 
-To make the point sink home since jinja can at time look mind boggling to the novice beginner, we'll start with explaining a for loop. This is the skeleton of a `for` loop in jinja.
+Let's start with explaining a *for* loop. This is the skeleton of a `for` loop in jinja.
 
 ```
 {% for item in sequence %}
@@ -25,7 +25,7 @@ To make the point sink home since jinja can at time look mind boggling to the no
 
 Going by the above cue, let's create a jinja statement that will select all those rows whose bike riders' birth years are any of the following: 1995, 1997 and 2002. Nothing special about these years, just that they stem from the unprofitable notion that they correspond to my birth year and those of my siblings!
 
-Create a new folder called `jinja` under the `models` directory and within it create a `years` SQL file. Copy past the following contents into `years.sql`.
+Create a new folder called `jinja` under the `models` directory and within it create a `years` SQL file. Copy paste the following contents into `years.sql`.
 
 ```
 {% set years = [1995, 1997, 2002] %}
@@ -35,17 +35,16 @@ SELECT *
 FROM {{ ref('citi_trips_long') }}
 WHERE birth_year = {{ year }}
 
-
 {% endfor %}
 
 ```
 
-Let's go through the above line by line. It may look a bit more cryptic that the go lucky SQL statements we write, but it is quite easy, especially if you know a bit of python.
+Let's go through the above line by line.
 
-* `{% set years = [1995, 1997, 2002] %}` - this sets the variables we will use to extract some data from our tables. The `years` variable consists of three years which we will use to filter our tables. 
+* `{% set years = [1995, 1997, 2002] %}` - this sets the variables we will use to extract some data from our tables. The `years` variable consists the years that we will use to filter our tables. 
 
 
-* `{% for year in years %}` - the SQL statement that will be repeated is placed inside the `for ...` loop. In this statement, for every year in the `years` variable list, we will repeat the following sql statement, where `{{ year }}` will be each year in the `years` variable:
+* `{% for year in years %}` - the SQL statement that will be repeated is placed inside the `for ...` loop. In this statement, for every year in the `years` variable list, we will repeat the below sql statement, where `{{ year }}` is each year in the `years` variable:
 
 ```
 SELECT * 
@@ -81,12 +80,12 @@ WHERE birth_year = 2002
 ```
 
 
-What the `for` loop did was avoid the redundancy of selecting each `birth_year` in its own `SELECT` statement and instead put it inside one `for` loop statement. Going a step further, also the redundancy of hardcoding the `year` is removed. This formula, though a bit complicated, toes in line with the Do not Repeat Yourself (DRY) principle in programming.
+What the `for` loop did was to avoid the redundancy of selecting each `birth_year` in its own `SELECT` statement. Instead it put the three `SELECT` statements inside one `for` loop statement. Going a step further, also the redundancy of hardcoding the `year` is removed. This formula, though a bit complicated, toes in line with the Do not Repeat Yourself (DRY) principle in programming.
 
 ## A more complex jinja query 
 
 
-One can also create more complex jinja queries that leverage other functionalities of SQL such as aggregation and CASE WHEN statements. Now suppose, for purely selfish reasons, this author wants to compare the bike ride durations against those of other people who are age mates as his siblings. Below is an `age.sql` file that creates a table that has a column showing the trip duration for each value in the `years` variable.
+One can also create more complex jinja queries that leverage other SQL functionalities such as aggregation and CASE WHEN statements. Now suppose, for purely selfish reasons, this author wants to compare the bike ride durations against those of other people who were born in the years 1995, 1997 and 2002. Below is an `age.sql` file that creates a table that has a column showing the trip duration for each value in the `years` variable.
 
 ```
 {% set years = [1995, 1997, 2002] %}
@@ -129,17 +128,17 @@ WHERE birth_year IN (
 GROUP BY birth_year
 ```
 
-Pasting this query in BigQuery gives us the following table.
+Pasting this query in BigQuery gives us the below table:
 
 ![Age query](./images/age_query.png)
 
 
 We can see a column for trip duration in minutes for each of the three select years of 1995, 1997 and 2002. However, other years not set in our `years` variable are included as well, but with the value `0` in each of the three columns. Before one starts getting confused and blaming the universe for not wanting us to succeed, there is a way we can sort this pesky issue: enter the `if not loop.last` statement!
 
-In our previous SQL query, and if you are experienced with SQL queries a bit, you already know that one can sort the issue of excluding unnecessary years using the `WHERE` clause. For example, we would have used the clause `WHERE birth_year IN (1995, 1997, 2002)`. However, we frowned on this approach because it is making break the DRY principle by hardcoding the years by hand. Taking a more complex approach to fulfil the DRY principle sounds like we are exhibiting Obsessive Compulsive Disorder (OCD) but being obsessed in doing things in a higher way is not all too bad in programming. 
+In our previous SQL query, you saw that one can sort the issue of excluding unnecessary years using the `WHERE` clause. For example, we would have used the clause `WHERE birth_year IN (1995, 1997, 2002)`. However, we frowned on this approach because it is breaking the DRY principle by hardcoding the years by hand. Taking a more complex approach to fulfil the DRY principle sounds like we are exhibiting Obsessive Compulsive Disorder (OCD) but being obsessed in doing things in a higher way is not all too bad in programming. 
 
 
-The [`if not loop.last` statement](https://docs.y42.com/docs/how-to-use-jinja) separates the values of interest with a comma, thus effectively fulfilling the work of where the `WHERE` clause failed. The `age2.sql` shows this in action.
+The [`if not loop.last` statement](https://docs.y42.com/docs/how-to-use-jinja) separates the values of interest with a comma, thus effectively fulfilling the work the `WHERE` clause where it failed. The `age2.sql` shows this in action.
 
 ```
 {% set years = [1995, 1997, 2002] %}
@@ -295,7 +294,7 @@ WHERE birth_year IN (
 )
 ```
 
-The `for` loop begins when we want to specify the years, jinja tells our computer to add a comma until the last one and the `endfor` statement tells our computer to break out of the looping. Here is the corresponding compiled SQL in the `years2.sql` in the target directory. When this query is pasted, into BigQuery, it only filters the rows matching to the specified birth years.
+The `for` loop begins when we want to specify the years, the `if not loop` programmatically adds a comma until the last one and finally the `endfor` statement tells our computer to break out of the looping. Here is the corresponding compiled SQL in the `years2.sql` in the target directory. When this query is pasted, into BigQuery, it only filters the rows matching to the specified birth years.
 
 ```
 SELECT * 
