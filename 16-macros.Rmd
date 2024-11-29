@@ -98,12 +98,12 @@ dbt run-operation select_all_columns --args '{table_name: my_table}'
 
 ```
 
-The above are ways to invoke a macro but for simplicity purposes, for life is too complicated to add more complications from something miniature as macros, we shall rely on the first method of invoking macros using expressions.
+The above are ways to invoke a macro but for simplicity purposes, we shall rely on the first method of invoking macros using expressions.
 
 
 ## Simple macro
 
-Having known that a macro acts like a function, let's create a macro that calculates the age of a bike rider. We already have the `birth_year` column, so getting age should just be subtracting birth year from the current year. 
+Having known that a macro acts like a function, let's create a macro that calculates the age of a bike rider. We already have the `birth_year` column, so calculating one's age should be as simple as subtracting their birth year from the current year. 
 
 
 As earlier mentioned, macros should go into the `macros` folder. Create a  `calculate_age` SQL file and inside it paste the following contents.
@@ -116,7 +116,7 @@ As earlier mentioned, macros should go into the `macros` folder. Create a  `calc
 {% endmacro %}
 ```
 
-Remember, a macro is a function and thus what goes within the `{% macro %}` and `{% endmacro %}` expressions is the function itself! This explains why our `calculate_age` macro is so succinct. The `(EXTRACT( YEAR FROM CURRENT_DATE() ) - {{ year }})` is just an SQL way of subtracting any column, referenced by the variable `{{ year }}` from the current year. Of course the `{{ year }}` column specified has to be numeric. 
+Remember, a macro is a function and thus what goes within the `{% macro %}` and `{% endmacro %}` expressions is the function itself! This explains why our `calculate_age` macro is so succinct. The `(EXTRACT( YEAR FROM CURRENT_DATE() ) - {{ year }})` is just SQL's way of extracting the current year and subtracting an earlier year being referenced by the variable `{{ year }}`. Of course the specified `{{ year }}` column has to be numeric. 
 
 Alright. To see the `calculate_age` macro in action, create a `biker_age` SQL file inside the `jinja` directory. Paste the following content.
 
@@ -128,10 +128,10 @@ FROM
 
 ```
 
-In the subchapter of [Invoking a Macro](##Invoking a macro) we saw that we invoke a macro in the following format: `{{ macro_name(arg1, arg2, argN) }}`. The macro name goes first, followed by the arguments in brackets. We have essentially done this in the `biker_age` SQL file. The `calclate_age()` macro has been provided the column to calculate on, obviously the `birth_year` column. We use the `AS` keyword to create a new column with the alias `AGE`. Thereafter, we run the open sesame command `dbt compile --select macros`. 
+In the sub-chapter of [Invoking a Macro](##Invoking a macro), we saw that a macro is invoked in the following format: `{{ macro_name(arg1, arg2, argN) }}`. The macro name goes first, followed by the arguments in brackets. We have essentially done this in the `biker_age` SQL file. The `calclate_age()` macro has been provided the column to calculate on, the `birth_year` column. We use the `AS` keyword to create a new column with the alias `AGE`. Thereafter, we run the open sesame command `dbt compile --select macros`. 
 
 
-We got the following in the target directory, a `biker_age` SQL file with the following SELECT query:
+After compilation, dbt created a `biker_age` SQL file containing the below code:
 
 ```
 SELECT *, 
@@ -149,7 +149,10 @@ The above should definitely result in a table with the `AGE` column at the far e
 
 ## Complex macro
 
-The above was a simple macro that neatly drove the point home. How about a more complex macro, like one that works on an entire table, transforms it, has more than one argument and oh, one in which you can change the arguments? We are trying to work with a function where we cast things on sand, and not stone. That's the kind of macro we need. Create a SQL called `age_trips` with the following code:
+The above was a simple macro that neatly drove the point home. How about a more complex macro, like one that works on an entire table, transforms it, has more than one argument and oh my... one in which you can specify the parameters? We want to write our functions on sand, not stone, so that we can change at will. That's the kind of macro we need. 
+
+
+Let's go. Create a SQL called `age_trips` with the following code:
 
 ```
 {% macro age_trips (column, duration, table_name, years = [1995, 1997, 2002]) %}
@@ -169,16 +172,16 @@ ORDER BY {{ column }} DESC
 {% endmacro %}
 ```
 
-Our intelligent mind (no pun intended) created a macro that selects a column, sums the time duration in that column but aggregates the sum based on certain numerical column values. It will not sum everything in the entire set but for certain values specified by the `years` variable. Additionally, we have preset the values to go into the `years` variables which are `1995`, `1997` and `2002`. Finally, to finish in a clean manner, we order the table based on arranging the specified column values in descending order. 
+Our intelligent mind (no pun intended) created a macro that selects a column, sums the time duration in that column and additionally, aggregates the sum based on certain numerical column values. It will not sum everything in the entire set but just certain values specified by the `years` variable. Additionally, we have preset the values to go into the `years` variables which are `1995`, `1997` and `2002`. Finally, we order the table by arranging the values of the specified columns in descending order. 
 
-Now is time to test our macro. Under the `jinja` directory, create a SQL file called `age_trip_totals`. It should have the below miniatuae code.
+Now is time to test our macro. Under the `jinja` directory, create a SQL file called `age_trip_totals`. It should have the below minutiae code.
 
 ```
 {{ age_trips(column='birth_year', duration='trip_min_round',
 table_name='citi_trips_long', years = [1990, 1996, 1998, 2001, 2002]) }}
 ```
 
-What on earth just happened here? There was no `SELECT` statement as in the `biker_age` file? Yes, there wasn't, and for the good reason in that we specifed our `SELECT` blueprint in the macros file, such that calling the `age_trips` function from within `age_trips_totals` file will invoke the SQL statement encapsulated by the `age_trips` function. If you run `dbt compile --select macros` the following SQL file will be compiled in the target directory.
+What on earth just happened here? There was no `SELECT` statement as in the `biker_age` file? Yes, there wasn't, and for a good reason. We had already specifed our `SELECT` blueprint in the macros file. Therefore, calling the `age_trips` function from within `age_trips_totals` file will invoke the SQL statement encapsulated by the `age_trips` function. If you run `dbt compile --select macros`, the following SQL file will be compiled in the target directory.
 
 ```
 SELECT birth_year, 
@@ -207,12 +210,13 @@ ORDER BY birth_year DESC
 
 ```
 
-Pasting this query on BigQuery will give us a table with the total trip duration for all bikers aggregated into specific years: 1990, 1996, 1998, 2001 and 2002.
+Pasting this query on BigQuery will give us a table which aggregates the total trip duration for bikers born in specific years only. That is, those bikers born in any of the following years: 1990, 1996, 1998, 2001 and 2002.
+
 
 ![Age trip table](./images/age_trip.png)
 One can also create a view of this macro model using `dbt run --select age_trip_totals`. A `biker_age` view should appear under the `nyc_bikes` dataset.
 
-By doing the above, we not only created a macros with default parameters, but we could also change them and get valid results as seen when playing around with the `years` argument in our `age_trips()` function. As a matter of fact, the `years` parameter doesn't have to take *years* per se, it can actually work with any numerical column. But we just specified the name `years` as a clue. In the `age_trip_totals2` SQL file, we specified the ages of interest from within the `AGE` column of our `biker_age` view. 
+By doing the above, we not only created a macros with default parameters, but we could also change them and get valid results. We can do this by tweaking the `years` argument in our `age_trips()` function. As a matter of fact, the `years` parameter doesn't have to take *years* per se, it can actually work with any numerical column. But we just specified the name `years` as a clue. In the `age_trip_totals2` SQL file, we specified the ages of interest from within the `AGE` column of our `biker_age` view. 
 
 ```
 {{ age_trips(column='AGE', duration='trip_min_round',
@@ -257,7 +261,7 @@ Pasting the above in BigQuery gives us an aggregation of the total trip duration
 
 ![Age trip total 2 view](./images/age_trip_totals2.png)
 
-As mentioned earlier, and as show with a quick example of `age_trip_totals` model, we can create views of each of our macro reliant models. Since they are all within the jinja directory, the following does the trick: `dbt run --select jinja`. This should create a view of each of our models created in this chapter.
+As mentioned earlier, and as show with a quick example of `age_trip_totals` model, we can create views of each of our macro models. Since they are all within the jinja directory, the following does the trick: `dbt run --select jinja`. This should create a view of each of our models created in this chapter.
 
 Below is a snippet of the creation of views.
 
