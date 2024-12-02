@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,19 +242,20 @@
             <section class="normal" id="section-">
 <div id="hosting-dbt-generated-documentation" class="section level1 hasAnchor" number="19">
 <h1><span class="header-section-number">Chapter 19</span> Hosting dbt generated documentation<a href="hosting-dbt-generated-documentation.html#hosting-dbt-generated-documentation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Imagine you have put blood, sweat and tears into your book, you have said everything you wanted to say, divulged what was secret, and unearthed what was incomprehensible. Except for one thing: you can’t publish it. That would be a disaster, a mockery of your efforts, yet that would be our portion if we had not published the dbt documentation we had created in Chapter 7. After all is said and done, it has to be printed somewhere, and obviously the world wide web is our playground.</p>
-<p>There are various ways to publish your dbt generated documentation, such as in Github, Google Cloud and Azure Devops. We would have loved to host our dbt generated documentation in Google cloud as that would have put us in the league of astute developers, but the process and costs were a bit too much. Therefore, we slid back to <a href="https://medium.com/dbt-local-taiwan/host-dbt-documentation-site-with-github-pages-in-5-minutes-7b80e8b62feb">Github</a> which is easier and totally free.</p>
+<p>Imagine you have put blood, sweat and tears into your book, you have said everything you wanted to say, divulged what was considered secret, and unearthed what was incomprehensible. Except for one thing: you can’t publish it. That would be a disaster, a mockery of your efforts, yet that would be our portion if we had not published the dbt documentation we had created in <a href="the-dbt-architecture.html#documentation">Chapter 7</a>. After all is said and done, it has to be printed somewhere, and obviously the world wide web is our playground.</p>
+<p>There are various ways to publish your dbt generated documentation, such as in Github, Google Cloud and Azure Devops. We would have loved to host our dbt generated documentation in Google cloud as that would have put us in the league of astute developers, but the process and costs were a bit too much. Therefore, we slid back to <a href="https://medium.com/dbt-local-taiwan/host-dbt-documentation-site-with-github-pages-in-5-minutes-7b80e8b62feb">Github</a> which is totally free.</p>
 <div id="preparations" class="section level2 hasAnchor" number="19.1">
 <h2><span class="header-section-number">19.1</span> Preparations<a href="hosting-dbt-generated-documentation.html#preparations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="creating-a-gh-pages-branch" class="section level3 hasAnchor" number="19.1.1">
 <h3><span class="header-section-number">19.1.1</span> Creating a <code>gh-pages</code> branch<a href="hosting-dbt-generated-documentation.html#creating-a-gh-pages-branch" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>If hosting dbt documentation were easy, then we would have simply done so from the <code>main</code> branch. However, including taking into account the process of hosting on a more sophisticated platform such as Google Cloud, hosting dbt process seems like a thing for the top-tier tech gurus. It is for this reason we have to create a separate branch, by the name of <code>gh-pages</code>. Github can autodetect the <code>index.html</code> file under this branch automatically compared to a branch by any other name.</p>
+<p>If hosting dbt documentation were easy, then we would have simply done so from the <code>main</code> branch. However, taking into account the process of hosting on a more sophisticated platform such as Google Cloud, the entire process seems like a thing for the top-tier tech gurus. It is for this reason we create a separate branch by the name of <code>gh-pages</code>. Github can autodetect the <code>index.html</code> file under this branch automatically compared to a branch by any other name.</p>
 <p>To create a new branch run <code>git checkout --orphan gh-pages</code>.</p>
 <p>The purpose of the <code>--orphan</code> command is to create a branch from a clean slate; it has no connection to previous commits.</p>
 </div>
 <div id="tracking-the-target-folder" class="section level3 hasAnchor" number="19.1.2">
 <h3><span class="header-section-number">19.1.2</span> Tracking the <code>target</code> folder<a href="hosting-dbt-generated-documentation.html#tracking-the-target-folder" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Now run <code>dbt docs generate</code> in order to create the dependency files of your dbt documentation under the <code>target</code> folder. Once the <code>catalog.json</code> is rewritten, we add this branch for tracking but we include the <code>-f</code> keyword to make the files under the <code>target</code> branch trackable. This is because by default they are set to not be tracked right within <code>.gitignore</code> file.</p>
+<p>Now, in order to create the dependency files for your dbt documentation within the <code>target</code> folder, run <code>dbt docs generate</code>.</p>
+<p>Once the <code>catalog.json</code> is rewritten, we must add this branch for tracking. By default, in the <code>.gitignore</code> file, all files under the <code>target</code> folder are set to not be tracked. Therefore, when adding this folder, we introduce the <code>-f</code> keyword when preparing our files for commit like so:</p>
 <pre><code>git add -f target</code></pre>
 <p>Now let’s commit our <code>target</code> folder contents within our local <code>gh-pages</code> branch.</p>
 <pre><code>git commit -m &#39;hosting dbt docs in github&#39; target</code></pre>
@@ -260,7 +263,7 @@
 </div>
 <div id="pushing-to-github" class="section level3 hasAnchor" number="19.1.3">
 <h3><span class="header-section-number">19.1.3</span> Pushing to Github<a href="hosting-dbt-generated-documentation.html#pushing-to-github" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Next, we only want to take the contents of our <code>target</code> folder and push them into the <code>gh_pages</code> branch. We use the following code: <code>git subtree push --prefix target origin gh-pages</code>. A subtree is like a sub-folder in Github. We use subtree when we want to save certain directories from one repository into another. In our case we only want the contents of the <code>target</code> folder and this we specified using the <code>--prefix</code> keyword. Sometimes, one could have been saving their work at a higher level, such as yours truly. We got the below error when we tried:</p>
+<p>Next, we only want to take the contents of our <code>target</code> folder and push them into the <code>gh_pages</code> branch. We use the following code: <code>git subtree push --prefix target origin gh-pages</code>. A subtree is like a sub-folder in Github. We use <code>subtree</code> when we want to save certain directories from one repository into another. In our case we only want the contents of the <code>target</code> folder and this we specified using the <code>--prefix</code> keyword. Sometimes, one could have been saving their work at a higher folder level, such as yours truly. What do we mean here? We mean that perhaps you have been commiting from <code>folder1/myfiles/commit-here</code> but you work was initialized by git from within <code>folder1</code>. In this case just push your files from <code>folder1</code> or else you will get the below error when performing a subtree push:</p>
 <pre><code>You need to run this command from the toplevel of the working tree.</code></pre>
 <p>In this case, just specify the top-level folder and the target folder, separated with slash(es) like so:</p>
 <pre><code>git subtree push --prefix dbt_book/target origin gh-pages</code></pre>

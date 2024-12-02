@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,7 +242,7 @@
             <section class="normal" id="section-">
 <div id="exposures" class="section level1 hasAnchor" number="15">
 <h1><span class="header-section-number">Chapter 15</span> Exposures<a href="exposures.html#exposures" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Imagine a soldier dropping a piece of paper containing their camp, trails they use and the military equipment that is due to arrive only for it to be picked up by a wondering enemy. That would be catastrophic, right? That is akin to exposing them into the line of fire. However, exposures in dbt serve a good purpose. They show how your data is used by downstream project, be they be notebooks, a dashboard or another data pipeline. They only thing that sets apart exposures from other models is that this time round you are the one who defines which projects will be used downstream.</p>
+<p>Imagine a soldier dropping a piece of paper containing their camp location, trails and military equipment only for it to be picked up by a wandering enemy. That would be catastrophic, right? That is akin to exposing them into the line of fire. However, exposures in dbt serve a good purpose. They show how your data is used by downstream projects, be they be notebooks, a dashboard or another data pipeline. They only thing that sets apart exposures from other models is that this time round you are the one who defines which projects will be used downstream. For example, if you want to show your CEO which models were used to create the dashboard, instead of showing the ten models you sifted through, you only show the three that made it to the dashboard.</p>
 <div id="creating-an-exposure" class="section level2 hasAnchor" number="15.1">
 <h2><span class="header-section-number">15.1</span> Creating an exposure<a href="exposures.html#creating-an-exposure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Exposures are written in YAML files but nested under the <code>exposures:</code> key. Below is an exposure created in the <code>exposure/exposures.yml</code> path.</p>
@@ -268,11 +270,11 @@ exposures:
 <p><strong>Required</strong></p>
 <ul>
 <li><p><code>name</code>: a unique exposure name written in snake case</p></li>
-<li><p><code>type</code>: one of dashboard, notebook, analysis, ml, application (used to organize in docs site)</p></li>
+<li><p><code>type</code>: one of dashboard, notebook, analysis, ml or application</p></li>
 <li><p><code>owner</code>: name or email required; additional properties allowed</p></li>
 </ul>
 <p><strong>Expected</strong></p>
-<p><code>depends_on</code>: list of refable nodes, including <code>metric</code>, <code>ref</code>, and <code>source</code>. While possible, it is highly unlikely you will ever need an <code>exposure</code> to depend on a <code>source</code> directly.</p>
+<p><code>depends_on</code>: list of nodes, including <code>metric</code>, <code>ref</code>, and <code>source</code>. While possible, it is highly unlikely you will ever need an <code>exposure</code> to depend on a <code>source</code> directly.</p>
 <p><strong>Optional</strong></p>
 <ul>
 <li><p><code>label</code>: May contain spaces, capital letters, or special characters.</p></li>
@@ -285,8 +287,10 @@ exposures:
 <li>tags</li>
 <li>meta</li>
 </ul>
-<p>Running an exposure</p>
-<p>To run the exposure we just created, we use the following one liner. The plus line is there to indicate to dbt to include all models used to feed into the <code>station_bikes_exposure</code> exposure.</p>
+</div>
+<div id="running-an-exposure" class="section level2 hasAnchor" number="15.2">
+<h2><span class="header-section-number">15.2</span> Running an exposure<a href="exposures.html#running-an-exposure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To run the exposure we just created, we use the following one liner. The plus sign is there to indicate to dbt to include all models used to feed into the <code>station_bikes_exposure</code> exposure.</p>
 <pre><code>dbt run --select +exposure:station_bikes_exposure</code></pre>
 <p>It is noteworthy to mention that you run the <code>name</code> value under the <code>exposures</code> key. The name of the YAML is not used when running exposures.</p>
 <p>Here is the output:</p>
@@ -314,21 +318,21 @@ exposures:
 </code></pre>
 <p>Nevertheless, we remain with visualizing our exposure.</p>
 </div>
-<div id="visualizing-the-exposure" class="section level2 hasAnchor" number="15.2">
-<h2><span class="header-section-number">15.2</span> Visualizing the exposure<a href="exposures.html#visualizing-the-exposure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="visualizing-the-exposure" class="section level2 hasAnchor" number="15.3">
+<h2><span class="header-section-number">15.3</span> Visualizing the exposure<a href="exposures.html#visualizing-the-exposure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Visualizing exposures is as simple as just generating your dbt documentation. This is actually the default way of displaying exposures. It begins with <code>dbt docs generate</code> and <code>dbt docs serve</code>. Afterwards, open the dbt documentation static web page in the port number provided. Ours is <code>localhost:/8080</code>.</p>
 <div class="float">
 <img src="images/exposure_webpage.png" alt="Exposure" />
 <div class="figcaption">Exposure</div>
 </div>
-<p>You will notice that there is a dedicated section for exposures called <code>Exposures</code>. The exposure title is <code>Dashboard</code> and the label for the exposure is the label provided in the YAML.</p>
+<p>You will notice that there is a dedicated section for exposures called <code>Exposures</code>. The exposure title is <code>Dashboard</code> and the label for the exposure is the <code>label</code> value provided in the YAML.</p>
 <p>If you click on the blue lineage graph button, you will see the upstream models that feed into our exposure.</p>
 <div class="float">
 <img src="images/exposure_lineage_graph.png" alt="Exposure lineage graph" />
 <div class="figcaption">Exposure lineage graph</div>
 </div>
 <p>Still at the bottom of the webpage, the <strong>Depends on</strong> section contains links to all the upstream models and references for your exposure. Clicking on any takes you to the dbt documentation site for that model.</p>
-<p>Finally, there is the <strong>View this exposure</strong> button. Clicking on it will take you to the url you specified in the <code>url:</code> key of the exposures file. In our case, the url leads to a Dashboard showing all the public sanitation facilities in Australia. Obviously there is no relation between bikes and sanitation facilities as this is just for demonstration purposes only!</p>
+<p>Finally, there is the <strong>View this exposure</strong> button. Clicking on it will take you to the url you specified in the <code>url:</code> key of the exposures file. In our case, the url leads to a Dashboard showing all the public sanitation facilities in Australia. Obviously there is no relation between bikes and sanitation facilities. This was just for demonstration purposes only!</p>
 <div class="float">
 <img src="images/exposure_hyperlink.png" alt="Exposure" />
 <div class="figcaption">Exposure</div>
@@ -357,12 +361,12 @@ exposures:
 <img src="images/exposure_application.png" alt="Exposure application" />
 <div class="figcaption">Exposure application</div>
 </div>
-<p>The lineage graph and the <strong>View this exposure</strong> buttons work for this exposure as well. In fact the lineage graph is the most complex so far. The exposure took into consideration that the <code>citi_trips_long</code> model is depedent on the <code>citi_trips_minutes</code> and <code>citi_trips_round</code> models!</p>
+<p>The lineage graph and the <strong>View this exposure</strong> buttons work for this exposure as well. In fact this lineage graph is the most complex we’ve encountered in the course so far. The exposure took into consideration that the <code>citi_trips_long</code> model is dependent on the <code>citi_trips_minutes</code> and <code>citi_trips_round</code> models!</p>
 <div class="float">
 <img src="images/exposure_lineage_graph2.png" alt="Exposure lineage graph" />
 <div class="figcaption">Exposure lineage graph</div>
 </div>
-<p>The exposure button also leads to a dashboard showing rates of some sanitation related disease. Again, not related to bikes and stations but serves the purpose of demonstration.</p>
+<p>The exposure button also leads to a dashboard showing rates of some sanitation related disease. Again, this dashboard is not related to bikes and stations but serves the purpose of demonstration.</p>
 
 </div>
 </div>

@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -242,9 +244,9 @@
 <h1><span class="header-section-number">Chapter 5</span> Our data in BigQuery<a href="our-data-in-bigquery.html#our-data-in-bigquery" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In an earlier chapter, we saw that in data engineering data mainly goes through three processes: extract, load and transform (ELT). The Extract, Transform, Load (ELT) is more of a traditional approach and we will not use it in this case. We will be using Google Bigquery as our data warehouse when working with dbt.</p>
 <p>As a reminder, let’s go through the definitions of ELT.</p>
-<p>Extract - the process of identifying and reading data from one or more source systems. We won’t have to do this since the New York City (NYC) bikes data that will be using has already been <em>extracted</em> from whichever the source is by the trusty workers of Google.</p>
+<p>Extract - the process of identifying and reading data from one or more source systems. We won’t have to do this since the New York City (NYC) bikes data that will be using has already been <em>extracted</em> from its source by BigQuery creators.</p>
 <p>Load - the process of adding the extracted data to the data warehouse, –in this case Google BigQuery. Again, Google has done this for us. Therefore we won’t have to do it.</p>
-<p>Transform - the process of converting data from its raw format to the format that it will be use for analysis. This falls definitely within our forte. And we shall use dbt for this. Examples of data transformations that can be done with SQL modeling in dbt are:</p>
+<p>Transform - the process of converting data from its raw format to the format that it will be used for analysis. This falls definitely within our forte. And we shall use dbt for this. Examples of data transformations that can be done with SQL modeling in dbt are:</p>
 <ul>
 <li>Replacing codes with values</li>
 <li>Aggregating numerical sums</li>
@@ -264,19 +266,19 @@
 </div>
 <p>Click on the dropdown at the top. Select <strong>NEW PROJECT</strong>. We want to create a new project that will contain some tables that we will work with in dbt.</p>
 <p>Name your project as <code>dbt-project1</code> or any other name you prefer. Then select <strong>CREATE</strong>.</p>
-<p>Once the project has been created, you will be returned to the original page as first. However, when you select the project dropdown again, you should see your newly created project as one of the options.</p>
+<p>Once the project has been created, you will be returned to the original page as at first. However, when you select the project dropdown again, you should see your newly created project as one of the options.</p>
 <div class="float">
 <img src="images/gcp_project.png" alt="GCP Project" />
 <div class="figcaption">GCP Project</div>
 </div>
 <p>Click on your project, the interface will refresh and the dropdown should now reflect <code>dbt-project1</code>.</p>
 <p>Click on the <strong>Dashboard</strong> link on the homepage.</p>
-<p>The below interface should appear. It can seem overwhelming at first.</p>
+<p>The below interface should appear. It can seem overwhelming at first. Lots of things in one place.</p>
 <div class="float">
 <img src="images/dashboard.png" alt="Dashboard" />
 <div class="figcaption">Dashboard</div>
 </div>
-<p>In one of the “boxes” within the <strong>Dashboard</strong> tab, you will find one called <strong>Resources</strong> with the <strong>BigQuery</strong> button underneath. Click on this button. It will take you to a page asking you to Enable the BigQuery Application Programming Interface (API). Kindly comply!</p>
+<p>In one of the “boxes” within the <strong>Dashboard</strong> tab, you will find one called <strong>Resources</strong> with the <strong>BigQuery</strong> button underneath. Click on this button. It will take you to a page asking you to <em>Enable the BigQuery Application Programming Interface (API)</em>. Do comply!</p>
 <p>Behold, below is the BigQuery interface.</p>
 <div class="float">
 <img src="images/bigquery_interface.png" alt="BigQuery interface" />
@@ -306,7 +308,7 @@
 <li><p>Region - <code>africa-south1 (Johannesburg)</code> or your preferred region</p></li>
 </ul>
 <p>Thereafter, click on <strong>CREATE DATASET</strong>.</p>
-<p>The <code>nyc_bikes</code> dataset should now appear under the <code>dbt-projec1</code> resource. We want to copy the contents of the <code>new_york_citibike</code> dataset into our <code>nyc_bikes</code> dataset. So how do we proceed?</p>
+<p>The <code>nyc_bikes</code> dataset should now appear under the <code>dbt-project1</code> resource. We want to copy the contents of the <code>new_york_citibike</code> dataset into our <code>nyc_bikes</code> dataset. So how do we proceed?</p>
 <p>Scroll down to the <code>new_york_citibike</code> dataset under the <code>bigquery-public-data</code> resource and click on it. On the menu for this dataset, you will see the <strong>Copy</strong> button. Click on this button.</p>
 <div class="float">
 <img src="images/copy.png" alt="Copy dataset" />
@@ -316,14 +318,14 @@
 <img src="images/copy_sidebar.png" alt="Copy sidebar" />
 <div class="figcaption">Copy sidebar</div>
 </div>
-<p>In the <strong>Destination</strong> searchbar, type <code>nyc_bikes</code> in reference to where we want to copy the contents into. You may need to enable the data transfer API to perform the copy operation. Do so if BigQuery necessitates you that it must be enabled.</p>
+<p>In the <strong>Destination</strong> searchbar, type <code>nyc_bikes</code> in reference to where we want to copy the contents into. You may need to enable the data transfer API to perform the copy operation. Do so if BigQuery necessitates that this must be enabled.</p>
 <p>Once you copy the dataset, a small bar will appear on the screen saying <strong>View Details</strong>. Click on it to stop the run operation since BigQuery will be rerunning the copy operation after every 24 hours. Disable the transfer process and delete it.</p>
 <p>Going back to your <code>dbt_project1</code> resource, your <code>nyc_bikes</code> dataset should now be having two tables under it. That is:</p>
 <ul>
 <li>citibike_stations</li>
 <li>citibike_trips</li>
 </ul>
-<p>Click on any of the tables and preview the data therein using the <strong>PREVIEW</strong> button of each tables interface.</p>
+<p>Click on any of the tables and preview the data therein using the <strong>PREVIEW</strong> button of each tables’ interface.</p>
 <div class="float">
 <img src="images/table_interface.png" alt="Table" />
 <div class="figcaption">Table</div>

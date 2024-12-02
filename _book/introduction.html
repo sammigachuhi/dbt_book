@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -242,16 +244,16 @@
 <h1><span class="header-section-number">Chapter 2</span> Introduction<a href="introduction.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="what-is-dbt" class="section level2 hasAnchor" number="2.1">
 <h2><span class="header-section-number">2.1</span> What is dbt?<a href="introduction.html#what-is-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, when in full, stands for Data build tool. dbt is a tool that data scientists and analytical engineers use to transform data in their data warehouses. If you are a newbie wanting to, or rather curious about dbt, the preceding statements sure contains a lot. The words <em>analytical engineers</em>, <em>transform data</em> and <em>data warehouses</em> may sound unfamiliar, if not imposing. For now just think of dbt much like a recipe. In a recipe, you have the steps and the instructions to cook your favourite meal, say a roasted chicken. Sure enough, your recipe will contain details on the optimal oven temperature, heating duration and how to set it! dbt works in much the same way. We define how we want to transform or build our data. Once we hit <code>run</code> the magic happens.</p>
+<p>dbt, when in full, stands for Data build tool. dbt is a tool that data scientists and analytical engineers use to transform data in their data warehouses. For now just think of dbt much like a recipe. In a recipe, you have the steps and the instructions to cook your favourite meal, say a roasted chicken. Sure enough, your recipe will contain details on the optimal oven temperature, heating duration and how to set your meal! dbt works in much the same way. We define how we want to transform or build our data. Once we hit <code>run</code>, the magic happens.</p>
 </div>
 <div id="encounter-with-dbt" class="section level2 hasAnchor" number="2.2">
 <h2><span class="header-section-number">2.2</span> Encounter with <code>dbt</code><a href="introduction.html#encounter-with-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>How did I come across dbt? Being from a totally different background, the geographical sciences, my first experience with dbt, contrary to what veteran users may say, wasn’t so good. Either because a lot was on my desk back then, but I was having trouble piecing together all the different components that make dbt work, or dbt uses to work. Whichever is the case. It is only after some time, and several hard knocks in between, that I was able to get a semblance of what it does.</p>
-<p>At least I got a few things. dbt could be used to create views of your tables in the data warehouse, it could perform tests and lastly, (the one I liked the most) it could be used to render a website of your documentation!</p>
+<p>How did I come across dbt? Being from a totally different background, the geographical sciences, my first experience with dbt, contrary to the many positive revs from online users, wasn’t so good. Either because a lot was on my desk back then, for I was having trouble piecing together all the different components that make dbt work, and how it works. It is only after some time, and several hard knocks in between, that I was able to get a semblance of what it does.</p>
+<p>Nevertheless, at least I got a few things. dbt could be used to create views of your tables in the data warehouse, it could perform tests and lastly, (the one I liked the most) it could be used to render your documentation!</p>
 </div>
 <div id="dbt-from-the-professionals" class="section level2 hasAnchor" number="2.3">
 <h2><span class="header-section-number">2.3</span> dbt, from the professionals…<a href="introduction.html#dbt-from-the-professionals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, from the words of developers, is an open-source tool that analysts and data engineers use to transform data in their data warehouses. Did someone mention <em>transform data</em> somewhere? Data transformation is the process of converting data from its source format to the format required for analysis. The data transformation process is part of a three stage process known as Extract Load and Transform (ELT). Before ELT, Extract Transform Load was the king. The former involves transfering data from the source, to the destination, such as a data warehouse or data lake and performing the transformation in the destination. The latter, though a traditional approach, involves first identifying the data, transforming it prior to landing it to the destination, in this case data warehouse and letting it rest there where downstream users can get hold of it.</p>
+<p>dbt, from the words of developers, is an open-source tool that analysts and data engineers use to transform data in their data warehouses. Data transformation is the process of converting data from its source format to the format required for analysis. The data transformation process is part of a three stage process known as Extract, Load and Transform (ELT). Before ELT, Extract, Transform, and Load (ETL) was the king. The former involves transfering data from the source, to the destination, such as a data warehouse or data lake and performing the transformation in the destination. The latter, ETL, though a traditional approach, involves first identifying the data, transforming it prior to landing it to the destination, in this case a data warehouse.</p>
 <p>Here is a better description of the Extract, Load and Transform keywords.</p>
 <p>Extract - this is the identification and reading of data from one or more sources, such as databases, internet, comma separated value (csv) files and the like.</p>
 <p>Load - just like you would pull up a weight into a lorry, this is the process of transferring data from the source to your data warehouse.</p>

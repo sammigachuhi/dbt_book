@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,13 +242,13 @@
             <section class="normal" id="section-">
 <div id="sources-1" class="section level1 hasAnchor" number="12">
 <h1><span class="header-section-number">Chapter 12</span> Sources<a href="sources-1.html#sources-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In the all-time favourite book <em>The voyages and adventures of Captain Hatteras</em>, an intelligent second-in-command captain of the sturdy ship –<em>The Forward</em>, would receive letters on almost every morning of the instructions that he and the crew should follow. The instructions were from an unknown source but they would detail which bearings the ship should follow, or what to do to navigate the high seas. In dbt, sources are what make your data in the data warehouse be referenced in dbt operations such as running models, tests and checking the ‘freshness’ of your data.
-Just like in the above anecdote where, if any person in the crew would ask Sir Richard Shandon, the second-in-command for justification of any task they were commanded to do, Richard would always refer to the authoratative letter from an anonymous source. Likewise, when working with sources, dbt will perform operations by referencing the sources using the <code>source</code> function (<code>{{ source("schema", "table") }}</code>).</p>
+<p>In the all-time favourite book <em>The voyages and adventures of Captain Hatteras</em>, every morning, the second-in-command, a well versed captain of the high seas, Richard Shandon by name, would receive a letter from an anonymous sender directing him on which direction to steer the ship. In dbt, sources are what make your data in the data warehouse be referenced in dbt operations such as running models, tests and checking the ‘freshness’ of your data.</p>
+<p>Just like in the above anecdote where, if any person in the crew would ask Sir Richard Shandon for justification of any task they were commanded to do, Richard would always refer to the authoritative letter from an anonymous source. Likewise, when working with sources, dbt will perform operations by referencing the sources using the <code>source</code> function (<code>{{ source("schema", "table") }}</code>).</p>
 <p>Sources in dbt are defined inside YAML files, and they are referenced inside SQL files, just like regular models again!</p>
 <div id="defining-a-source" class="section level2 hasAnchor" number="12.1">
 <h2><span class="header-section-number">12.1</span> Defining a source<a href="sources-1.html#defining-a-source" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>To demonstrate defining sources, we will work with two tables already in our data warehouse. These are the <code>2014-tripdata</code> and <code>citi_trips_round</code> tables under <code>nyc_bikes_nyc_bikes2014</code> (<code>nyc_bikes_nyc_bikes2014/2014-tripdata</code>) and <code>nyc_bikes</code> tree structures in BigQuery respectively.</p>
-<p>Create a new sibling directory next to the <code>docs</code>, <code>example</code>, and <code>my_models</code> folders. Inside it, create a new YAML file called <code>sources_bikes.yml</code>. The path to this file should be <code>models/sources/sources_bikes.yml</code>.</p>
+<p>Create a new sibling directory called <code>sources</code> next to the <code>docs</code>, <code>example</code>, and <code>my_models</code> folders. Inside it, create a new YAML file called <code>sources_bikes.yml</code>. The path to this file should be <code>models/sources/sources_bikes.yml</code>.</p>
 <p>Copy paste these contents into the newly created YAML file.</p>
 <pre><code>version: 2
 
@@ -261,12 +263,12 @@ sources:
     tables:
       - name: citi_trips_round
 </code></pre>
-<p>If you’ve worked with YAML property files in the previous chapters, this should be all too familiar. Nevertheless, the <code>name</code> and <code>schema</code> values refer to the schema name in your data warehouse, but they can be different. For the <code>tables</code> dictionary, we refer to the names of those tables under a particular schema. For example, the <code>citi_trips_round</code> is definitely under the <code>nyc_bikes</code> schema.</p>
+<p>The above should be all too familiar since we’ve worked with several YAML files so far. Nevertheless, the <code>name</code> and <code>schema</code> values refer to the schema names in your data warehouse. For the <code>tables</code> dictionary, we refer to the names of those tables under a particular schema. For example, the <code>citi_trips_round</code> is definitely under the <code>nyc_bikes</code> schema.</p>
 </div>
 <div id="referencing-sources" class="section level2 hasAnchor" number="12.2">
 <h2><span class="header-section-number">12.2</span> Referencing sources<a href="sources-1.html#referencing-sources" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Sources in our data warehouse are referenced using the <code>source()</code> function. Remember when referencing other models within models we used the <code>ref()</code> function? When working with sources, the <code>ref()</code> is now <code>source()</code>.</p>
-<p>Below is a demonstration of referencing a source to only select male bike riders. Notice the arrangement of the schema and table names within quotation markes (<code>''</code>) and separated by a comman. This is how we reference other data acting as the <em>source</em> in our <code>nyc_bikes_male.sql</code>.</p>
+<p>Below is a demonstration of referencing a source to only select male bike riders. Notice the arrangement of the schema and table names within quotation marks (<code>''</code>) and separated by a comma. This is how we reference other data acting as the <em>source</em> in our <code>nyc_bikes_male.sql</code>.</p>
 <pre><code>SELECT * FROM 
 {{ source(&#39;nyc_bikes&#39;, &#39;citi_trips_round&#39;) }}
 WHERE gender = &quot;male&quot;
@@ -295,7 +297,7 @@ WHERE gender = 1
 <img src="images/sources.png" alt="Sources" />
 <div class="figcaption">Sources</div>
 </div>
-<p>One would have expected the <code>nyc_male_2014</code> view to be under the <code>nyc_bikes_nyc_bikes2014</code> schema because that’s the seed dataset. Our assumption is that we set the <code>nyc_bikes</code> as the dataset to work with when setting up dbt, and thus it’s very hard to deviate from this. But we stand to be corrected. One more thing, though its obvious –the dbt source can also work inside a <code>WITH</code> SQL statement like so in the <code>nyc_female_2014</code> model.</p>
+<p>One would have expected the <code>nyc_male_2014</code> view to be under the <code>nyc_bikes_nyc_bikes2014</code> schema because that’s the seed dataset. Our assumption is that we set the <code>nyc_bikes</code> as the dataset to work with when setting up dbt, and thus it’s very hard to deviate from this. But we stand to be corrected. One more thing, the dbt source can also work inside a <code>WITH</code> SQL statement like so in the <code>nyc_female_2014</code> model.</p>
 <pre><code>WITH nyc_female_2014 AS (
     SELECT * FROM 
         {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
@@ -306,7 +308,7 @@ SELECT * FROM nyc_female_2014</code></pre>
 </div>
 <div id="defining-properties-in-a-sources-file" class="section level2 hasAnchor" number="12.3">
 <h2><span class="header-section-number">12.3</span> Defining properties in a <code>sources</code> file<a href="sources-1.html#defining-properties-in-a-sources-file" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Just like you would craft the properties for a given models YAML file, the same can likewise be done for the sources YAML file. You can define descriptions and tests for your fields in a <code>sources</code> file. Again, what’s good for the goose is good for the gander also applies here. Below is our enriched <code>sources</code> YAML file.</p>
+<p>Just like you would craft the properties for a given models’ YAML file, the same can likewise be done for the sources YAML file. You can define descriptions and tests for your fields in a <code>sources</code> file. Again, what’s good for the goose is good for the gander. Below is our enriched <code>sources</code> YAML file.</p>
 <pre><code>version: 2
 
 sources:
@@ -370,8 +372,8 @@ sources:
     schema: nyc_bikes 
     tables:
       - name: citi_trips_round</code></pre>
-<p>Let’s start by running the sole test at the trusty <code>tripduration</code> key via our one liner slingshot code: <code>dbt test --select sources</code>.</p>
-<p>Everything run fine meaning there were no null values in this field.</p>
+<p>Let’s start by running the sole test at the trusty <code>tripduration</code> key via our single-line slingshot code: <code>dbt test --select sources</code>.</p>
+<p>Everything ran fine meaning there were no null values in this field.</p>
 <pre><code>19:32:18  Concurrency: 1 threads (target=&#39;dev&#39;)
 19:32:18  
 19:32:18  1 of 1 START test dbt_expectations_source_expect_column_values_to_not_be_null_nyc_bikes_nyc_bikes2014_2014-tripdata__id  [RUN]
@@ -381,7 +383,7 @@ sources:
 <img src="images/sources_definitions.png" alt="Sources descriptions" />
 <div class="figcaption">Sources descriptions</div>
 </div>
-<p>You should see your dbt documentation updated with the descriptions for <code>nyc_bikes_nyc_bikes2014</code> table. Since the <code>citi_trips_round</code> table has been defined twice, once in the <code>my_models</code> YAML and now in the <code>sources</code> YAML, you will notice one of the <code>citi_trips_round</code> table does not have any definition. We can decide to copy paste the definitons of <code>citi_trip_round</code> table from <code>my_models</code> into the <code>sources</code> YAML file. The <code>2014-tripdata</code> table inside the <code>nyc_bikes_nyc_bikes2014</code> YAML also suffers from the same issue.</p>
+<p>You should see your dbt documentation updated with the descriptions for <code>nyc_bikes_nyc_bikes2014</code> table.</p>
 <p>Below is our <code>sources</code> YAML file in full with additional descriptions and tests.</p>
 <pre><code>version: 2
 

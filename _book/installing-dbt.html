@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,7 +242,7 @@
             <section class="normal" id="section-">
 <div id="installing-dbt" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Installing dbt<a href="installing-dbt.html#installing-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Now that we’ve seen how to access a dataset inside our data warehouse, now let’s proceed to installing dbt. This section assumes you have Visual Studio (VS) Code already installed. All code in this book has been done inside a Linux environment but on a Windows computer thanks to the Window Subsystem for Linux (WSL2) virtualization platform.</p>
+<p>Now that we’ve seen how to access a dataset inside our data warehouse, now let’s proceed to installing dbt. This section assumes you already have Visual Studio (VS) Code installed. All code in this book has been operated within a Linux environment. For Window’s users, a Linux environment can be enabled by installing the Windows Subsystem for Linux (WSL2) virtualization platform.</p>
 <div id="setting-the-environment" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Setting the environment<a href="installing-dbt.html#setting-the-environment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Open your VS Code.</p>
@@ -253,16 +255,15 @@
 </code></pre>
 <p>You will see your namespace appended with <code>venv</code> which means that your virtual environment is now active. For example:</p>
 <pre><code>(venv) sammigachuhi@Gachuhi:~/dbt_book$ </code></pre>
-<p>Now here comes the big part: installing dbt for Big Query. We just don’t want to install dbt-core, the dbt packages that we’ll be using, but we also want to install the necessary dependencies that will connect it to BigQuery, where our data is stored.</p>
-<p>The following code will install everything we need; both dbt and the dependencies needed to connect it to BigQuery.</p>
+<p>Now here comes the big part: installing dbt for Big Query. The following code will install everything we need; both dbt and the dependencies needed to connect it to BigQuery.</p>
 <pre><code>python3 -m pip install dbt-core dbt-bigquery
 </code></pre>
 </div>
 <div id="connecting-to-your-bigquery-data-warehouse" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> Connecting to your BigQuery data warehouse<a href="installing-dbt.html#connecting-to-your-bigquery-data-warehouse" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We wish connecting to a data warehouse for dbt were as easy as providing a username and password. However, it is not so. But it is definitely possible. To connect dbt to a data warehouse, we use a keyfile. A keyfile is a file that contains encryption keys or licenses for a particular task. The keyfile we shall use shall be the doorway to our data warehouse.</p>
-<p>First step, go to your <a href="https://console.cloud.google.com/apis/credentials/wizard">GCP Credentials Wizard</a> page.</p>
-<p>Ensure that your project is set to the dbt project you created in the previous chapter. For my case, I reverted to an earlier created project called <code>dbt_project</code> since my other project <code>dbt_project1</code> started incuring costs.</p>
+<p>We wish connecting to a data warehouse for dbt were as easy as providing a username and password. However, far from it. But it is definitely possible. To connect dbt to a data warehouse, we use a keyfile. A keyfile is a file that contains encryption keys or licenses for a particular task. The keyfile we shall use shall be the doorway to our data warehouse.</p>
+<p>As the first step, go to your <a href="https://console.cloud.google.com/apis/credentials/wizard">GCP Credentials Wizard</a> page.</p>
+<p>Ensure that your project is set to the dbt project you created in the previous chapter. For my case, I reverted to an earlier created project called <code>dbt_project</code> since my other project <code>dbt_project1</code> started incurring costs.</p>
 <p>For <strong>Credential Type</strong>:</p>
 <ul>
 <li><p>From the <strong>Select an API</strong> dropdown, choose <strong>BigQuery API</strong></p></li>
@@ -276,7 +277,7 @@
 <li><p>Leave the <strong>Grant users access to this service account</strong> fields blank</p></li>
 <li><p>Once everything is fine it is as good as clicking <strong>Done</strong>!</p></li>
 </ul>
-<p>Your credentials interface will look like below.</p>
+<p>Your credentials interface will look like this:</p>
 <div class="float">
 <img src="images/service-account.png" alt="Service account" />
 <div class="figcaption">Service account</div>
@@ -312,7 +313,7 @@ Enter a number: 1</code></pre>
 [1] oauth
 [2] service_account
 Desired authentication method option (enter a number): 2</code></pre>
-<p>For the keyfile, provide the path to where you had saved the json file. As a note, this path should be somewhere different than where your dbt project is located. This is because saving the project into Github with your json keys as part of its files will cause Github to raise an alarm and send consistent emails. This is because the json keys are never meant to be shared or stored somewhere accessible. They are considered sensitive information</p>
+<p>For the keyfile, provide the path to where you had saved the json file. As a note, this path should be somewhere different than where your dbt project is located. This is because saving the project into Github with your json keys as part of its files will cause Github to raise an alarm and send alert emails. This is because the json keys are never meant to be shared or stored somewhere accessible. They are considered sensitive information.</p>
 <pre><code>keyfile (/path/to/bigquery/keyfile.json): /home/sammigachuhi/dbt_credentials/dbt_book.json</code></pre>
 <p>You will also be asked to provide your project ID. This is available under your dbt project’s dashboard under the <strong>Project ID</strong> heading.</p>
 <pre><code>project (GCP project id): dbt-project-437116</code></pre>

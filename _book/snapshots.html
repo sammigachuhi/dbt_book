@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,18 +242,18 @@
             <section class="normal" id="section-">
 <div id="snapshots" class="section level1 hasAnchor" number="13">
 <h1><span class="header-section-number">Chapter 13</span> Snapshots<a href="snapshots.html#snapshots" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Picture this, there is this lady you have been eyeing, after many nights of turning and tossing, you decide to visit her place because she is currently not anywhere interested in being taken out. When you visit her at the rendezvous, you decide to ask her to take a ‘selfie’ of you and her (big mistake). You think she will send the selfie to you, she never does. Well, that’s a true story of yours truly and even though no hard feelings over the incident, snapshots in dbt work in much the same way.</p>
-<p>A snapshot in dbt is a recorded change of a mutable table over time. Think of a snapshot as a way to track changes in your data over time. For example, you could be a having a crazy table that logs your relationship status with your girlfriend or boyfriend over time. The first row could be as follows:</p>
+<p>Picture this, there is this lady you have been eyeing, after turning and tossing for several nights, you decide to visit her place because she is currently not anywhere interested in being taken out. When you visit her at the rendezvous, you decide to ask her to take a ‘selfie’ of you and her (big mistake). You think she will send the selfie to you, she never does. Well, that’s a true story of yours truly and even though no hard feelings over the incident, snapshots in dbt work in much the same way.</p>
+<p>A snapshot in dbt is a recorded change of a mutable table. Think of a snapshot as a way to track changes in your data. For example, you could be a having a crazy table that logs your relationship status with your girlfriend or boyfriend over time. The first row could be as follows:</p>
 <pre><code>|----------|--------------|---------------|
 | id       |  Status      | updated-at    |
 | 11       |  Spark       | 21/09/2024    |
 |----------|--------------|---------------|</code></pre>
-<p>Now let’s say, you realise something about your girlfriend and boyfriend that puts a freeze on the relationship, so in your relationship table it would have the following update.</p>
+<p>Now, let’s say you realise something about your girlfriend and boyfriend that puts a freeze on the relationship. So in your relationship table it would have the following update.</p>
 <pre><code>|----------|--------------|---------------|
 | id       |  Status      | updated-at    |
 | 11       |  Shaky       | 22/10/2024    |
 |----------|--------------|---------------|</code></pre>
-<p>The relationship would now be ‘shaky’ subject to external forces and internal will, but our update may have overwritten the previous record of ‘Spark’ when the relationship was at cloud nine. dbt offers a way to preserve these past records so that they can be used for further analysis, or for posterity purposes. For example, keeping a record of the change can be used to analyse how long the relationship lasted from its hey days to when the waves started beating the ship. This kind of analysis can be used for more serious matters, such as when analyzing the time it takes from sending to receiving an order. dbt will help you record these changes and log the time when the change took place. For example, our dbt snapshot for our relationship would be:</p>
+<p>Our above update will have overwritten the previous record of ‘Spark’ when the relationship was at cloud nine. dbt offers a way to preserve these past records so that they can be used for further analysis, or for posterity purposes. For example, keeping a record of the change can be used to analyse how long the relationship lasted from its hey days to when the waves started beating the ship. This kind of analysis can be used for more serious matters, such as when analyzing the time it takes from sending to receiving an order. dbt will help you record these changes and log the time when the change took place. For example, our dbt snapshot for our relationship would be:</p>
 <p>|———-|————–|—————|—————-|————–|
 | id | Status | updated-at | dbt_valid_from | dbt_valid_to |
 | 11 | Spark | 21/09/2024 | 21/09/2024 | 22/10/2024 |
@@ -260,8 +262,8 @@
 <p>The most up-to-date record will have a value of <code>null</code> in the <code>dbt_valid_to</code> field. Here is a description of the last two fields and those used internally by dbt.</p>
 <ol style="list-style-type: decimal">
 <li><p><code>dbt_valid_from</code> - The timestamp when this snapshot row was first inserted. This column can be used to order the different “versions” of a record.</p></li>
-<li><p><code>dbt_valid_to</code> - The timestamp when this row became invalidated. The most recent snapshot record will have dbt_valid_to set to null.</p></li>
-<li><p><code>dbt_scd_id</code> - A unique key generated for each snapshotted record. This is used internally by dbt.</p></li>
+<li><p><code>dbt_valid_to</code> - The timestamp when this row became invalidated. The most recent snapshot record will have <code>dbt_valid_to</code> set to null.</p></li>
+<li><p><code>dbt_scd_id</code> - A unique key generated for each tracked record. This is used internally by dbt.</p></li>
 <li><p><code>dbt_updated_at</code> - The updated_at timestamp of the source record when this snapshot row was inserted. This is used internally by dbt.</p></li>
 </ol>
 <p>Slowly Changing Dimension (SCD) refers to the way data changes over time in a data warehouse. In today’s world, one wouldn’t say that data changes slowly, but the term arises from the fact that even though data may change infrequently, such as makeups and breakups in your relationship, they are significant over time even to the future of the relationship or the continuity of your business!</p>
@@ -342,23 +344,23 @@ WHERE `start station name` = &#39;Nowhere Near Station&#39;;</code></pre>
 <pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
 SET `start station name` = &#39;Even Further Station&#39;, `_id` = 1001995
 WHERE `_id` = 0;</code></pre>
-<p>Again, run <code>dbt snapshot</code>. Always run <code>dbt snapshot</code> when you suspect, or where in actual sense your table has been updated, even if through automatic scheduling.</p>
+<p>Again, run <code>dbt snapshot</code>. Always run <code>dbt snapshot</code> when your data has received new data update.</p>
 <p>Let’s check if the new row with two updates has been recorded in our snapshots table.</p>
 <pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
 WHERE `start station name` = &#39;Even Further Station&#39;;</code></pre>
-<p>If you run this, you will notice that the <code>dbt_valid_to</code> is still <code>null</code>. We presume this is because we have added a new unique key and thus dbt will still treat this as a new recorded rather than one which was changed from 0 to 1001995.</p>
+<p>If you run this, you will notice that the <code>dbt_valid_to</code> is still <code>null</code>. This could possibly be because we have added a new unique key and thus dbt will still treat this as a new record rather than one which was changed from 0 to 1001995.</p>
 <p>Now, update the row with <code>_id</code> 1001995 using the below SQL query.</p>
 <pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
 SET `start station name` = &#39;Furth East Station&#39;
 WHERE `_id` = 1001995;</code></pre>
-<p>Now after running <code>dbt snapshot</code> (we hope you remembered), let’s see if our snapshot table will have tracked the historical change of <code>Even Further Station</code> and <code>Furth East Station</code> of row <code>_id</code> 1001995. Use the below query to unravel the results, drumrolls please…</p>
+<p>Now after running <code>dbt snapshot</code> , let’s see if our snapshot table will have tracked the historical change of <code>Even Further Station</code> and <code>Furth East Station</code> of row <code>_id</code> 1001995. Use the below query to unravel the results.</p>
 <pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`tripdata_snapshot`
 WHERE `_id` = 1001995;</code></pre>
 <div class="float">
 <img src="images/snapshot_example.png" alt="Snapshot example" />
 <div class="figcaption">Snapshot example</div>
 </div>
-<p>Yes it did! For row 1, which stands for when the ‘start station name’ was <code>Even Further Station</code>, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the ‘start station name’ was switched to <code>Furth East Station</code>, we can see it became valid from 2024-10-24 20:02, the exact time when row was updated.</p>
+<p>Yes it did! For row 1, which stands for when the ‘start station name’ was <code>Even Further Station</code>, we can see that row was valid from 2024-10-24 19:29 to 2024-10-24 20:02. However, the new row 2, which is where the ‘start station name’ was switched to <code>Furth East Station</code>, we can see it became valid from 2024-10-24 20:02; the exact time when row was updated.</p>
 <p>You can indeed check if the latest change is in the <code>2014-tripdata</code> table via:</p>
 <pre><code>SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata`
 WHERE `start station name` = &#39;Furth East Station&#39;;</code></pre>
@@ -366,7 +368,7 @@ WHERE `start station name` = &#39;Furth East Station&#39;;</code></pre>
 <div id="the-timestamp-strategy" class="section level2 hasAnchor" number="13.3">
 <h2><span class="header-section-number">13.3</span> The <code>timestamp</code> strategy<a href="snapshots.html#the-timestamp-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The <code>timestamp</code> strategy in snapshoting relies on an <code>updated_at</code> column to check if any changes have occurred on the row. If the configured <code>updated_at</code> column is more recent than when the table was last run, dbt will invalidate the old record and record a new one. If the timestamps are unchanged, dbt will not take any action.</p>
-<p>The <code>timestamp</code> strategy requires an <code>updated_at</code> column which represents when the row was last updated. In order to work with <code>timestamp</code> strategy, we need to recreate our <code>2014-tripdata</code> but now with an additional <code>updated_at</code> column. It can be any table, so long as there is an <code>updated_at</code> column, but we settled on this one because it is lightweight and plus, we already have it as a seed. We will use a dbt model to recreated the <code>2014-tripdata</code> seed but with an extra <code>updated_at</code> column.</p>
+<p>The <code>timestamp</code> strategy requires an <code>updated_at</code> column which represents when the row was last updated. In order to work with <code>timestamp</code> strategy, we need to recreate our <code>2014-tripdata</code> but now with an additional <code>updated_at</code> column. It can be any table, so long as there is an <code>updated_at</code> column, but we settled on this one because it is lightweight. Plus, we already have it as a seed. We will use a dbt model to recreated the <code>2014-tripdata</code> seed but with an extra <code>updated_at</code> column.</p>
 <p>Create a <code>nyc_bikes_timestamp</code> SQL model inside the <code>sources</code> folder. Copy paste the following contents into the model.</p>
 <pre><code>{{ config(
     materialized=&quot;table&quot;,
@@ -425,7 +427,7 @@ SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bike
 
 {% endsnapshot %}
 </code></pre>
-<p>You may wonder why we are not using something like <code>{{ source("schema", "table") }}</code> in the SELECT statement. We had initially run that with <code>nyc_bikes_nyc_bikes_nyc_bikes2014</code> and <code>nyc_bikes_timestamp</code> as the schema and table names respectively. However, dbt kept throwing an error that it couldn’t find a table therefore we resulted in the unorthodox way of hardcoding the entire dataset-schema-table namespace.</p>
+<p>You may wonder why we are not using something like <code>{{ source("schema", "table") }}</code> in the SELECT statement. We had initially run that with <code>nyc_bikes_nyc_bikes_nyc_bikes2014</code> and <code>nyc_bikes_timestamp</code> as the <em>schema</em> and <em>table</em> names respectively. However, dbt kept throwing an error that it couldn’t find such a table therefore we resulted in the unorthodox way of hardcoding the entire dataset-schema-table namespace.</p>
 <p>Now run <code>dbt snapshot</code> to create the <code>nyc_bikes_timestamp</code> table.</p>
 <pre><code>19:31:54  Concurrency: 1 threads (target=&#39;dev&#39;)
 19:31:54  
@@ -446,7 +448,7 @@ SELECT * FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bike
 <p>Now to check if our timestamp table can snapshot changes, let’s insert a new row and make some changes to it. Paste the following in a SQL tab in BigQuery.</p>
 <pre><code>INSERT INTO `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp` (`_id`, `tripduration`, `start station name`, `updated_at`) 
 VALUES (21001995, 2000, &#39;Sumwhere Near Station&#39;, &#39;2024-10-25 23:09:47.169668 UTC&#39;);</code></pre>
-<p>Note the <code>updated_at</code> column. Unlike when working with the <code>check</code> strategy which could still work well with several fields as <code>null</code>, omitting the <code>updated_at</code> column in the <code>timestamp</code> strategy is costly as dbt will be unable to track any change. All you will get just a new field but with several <code>null</code> values in the snapshot table.</p>
+<p>Note the <code>updated_at</code> column. Unlike when working with the <code>check</code> strategy which could still work well with several fields as <code>null</code>, omitting the <code>updated_at</code> column in the <code>timestamp</code> strategy is costly as dbt will be unable to track any change. All you will get is just a new field but with several <code>null</code> values in the snapshot table.</p>
 <p>Now run <code>dbt snapshot</code> and when it succesfully runs, check <code>timestamp_snapshot</code> table using this SELECT statement in BigQuery.</p>
 <pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
 WHERE `_id` = 21001995;</code></pre>
@@ -454,7 +456,7 @@ WHERE `_id` = 21001995;</code></pre>
 <pre><code>UPDATE `dbt-project-437116`.`nyc_bikes_nyc_bikes_nyc_bikes2014`.`nyc_bikes_timestamp`
 SET `start station name` = &#39;Somewhere Here Station&#39;, `updated_at` = &#39;2024-10-25 23:14:47.169668 UTC&#39;
 WHERE `_id` = 21001995;</code></pre>
-<p>Run <code>dbt snapshot</code>. Again, we are careful not to omit the <code>updated_at</code> column!</p>
+<p>Run <code>dbt snapshot</code>.</p>
 <p>Now check if dbt has been able to track changes. We expect that the row with the station name ‘Sumwhere Near Station’ was valid for a short period (see the <code>dbt_valid_from</code> and <code>dbt_valid_to</code> columns) while the ‘Somewhere Here Station’ is the most current.</p>
 <pre><code>SELECT * FROM `dbt-project-437116`.`snapshots`.`timestamp_snapshot` 
 WHERE `_id` = 21001995;</code></pre>

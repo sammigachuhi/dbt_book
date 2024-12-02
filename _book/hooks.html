@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,7 +242,7 @@
             <section class="normal" id="section-">
 <div id="hooks" class="section level1 hasAnchor" number="18">
 <h1><span class="header-section-number">Chapter 18</span> Hooks<a href="hooks.html#hooks" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>At one time, I posed a question to a well-versed data engineer of why the technological space seems to be awash with exotic outlandish names. Although I can’t remember what he replied, but it was after a hearty laughter. Hooks in dbt seems to fit into the calibre of these outlandish names, for there is nothing regarding its purpose in dbt which seems to suggest it will lure and capture your data, read the prey in this case.</p>
+<p>At one time, I posed a question to a well-versed data engineer of why the technological space seems to be awash with exotic outlandish names. Hooks in dbt seem to fit into the calibre of these outlandish names… for there is nothing regarding its purpose in dbt which seems to suggest it will lure and capture your data.</p>
 <p>You could take hooks as customized SQL models that are out of the box when it comes to dbt. There are various forms of hooks, namely:</p>
 <ol style="list-style-type: decimal">
 <li><p><code>pre-hook</code> - executed before a model, snapshot or seed is built.</p></li>
@@ -248,7 +250,7 @@
 <li><p><code>on-run-start</code> - executed at the start of implementing the following code executions: <code>dbt build</code>, <code>dbt compile</code>, <code>dbt docs generate</code>, <code>dbt run</code>, <code>dbt seed</code>, <code>dbt snapshot</code> or <code>dbt test</code>.</p></li>
 <li><p><code>on-run-end</code> - executed at the end of the following code executions: <code>dbt build</code>, <code>dbt compile</code>, <code>dbt docs generate</code>, <code>dbt run</code>, <code>dbt seed</code>, <code>dbt snapshot</code> or <code>dbt test</code>.</p></li>
 </ol>
-<p>A confession to make: since I have minimal experience using hooks, I shall play in the ‘safe’ zone.</p>
+<p>A confession to make: since I have minimal experience using hooks, I shall play it safe, thus the reason why this chapter is quite short.</p>
 <div id="post-hooks" class="section level2 hasAnchor" number="18.1">
 <h2><span class="header-section-number">18.1</span> Post-hooks<a href="hooks.html#post-hooks" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The format of writing a hook is:</p>
@@ -260,7 +262,7 @@
 
 SELECT * FROM raw_table
 </code></pre>
-<p>We tried creating a simple post-hook but no matter what we tried, <code>dbt</code> kept throwing back errors. Nevertheless, on more on how to set up hooks, see <a href="https://docs.getdbt.com/docs/build/hooks-operations">here</a> and <a href="https://www.y42.com/docs/dbt-models/hooks">here</a>.</p>
+<p>We tried creating a simple post-hook but no matter what we tried, <code>dbt</code> kept throwing back errors. Nevertheless, for more on how to set up hooks, see <a href="https://docs.getdbt.com/docs/build/hooks-operations">here</a> and <a href="https://www.y42.com/docs/dbt-models/hooks">here</a>.</p>
 
 </div>
 </div>

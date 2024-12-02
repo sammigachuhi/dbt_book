@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -245,9 +247,9 @@
 <ul>
 <li><p><strong>Expressions {{ … }}</strong>: Expressions are used when you want to output a string. You can use expressions to reference variables and call macros.</p></li>
 <li><p><strong>Statements {% … %}</strong>: Statements don’t output a string. They are used for control flow, for example, to set up for loops and if statements, to set or modify variables, or to define macros.</p></li>
-<li><p><strong>Comments {# … #}</strong>: Jinja comments are used to prevent the text within the comment from executing or outputing a string. Don’t use – for comment.</p></li>
+<li><p><strong>Comments {# … #}</strong>: Jinja comments are used to prevent the text within the comment from executing or outputing a string.</p></li>
 </ul>
-<p>To make the point sink home since jinja can at time look mind boggling to the novice beginner, we’ll start with explaining a for loop. This is the skeleton of a <code>for</code> loop in jinja.</p>
+<p>Let’s start with explaining a <em>for</em> loop. This is the skeleton of a <code>for</code> loop in jinja.</p>
 <pre><code>{% for item in sequence %}
 -- SQL Code for {{ item }}
 {% endfor %}
@@ -255,7 +257,7 @@
 <div id="a-simple-jinja-statement" class="section level2 hasAnchor" number="16.1">
 <h2><span class="header-section-number">16.1</span> A simple jinja statement<a href="jinja.html#a-simple-jinja-statement" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Going by the above cue, let’s create a jinja statement that will select all those rows whose bike riders’ birth years are any of the following: 1995, 1997 and 2002. Nothing special about these years, just that they stem from the unprofitable notion that they correspond to my birth year and those of my siblings!</p>
-<p>Create a new folder called <code>jinja</code> under the <code>models</code> directory and within it create a <code>years</code> SQL file. Copy past the following contents into <code>years.sql</code>.</p>
+<p>Create a new folder called <code>jinja</code> under the <code>models</code> directory and within it create a <code>years</code> SQL file. Copy paste the following contents into <code>years.sql</code>.</p>
 <pre><code>{% set years = [1995, 1997, 2002] %}
 
 {% for year in years %}
@@ -263,13 +265,12 @@ SELECT *
 FROM {{ ref(&#39;citi_trips_long&#39;) }}
 WHERE birth_year = {{ year }}
 
-
 {% endfor %}
 </code></pre>
-<p>Let’s go through the above line by line. It may look a bit more cryptic that the go lucky SQL statements we write, but it is quite easy, especially if you know a bit of python.</p>
+<p>Let’s go through the above line by line.</p>
 <ul>
-<li><p><code>{% set years = [1995, 1997, 2002] %}</code> - this sets the variables we will use to extract some data from our tables. The <code>years</code> variable consists of three years which we will use to filter our tables.</p></li>
-<li><p><code>{% for year in years %}</code> - the SQL statement that will be repeated is placed inside the <code>for ...</code> loop. In this statement, for every year in the <code>years</code> variable list, we will repeat the following sql statement, where <code>{{ year }}</code> will be each year in the <code>years</code> variable:</p></li>
+<li><p><code>{% set years = [1995, 1997, 2002] %}</code> - this sets the variables we will use to extract some data from our tables. The <code>years</code> variable consists the years that we will use to filter our tables.</p></li>
+<li><p><code>{% for year in years %}</code> - the SQL statement that will be repeated is placed inside the <code>for ...</code> loop. In this statement, for every year in the <code>years</code> variable list, we will repeat the below sql statement, where <code>{{ year }}</code> is each year in the <code>years</code> variable:</p></li>
 </ul>
 <pre><code>SELECT * 
 FROM {{ ref(&#39;citi_trips_long&#39;) }}
@@ -296,11 +297,11 @@ SELECT *
 FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
 WHERE birth_year = 2002
 </code></pre>
-<p>What the <code>for</code> loop did was avoid the redundancy of selecting each <code>birth_year</code> in its own <code>SELECT</code> statement and instead put it inside one <code>for</code> loop statement. Going a step further, also the redundancy of hardcoding the <code>year</code> is removed. This formula, though a bit complicated, toes in line with the Do not Repeat Yourself (DRY) principle in programming.</p>
+<p>What the <code>for</code> loop did was to avoid the redundancy of selecting each <code>birth_year</code> in its own <code>SELECT</code> statement. Instead it put the three <code>SELECT</code> statements inside one <code>for</code> loop statement. Going a step further, also the redundancy of hardcoding the <code>year</code> is removed. This formula, though a bit complicated, toes in line with the Do not Repeat Yourself (DRY) principle in programming.</p>
 </div>
 <div id="a-more-complex-jinja-query" class="section level2 hasAnchor" number="16.2">
 <h2><span class="header-section-number">16.2</span> A more complex jinja query<a href="jinja.html#a-more-complex-jinja-query" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>One can also create more complex jinja queries that leverage other functionalities of SQL such as aggregation and CASE WHEN statements. Now suppose, for purely selfish reasons, this author wants to compare the bike ride durations against those of other people who are age mates as his siblings. Below is an <code>age.sql</code> file that creates a table that has a column showing the trip duration for each value in the <code>years</code> variable.</p>
+<p>One can also create more complex jinja queries that leverage other SQL functionalities such as aggregation and CASE WHEN statements. Now suppose, for purely selfish reasons, this author wants to compare the bike ride durations against those of other people who were born in the years 1995, 1997 and 2002. Below is an <code>age.sql</code> file that creates a table that has a column showing the trip duration for each value in the <code>years</code> variable.</p>
 <pre><code>{% set years = [1995, 1997, 2002] %}
 
 SELECT birth_year, 
@@ -335,14 +336,14 @@ WHERE birth_year IN (
   
 )
 GROUP BY birth_year</code></pre>
-<p>Pasting this query in BigQuery gives us the following table.</p>
+<p>Pasting this query in BigQuery gives us the below table:</p>
 <div class="float">
 <img src="images/age_query.png" alt="Age query" />
 <div class="figcaption">Age query</div>
 </div>
 <p>We can see a column for trip duration in minutes for each of the three select years of 1995, 1997 and 2002. However, other years not set in our <code>years</code> variable are included as well, but with the value <code>0</code> in each of the three columns. Before one starts getting confused and blaming the universe for not wanting us to succeed, there is a way we can sort this pesky issue: enter the <code>if not loop.last</code> statement!</p>
-<p>In our previous SQL query, and if you are experienced with SQL queries a bit, you already know that one can sort the issue of excluding unnecessary years using the <code>WHERE</code> clause. For example, we would have used the clause <code>WHERE birth_year IN (1995, 1997, 2002)</code>. However, we frowned on this approach because it is making break the DRY principle by hardcoding the years by hand. Taking a more complex approach to fulfil the DRY principle sounds like we are exhibiting Obsessive Compulsive Disorder (OCD) but being obsessed in doing things in a higher way is not all too bad in programming.</p>
-<p>The <a href="https://docs.y42.com/docs/how-to-use-jinja"><code>if not loop.last</code> statement</a> separates the values of interest with a comma, thus effectively fulfilling the work of where the <code>WHERE</code> clause failed. The <code>age2.sql</code> shows this in action.</p>
+<p>In our previous SQL query, you saw that one can sort the issue of excluding unnecessary years using the <code>WHERE</code> clause. For example, we would have used the clause <code>WHERE birth_year IN (1995, 1997, 2002)</code>. However, we frowned on this approach because it is breaking the DRY principle by hardcoding the years by hand. Taking a more complex approach to fulfil the DRY principle sounds like we are exhibiting Obsessive Compulsive Disorder (OCD) but being obsessed in doing things in a higher way is not all too bad in programming.</p>
+<p>The <a href="https://docs.y42.com/docs/how-to-use-jinja"><code>if not loop.last</code> statement</a> separates the values of interest with a comma, thus effectively fulfilling the work the <code>WHERE</code> clause where it failed. The <code>age2.sql</code> shows this in action.</p>
 <pre><code>{% set years = [1995, 1997, 2002] %}
 
 SELECT birth_year, 
@@ -470,7 +471,7 @@ WHERE birth_year IN (
     {% endfor %}
 
 )</code></pre>
-<p>The <code>for</code> loop begins when we want to specify the years, jinja tells our computer to add a comma until the last one and the <code>endfor</code> statement tells our computer to break out of the looping. Here is the corresponding compiled SQL in the <code>years2.sql</code> in the target directory. When this query is pasted, into BigQuery, it only filters the rows matching to the specified birth years.</p>
+<p>The <code>for</code> loop begins when we want to specify the years, the <code>if not loop</code> programmatically adds a comma until the last one and finally the <code>endfor</code> statement tells our computer to break out of the looping. Here is the corresponding compiled SQL in the <code>years2.sql</code> in the target directory. When this query is pasted, into BigQuery, it only filters the rows matching to the specified birth years.</p>
 <pre><code>SELECT * 
 FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
 

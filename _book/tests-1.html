@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -241,12 +243,12 @@
 <div id="tests-1" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Tests<a href="tests-1.html#tests-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Probably if you’ve worked on a Windows computer, you must have used Microsoft Defender Full Scan at some point. During or at the end of the scan, some results were displayed. dbt works in almost the same way, only that this time they scan your data.</p>
-<p>Tests in dbt are basically assertions of your data. That is, they are just some assumptions that you have of your datasets or columns that are correct. Tests enable one to know 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feal like something to bemoan, can fail (as all tests do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug if not more injurious to the integrity of your data later on! In a nutshell, dbt tests perform much like a programmatic scan that will only spew out errors of something that is suspicious.</p>
+<p>Tests in dbt are basically assertions of your data. That is, they are just some assumptions that you have of your datasets that are correct. Tests enable one to know: 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feel like something to bemoan, can fail (as all tests do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug later on! In a nutshell, dbt tests perform much like a programmatic scan that will only spew out errors of something that is suspicious.</p>
 <div id="types-of-tests-in-dbt" class="section level2 hasAnchor" number="9.1">
 <h2><span class="header-section-number">9.1</span> Types of tests in dbt<a href="tests-1.html#types-of-tests-in-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In dbt, a test can be defined in either of the following two ways:</p>
 <ol style="list-style-type: decimal">
-<li>generic test - this is a test written in a SQL model and defined inside a YAML file. The test in the YAML file is defined using jinja Macros. dbt comes with four shipped, all-batteries included tests namely:</li>
+<li>generic test - this is a test written in a SQL model and defined inside a YAML file. The test in the YAML file is defined using jinja Macros. dbt comes with four all-batteries included tests namely:</li>
 </ol>
 <ul>
 <li>unique - asserts that the column has no repeating values</li>
@@ -255,13 +257,13 @@
 <li>relationships - checks if the field has an existing relationship with another field in a different table.</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li>singular test - some normally refer to this as a custom test. This is a SQL query which is used to check assertions in your data. The SQL files that make up your test are defined inside the <code>tests</code> directory or the path defined in the <code>test-paths</code> key inside the <code>dbt_project.yml</code> file. Each SQL file will have one test only. Nevertheless, if this test will be used across many fields and files, you can reference it using jinja macros <code>{{ }}</code>. If this is the case, it is no longer singular test but a generic <em>custom</em> test.</li>
+<li>singular test - some normally refer to this as a custom test. This is a SQL query which is used to check assertions in your data. The SQL files that make up your test are defined inside the <code>tests</code> directory or the path defined in the <code>test-paths</code> key inside the <code>dbt_project.yml</code> file. Each SQL file will have one test only. Nevertheless, if this test will be used across many fields and files, you can reference it using jinja macros <code>{{ }}</code>. If this is the case, it is no longer a singular test but a generic <em>custom</em> test.</li>
 </ol>
 <p>Let’s start with a dbt out-of-the-box generic test.</p>
 </div>
 <div id="generic-tests-in-dbt" class="section level2 hasAnchor" number="9.2">
 <h2><span class="header-section-number">9.2</span> Generic tests in dbt<a href="tests-1.html#generic-tests-in-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We will start with a very simple test, the <code>not_null</code> test on the <code>start_station_name</code> column of <code>citi_trips_long</code> model. Surely, unless you are teleporting from somewhere, every rented bike must have an origin.</p>
+<p>We will start with a very simple test, the <code>not_null</code> test on the <code>start_station_name</code> column of <code>citi_trips_long</code> model. Surely, unless someone is teleporting from somewhere, every rented bike must have an origin.</p>
 <pre><code>
 - name: citi_trips_long
     description: &#39;{{ doc(&quot;citi_trips_long&quot;) }}&#39;
@@ -292,14 +294,14 @@
 19:15:36  
 19:15:36  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
 </code></pre>
-<p>If we had gone with the more blanket code of <code>dbt test</code>, it would have also tested those models under the shipped <code>examples</code> folder where there is already a test designed to fail, purely for educational purposes. Back to our <code>citi_trips_long</code> model, we can see that the test passed successfully. As expected, there are no null values in our <code>start_station_name</code> field. If the opposite happened, we suspect that this could be a case of fraud or some paranormal activities…</p>
-<p>Now let’s create a test that will fail on purpose. From a large dataset, obviously the station names can’t be unique all through. So we insert the <code>unique</code> value under the <code>tests</code> key as follows.</p>
+<p>If we had gone with the more blanket code of <code>dbt test</code>, it would have also tested those models under the shipped <code>examples</code> folder where there is already a test designed to fail, purely for demonstration purposes. Back to our <code>citi_trips_long</code> model, we can see that the test passed successfully. As expected, there are no null values in our <code>start_station_name</code> field. If the opposite happened, then there must be a row with a null value under this field.</p>
+<p>Now let’s create a test that will fail on purpose. From a large dataset, obviously the station names can’t be unique all through. So we insert the <code>unique</code> value under the <code>tests</code> key as follows:</p>
 <pre><code>- name: start_station_name
         description: &quot;Start Station Name&quot;
         tests:
           - not_null
           - unique</code></pre>
-<p>The output is as below. Note that it results in a failure and also shows the path to the SQL query that was used to carry out the test inside the <code>target/</code> directory. The resultant SQL path inside the target directory, if pasted in a SQL tab of your data warehouse will return the number of rows that <em>fail</em> the test.</p>
+<p>The output is as below. Note that it results in a failure and also shows the path to the SQL query inside the <code>target/</code> directory that was used to carry out the test. If you paste this SQL query from the <code>target</code> directory into your data warehouse, it will return the number of rows that failed the test.</p>
 <pre><code>19:23:35  Concurrency: 1 threads (target=&#39;dev&#39;)
 19:23:35  
 19:23:35  1 of 2 START test not_null_citi_trips_long_start_station_name .................. [RUN]
@@ -325,8 +327,8 @@
 </div>
 <div id="singular-tests-in-dbt" class="section level2 hasAnchor" number="9.3">
 <h2><span class="header-section-number">9.3</span> Singular tests in dbt<a href="tests-1.html#singular-tests-in-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>As mentioned earlier, singular tests are SQL models in your <code>tests</code> folder. They differ from the generic tests in that they are bespoke to your data needs. For example, if one of your tests doesn’t conform to the four batteries included tests, you can create one inside the <code>tests</code> folder.</p>
-<p>Below we create a singular test called <code>unnecessary_trips.sql</code> inside the <code>test</code> folder. The purpose of the test is to raise an error if a trip is less than 1 min, and if this passes without a hitch, we increase the trip to 10 min. The latter must surely generate an error! Notice that one can reference another model within a test using the <code>ref()</code> function.</p>
+<p>As mentioned earlier, singular tests are SQL models in your <code>tests</code> folder. They differ from the generic tests in that they are bespoke to your data needs. For example, if one of your tests doesn’t conform to the four tests shipped with dbt, you can create one inside the <code>tests</code> folder.</p>
+<p>Below we create a singular test called <code>unnecessary_trips.sql</code> inside the <code>test</code> folder. The purpose of the test is to raise an error if a trip is less than 10 min. The latter must surely generate an error! Notice that one can reference another model within a test using the <code>ref()</code> function.</p>
 <pre><code>SELECT bikeid, start_station_name, end_station_name,
     birth_year, gender, tripduration
 FROM {{ ref(&#39;citi_trips_round&#39;) }}
@@ -351,28 +353,27 @@ WHERE trip_min_round &lt; 10
 19:51:53    compiled code at target/compiled/dbt_book/tests/unnecessary_trips.sql
 19:51:53  
 19:51:53  Done. PASS=0 WARN=0 ERROR=1 SKIP=0 TOTAL=1</code></pre>
-<p>As you can see, a total 25183763 rows failed the test. If we had used a condition of less than 1 min (<code>trip_min_round &lt; 1</code>) the test would have passed.</p>
+<p>As you can see, a total 25183763 rows failed the test.</p>
 <p>A singular test can also be transformed into a generic test when its reused across the fields of your table(s) in the data warehouse. To demonstrate this, let’s create some generic tests.</p>
 </div>
 <div id="creating-a-generic-test" class="section level2 hasAnchor" number="9.4">
 <h2><span class="header-section-number">9.4</span> Creating a generic test<a href="tests-1.html#creating-a-generic-test" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>From the dbt documentation website, your <em>custom</em> generic tests are created within a <code>generic</code> folder within the <code>tests</code> directory. Thus, within your <code>tests/generic</code> directory, you will place the SQL models for your tests. Anything returned by your SQL models is in fact your tests failing! If nothing is returned, then your test passed, and your data as clean as a new pin.</p>
+<p><em>Custom</em> generic tests are created within a <code>generic</code> folder within the <code>tests</code> directory. Thus, within your <code>tests/generic</code> directory, you will place the SQL models for your tests. Anything returned by your SQL models is in fact your tests failing! If nothing is returned, then your test passed!</p>
 <p>Create a SQL model called <code>long_characters</code> within the <code>tests/generic</code> directory.</p>
 <pre><code>{% test long_characters (model, column_name) %}
 SELECT * FROM {{ model }}
 WHERE LENGTH({{ column_name }}) &gt; 15 
 {% endtest %}</code></pre>
-<p>Let’s go through the above line by line. We begin a generic test by using the <code>{%test &lt;model-name&gt; (model, column_name) %}</code> SQL statement in here <code>{% endtest %}</code> tags. The <code>model</code> and <code>column_name</code> are standard arguments where one or both should be defined.</p>
+<p>Let’s go through the above query line by line. We begin a generic test by using the <code>{%test &lt;model-name&gt; (model, column_name) %}</code> <em>SQL statement in here</em> <code>{% endtest %}</code> tags. The <code>model</code> and <code>column_name</code> are standard arguments where one or both should be defined.</p>
 <ul>
-<li><p><code>model</code> - the resource on which the test will be operated on. In our case, this is any model in which the test will be run on.</p></li>
+<li><p><code>model</code> - the resource on which the test will be operated on. In our case, this is any model which the test will run on.</p></li>
 <li><p><code>column_name</code> - this is a field within which the model will be run against. In other words, the column at which this model will operate on.</p></li>
 </ul>
-<p>The SQL statement within the test tags references the model and the columns using the <code>{{ model }}</code> and <code>{{ column_name }}</code> respectively. For example, if the test is placed in the <code>my_models</code> YAML file under the <code>citi_trips_long</code> model name, for the field <code>start_station_name</code>, it is as though the test is running this SELECT statement:</p>
-<pre><code>
-SELECT * FROM citi_trips_long
+<p>The SQL statement within the test tags references the model and the columns using the <code>{{ model }}</code> and <code>{{ column_name }}</code> respectively. For example, if the test is placed in the <code>my_models</code> YAML file, under the <code>citi_trips_long</code> model name, for the field <code>start_station_name</code>, it is as though the test is running this SELECT statement:</p>
+<pre><code>SELECT * FROM citi_trips_long
 WHERE LENGTH(start_station_name) &gt; 15 
 </code></pre>
-<p>In very few words, the above SQL tells dbt to shout out an error if any station name is greater than 15 characters. Such must be train stations larger than life.</p>
+<p>In very few words, the above SQL tells dbt to shout out an error if any station name is greater than 15 characters.</p>
 <p>Let’s create another test that will raise alarms if there are special characters within your <code>start_station_name</code>.</p>
 <pre><code>{% test special_characters (model, column_name) %}
 SELECT * FROM {{ model }}
@@ -380,7 +381,7 @@ WHERE {{ column_name }}
 LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
 {% endtest %}
 </code></pre>
-<p>Okay, it’s not time for our litmus test. Going back to the <code>start_station_name</code> mapping that we have performed some litmus tests, lets also add our two <em>custom</em> generic tests of <code>long_character</code> and <code>special_characters</code>.</p>
+<p>Okay, it’s now time for our litmus test. Going back to the <code>start_station_name</code> mapping that we have performed some litmus tests, lets also add our two <em>custom</em> generic tests of <code>long_character</code> and <code>special_characters</code>.</p>
 <pre><code>- name: citi_trips_long
     description: &#39;{{ doc(&quot;citi_trips_long&quot;) }}&#39;
     columns:
@@ -394,7 +395,7 @@ LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
           - long_characters
           - special_characters
 </code></pre>
-<p>If we go for the big bull and run all our tests with trusty <code>dbt test</code> keyword, we can see the output of the nine tests we have so far.</p>
+<p>If we go for the big bull and run all our tests with the trusty <code>dbt test</code> keyword, we can see the output of the nine tests we have so far.</p>
 <pre><code>19:08:15  Concurrency: 1 threads (target=&#39;dev&#39;)
 19:08:15  
 19:08:15  1 of 9 START test long_characters_citi_trips_long_start_station_name ........... [RUN]
@@ -411,7 +412,7 @@ LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
 19:09:10  9 of 9 FAIL 25183763 unnecessary_trips ......................................... [FAIL 25183763 in 2.81s]
 </code></pre>
 <p>From the above output, we can see that there were some station names with quite some long names and (thankfully) no station names with special characters.</p>
-<p>There is also other output below the above which shows how many records failed, depending on your test.</p>
+<p>There is also another output following the above which shows how many records failed, depending on your test.</p>
 <pre><code>19:09:10  Completed with 4 errors and 0 warnings:
 19:09:10  
 19:09:10  Failure in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
@@ -425,8 +426,8 @@ LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
 </div>
 <div id="configuring-custom-generic-tests" class="section level2 hasAnchor" number="9.5">
 <h2><span class="header-section-number">9.5</span> Configuring custom generic tests<a href="tests-1.html#configuring-custom-generic-tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>What if you feel that the <em>FAIL</em> alert like in the above tests is shouting too much! That you would prefer them to be <em>WARNINGS</em> because they are non-critical?</p>
-<p>You can do so by setting the configuration to diplay as a warning rather than an error.</p>
+<p>What if you feel that the <em>FAIL</em> alert like in the above tests is shouting too much?! That you would prefer them to be <em>WARNINGS</em> because they are non-critical?</p>
+<p>You can do so by setting the configuration to display as a warning rather than an error.</p>
 <pre><code>{% test long_characters (model, column_name) %}
     {{ config(severity = &#39;warn&#39;) }}
     SELECT * FROM {{ model }}
@@ -442,7 +443,7 @@ LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
 19:16:56  Warning in test long_characters_citi_trips_long_start_station_name (models/my_models/my_models.yml)
 19:16:56  Got 11463868 results, configured to warn if != 0
 -- snip --</code></pre>
-<p>However, in case you immediately change your mind that the failing tests of <code>long_characters</code> returned should be an error rather than a warning, you can simply overide your custom generic SQL models by specifying the severity within the YAML definition files.</p>
+<p>However, in case you immediately change your mind that the failing tests of <code>long_characters</code> should be an error rather than a warning, you can override your custom generic SQL models by specifying the severity within the YAML definition files.</p>
 <pre><code>- name: start_station_name
         description: &quot;Start Station Name&quot;
         tests:
@@ -465,7 +466,7 @@ LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
 <div id="storing-test-failures" class="section level2 hasAnchor" number="9.6">
 <h2><span class="header-section-number">9.6</span> Storing test failures<a href="tests-1.html#storing-test-failures" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>If you thought that dbt tests are a cool feature, then there is one more trick in the bag if you want a neat one-liner to view a dataset of the failing records. The <em>open sesame</em> key word is <code>--store-failures</code>. dbt will store the failing records as a table in the database.</p>
-<p>Let’s try it out. This is only what is needed to be run.</p>
+<p>Let’s try it out.</p>
 <pre><code>dbt test --store-failures
 </code></pre>
 <p>Of course our test will generate failed records, but we’ve already seen them. Here is part of the output for the test of long characters above the 15 character threshold.</p>
@@ -484,7 +485,7 @@ LIKE &#39;%^[a-zA-Z0-9+-]%&#39;
 <div class="figcaption">Failing records</div>
 </div>
 <p>That’s a very convenient one-liner!</p>
-<p>Below are other forms of generic tests shipped with dbt, for the <code>accepted_values</code> and <code>relationships</code>. The latter took to long to run and was cancelled midway.</p>
+<p>Below are other forms of generic tests shipped with dbt, for the <code>accepted_values</code> and <code>relationships</code>. The latter took too long to run and was cancelled midway.</p>
 <pre><code>- name: end_station_name
         description: &quot;End Station Name&quot;
          tests:

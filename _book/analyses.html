@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -240,10 +242,10 @@
             <section class="normal" id="section-">
 <div id="analyses" class="section level1 hasAnchor" number="14">
 <h1><span class="header-section-number">Chapter 14</span> Analyses<a href="analyses.html#analyses" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In dbt, analyses are those kind of queries that might not exactly be very much needed as a model but can be used for data exploration and visualization. Typically, any SQL model that is for analytical rather than modeling purposes is stored within the <code>analyses</code> directory. Thereafter, running the code <code>dbt compile</code> will create the compiled SQL file inside the <code>target/compiled/{project name}/analyses/sql_file_name.sql</code> directory. The code inside this directory can be pasted in a data visualization tool but it will not appear in the data warehouse. Yes it will not.</p>
+<p>In dbt, analyses are those kind of queries that might not exactly be very much needed as a model but can be used for data exploration and visualization. Typically, any SQL model that is for analytical rather than modeling purposes is stored within the <code>analyses</code> directory. Thereafter, running the code <code>dbt compile</code> will create the compiled SQL file inside the <code>target/compiled/{project name}/analyses/sql_file_name.sql</code> directory. The code inside this directory can be pasted in a data visualization tool but it will not appear in the data warehouse. You read that well: it will not.</p>
 <div id="creating-an-analysis" class="section level2 hasAnchor" number="14.1">
 <h2><span class="header-section-number">14.1</span> Creating an <code>analysis</code><a href="analyses.html#creating-an-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>As mentioned earlier, analyses queries are sttored within the <code>analysis</code> folder. To begin with, we shall create a SQL queries that performs a join. The below query will join the rows in <code>nyc_bikes_nyc_bikes2014</code>.<code>2014-tripdata</code> with those in <code>nyc_bikes</code>.<code>citi_trips_round</code> based on station id. The aforementioned contents are found within the <code>start_join_bikes</code> SQL within the analyses folder.</p>
+<p>As mentioned earlier, analyses queries are stored within the <code>analysis</code> folder. To begin with, we shall create a SQL query that performs a join. The below query will join the rows in <code>nyc_bikes_nyc_bikes2014</code>.<code>2014-tripdata</code> with those in <code>nyc_bikes</code>.<code>citi_trips_round</code> based on station id. The aforementioned contents are found within the <code>start_join_bikes</code> SQL within the <code>analyses</code> folder.</p>
 <pre><code>WITH `2014-tripdata` AS (
     SELECT * FROM {{ source(&#39;nyc_bikes_nyc_bikes2014&#39;, &#39;2014-tripdata&#39;) }}
 ), 
@@ -294,7 +296,7 @@ FROM `dbt-project-437116`.`nyc_bikes_nyc_bikes2014`.`2014-tripdata` cs
 JOIN `dbt-project-437116`.`nyc_bikes`.`citi_trips_round` ct 
 ON cs.`start station id` = ct.start_station_id
 WHERE ct.trip_min_round &gt; 50000;</code></pre>
-<p>The full table path has expanded and pasting this query into BigQuery produces the results without a fuss.</p>
+<p>The full table path was expanded and pasting this query into BigQuery produces the results without a fuss.</p>
 </div>
 <div id="definitions-for-analyses" class="section level2 hasAnchor" number="14.2">
 <h2><span class="header-section-number">14.2</span> Definitions for <code>analyses</code><a href="analyses.html#definitions-for-analyses" class="anchor-section" aria-label="Anchor link to header"></a></h2>

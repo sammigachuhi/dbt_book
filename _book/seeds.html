@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -241,13 +243,13 @@
 <div id="seeds" class="section level1 hasAnchor" number="11">
 <h1><span class="header-section-number">Chapter 11</span> Seeds<a href="seeds.html#seeds" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Seeds are Comma Separated Values (csv) files stored inside your <code>seeds</code> directory which can be loaded into your data warehouse using the <code>dbt seed</code> command.</p>
-<p>Seeds can also be referenced by your SQL models using the <code>ref()</code> function. Seeds in dbt are version controlled, that is, you can revert them to a previous state.</p>
+<p>Seeds can also be referenced by your SQL models using the <code>ref()</code> function. Seeds in dbt are version controlled. That is, you can revert them to a previous state.</p>
 <p>Seeds are best used for data that changes infrequently. A good example is country codes, email accounts and station names. However, seeds should not be used to store sensitive information such as passwords.</p>
 <p>To demonstrate about seeds in dbt, we will try to upload a <a href="https://www.civicdata.com/dataset/nyc-bike-share-trip-data/resource/3e7acf34-19ba-4bf4-8dd2-cf349623dc6b">New York City (NYC) bike history data</a> for 2014.</p>
-<p>Extract the zip folder and copy the <code>3e7acf34-19ba-4bf4-8dd2-cf349623dc6b.csv</code> inside the <code>dbt_book/seeds</code> directory. To avoid being verbose, let’s rename it to <code>2014-tripdata.csv</code>.</p>
+<p>Extract the zip folder and copy the <code>3e7acf34-19ba-4bf4-8dd2-cf349623dc6b.csv</code> inside the <code>dbt_book/seeds</code> directory. To reduce the verbosity of its name, rename it to <code>2014-tripdata.csv</code>.</p>
 <div id="uploading-a-seed-into-your-data-warehouse" class="section level2 hasAnchor" number="11.1">
 <h2><span class="header-section-number">11.1</span> Uploading a seed into your data warehouse<a href="seeds.html#uploading-a-seed-into-your-data-warehouse" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Believe you me we had a better csv table to upload, one much more related to the NYC bikes dataset. However, because it was ~320MB and we want to be economical in upload times, we settled for this historical data. Nevertheless, keeping on with this chapter, to upload a seed into a data warehouse, we use this command:</p>
+<p>Believe you me we had a better csv table to upload, one much more related to the NYC bikes dataset. However, because it was ~320MB and we want to be economical in upload times and bandwith, we settled for this historical data. Nevertheless, keeping on with this chapter, to upload a seed into a data warehouse, we use this command:</p>
 <pre><code>dbt seed</code></pre>
 <p>After that, it’s a test of patience. Depending on your upload speeds, it shouldn’t take long to upload a 36MB file to BigQuery.</p>
 <pre><code>-- snip --
@@ -299,7 +301,7 @@ SELECT COUNT(*) FROM dbt-project-437116.nyc_bikes.citi_stations_2014;</code></pr
 </div>
 <div id="seed-configurations-at-project-level" class="section level2 hasAnchor" number="11.3">
 <h2><span class="header-section-number">11.3</span> Seed Configurations at project level<a href="seeds.html#seed-configurations-at-project-level" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Though it may sound like there is a lot to do here, there actually isn’t. Suffice to only say that seeds are configurable as much as our normal models are. There are two ways to <a href="https://docs.getdbt.com/reference/seed-configs">configure seeds</a> in dbt, either in the <code>dbt_project</code> YAML file or a t the individual seed’s YAML properties.</p>
+<p>Though it may sound like there is a lot to do here, there actually isn’t. Suffice to only say that seeds are configurable as much as our normal models are. There are two ways to <a href="https://docs.getdbt.com/reference/seed-configs">configure seeds</a> in dbt: either in the <code>dbt_project</code> YAML file or at the individual seed’s YAML properties.</p>
 <p>For the purposes of this exercise, at the project level we will set a dictionary that looks as follows:</p>
 <pre><code>seeds:
   dbt_book:
@@ -319,7 +321,7 @@ SELECT COUNT(*) FROM dbt-project-437116.nyc_bikes.citi_stations_2014;</code></pr
 19:26:18  
 19:26:18  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1</code></pre>
 <p>Think of a schema as a folder or container for storing your data (read tables). Therefore, if you were in a company, there would be a schema (read it as folder or container) for sales, customers, products and clients. Inside the schema, (read folder or container) for sales, there would be tables for <code>january_sales</code>, <code>february_sales</code> and so on.</p>
-<p>Just a <em>nota bene</em>, don’t use hyphens <code>(-)</code> for your schema names, otherwise an error will result.</p>
+<p>Just a <em>nota bene</em>, don’t use hyphens <code>(-)</code> for your schema names, otherwise it will result in an error.</p>
 <p>Here is our seed data appearing under the <code>nyc_bikes_nyc2014_data</code> dataset.</p>
 <div class="float">
 <img src="images/seeds_schema.png" alt="Schema for seeds" />
@@ -367,7 +369,7 @@ seeds:
 </div>
 <div id="performing-tests-on-seeds" class="section level2 hasAnchor" number="11.5">
 <h2><span class="header-section-number">11.5</span> Performing tests on seeds<a href="seeds.html#performing-tests-on-seeds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Tests on seeds are performed in much the same way as for the other models. The only trick is to insert the name of the csv file. For example, to run a test of our <code>2014-tripdata.csv</code> which is our seed model, we execute <code>dbt test --select 2014-tripdata</code>.</p>
+<p>Tests on seeds are performed in much the same way as other models. The only trick is to insert the name of the csv file. For example, to run a test of our <code>2014-tripdata.csv</code> which is our seed model, we execute <code>dbt test --select 2014-tripdata</code>.</p>
 <pre><code>-- snip --
 18:19:53  Concurrency: 1 threads (target=&#39;dev&#39;)
 18:19:53  
@@ -380,7 +382,7 @@ seeds:
 18:20:02  
 18:20:02  Completed successfully
 -- snip --</code></pre>
-<p>As you can see, the two tests we defined in our <code>nyc_bikes2014</code> YAML properties’ file of <code>dbt_expectations.expect_table_column_count_to_be_between</code> and <code>dbt_expectations.expect_column_values_to_be_unique</code> have passed.</p>
+<p>As you can see, the two tests of <code>dbt_expectations.expect_table_column_count_to_be_between</code> and <code>dbt_expectations.expect_column_values_to_be_unique</code> passed.</p>
 </div>
 <div id="viewing-documentation-for-dbt-seeds" class="section level2 hasAnchor" number="11.6">
 <h2><span class="header-section-number">11.6</span> Viewing documentation for dbt seeds<a href="seeds.html#viewing-documentation-for-dbt-seeds" class="anchor-section" aria-label="Anchor link to header"></a></h2>

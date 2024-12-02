@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-11-17" />
+<meta name="date" content="2024-12-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,6 +79,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#resources"><i class="fa fa-check"></i><b>1.1</b> Resources</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#copyright"><i class="fa fa-check"></i><b>1.2</b> Copyright</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
 <ul>
@@ -184,7 +185,8 @@
 <li class="chapter" data-level="15" data-path="exposures.html"><a href="exposures.html"><i class="fa fa-check"></i><b>15</b> Exposures</a>
 <ul>
 <li class="chapter" data-level="15.1" data-path="exposures.html"><a href="exposures.html#creating-an-exposure"><i class="fa fa-check"></i><b>15.1</b> Creating an exposure</a></li>
-<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.2</b> Visualizing the exposure</a></li>
+<li class="chapter" data-level="15.2" data-path="exposures.html"><a href="exposures.html#running-an-exposure"><i class="fa fa-check"></i><b>15.2</b> Running an exposure</a></li>
+<li class="chapter" data-level="15.3" data-path="exposures.html"><a href="exposures.html#visualizing-the-exposure"><i class="fa fa-check"></i><b>15.3</b> Visualizing the exposure</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="jinja.html"><a href="jinja.html"><i class="fa fa-check"></i><b>16</b> Jinja</a>
 <ul>
@@ -301,27 +303,27 @@ WHERE CREATE_DATE &gt;= &#39;2020-02-18&#39;::DATE</code></pre>
 <p>To run a macro from the CLI or terminal, we use the <code>dbt run-operation {macro} --args '{args}'{macro}:</code> command. The macro will run with the arguments provided. The below macro being run from the CLI selects all columns from a table called <code>my_table</code>.</p>
 <pre><code>dbt run-operation select_all_columns --args &#39;{table_name: my_table}&#39;
 </code></pre>
-<p>The above are ways to invoke a macro but for simplicity purposes, for life is too complicated to add more complications from something miniature as macros, we shall rely on the first method of invoking macros using expressions.</p>
+<p>The above are ways to invoke a macro but for simplicity purposes, we shall rely on the first method of invoking macros using expressions.</p>
 </div>
 </div>
 <div id="simple-macro" class="section level2 hasAnchor" number="17.2">
 <h2><span class="header-section-number">17.2</span> Simple macro<a href="macros.html#simple-macro" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Having known that a macro acts like a function, let’s create a macro that calculates the age of a bike rider. We already have the <code>birth_year</code> column, so getting age should just be subtracting birth year from the current year.</p>
+<p>Having known that a macro acts like a function, let’s create a macro that calculates the age of a bike rider. We already have the <code>birth_year</code> column, so calculating one’s age should be as simple as subtracting their birth year from the current year.</p>
 <p>As earlier mentioned, macros should go into the <code>macros</code> folder. Create a <code>calculate_age</code> SQL file and inside it paste the following contents.</p>
 <pre><code>{% macro calculate_age (year) %}
 
 (EXTRACT( YEAR FROM CURRENT_DATE() ) - {{ year }}) 
 
 {% endmacro %}</code></pre>
-<p>Remember, a macro is a function and thus what goes within the <code>{% macro %}</code> and <code>{% endmacro %}</code> expressions is the function itself! This explains why our <code>calculate_age</code> macro is so succinct. The <code>(EXTRACT( YEAR FROM CURRENT_DATE() ) - {{ year }})</code> is just an SQL way of subtracting any column, referenced by the variable <code>{{ year }}</code> from the current year. Of course the <code>{{ year }}</code> column specified has to be numeric.</p>
+<p>Remember, a macro is a function and thus what goes within the <code>{% macro %}</code> and <code>{% endmacro %}</code> expressions is the function itself! This explains why our <code>calculate_age</code> macro is so succinct. The <code>(EXTRACT( YEAR FROM CURRENT_DATE() ) - {{ year }})</code> is just SQL’s way of extracting the current year and subtracting an earlier year being referenced by the variable <code>{{ year }}</code>. Of course the specified <code>{{ year }}</code> column has to be numeric.</p>
 <p>Alright. To see the <code>calculate_age</code> macro in action, create a <code>biker_age</code> SQL file inside the <code>jinja</code> directory. Paste the following content.</p>
 <pre><code>SELECT *, 
 {{ calculate_age(&quot;birth_year&quot;)}} AS AGE
 FROM 
 {{ ref(&#39;citi_trips_long&#39;) }}
 </code></pre>
-<p>In the subchapter of <a href="#id_#Invoking%20a%20macro">Invoking a Macro</a> we saw that we invoke a macro in the following format: <code>{{ macro_name(arg1, arg2, argN) }}</code>. The macro name goes first, followed by the arguments in brackets. We have essentially done this in the <code>biker_age</code> SQL file. The <code>calclate_age()</code> macro has been provided the column to calculate on, obviously the <code>birth_year</code> column. We use the <code>AS</code> keyword to create a new column with the alias <code>AGE</code>. Thereafter, we run the open sesame command <code>dbt compile --select macros</code>.</p>
-<p>We got the following in the target directory, a <code>biker_age</code> SQL file with the following SELECT query:</p>
+<p>In the sub-chapter of <a href="#id_#Invoking%20a%20macro">Invoking a Macro</a>, we saw that a macro is invoked in the following format: <code>{{ macro_name(arg1, arg2, argN) }}</code>. The macro name goes first, followed by the arguments in brackets. We have essentially done this in the <code>biker_age</code> SQL file. The <code>calclate_age()</code> macro has been provided the column to calculate on, the <code>birth_year</code> column. We use the <code>AS</code> keyword to create a new column with the alias <code>AGE</code>. Thereafter, we run the open sesame command <code>dbt compile --select macros</code>.</p>
+<p>After compilation, dbt created a <code>biker_age</code> SQL file containing the below code:</p>
 <pre><code>SELECT *, 
 
 
@@ -335,7 +337,8 @@ FROM
 </div>
 <div id="complex-macro" class="section level2 hasAnchor" number="17.3">
 <h2><span class="header-section-number">17.3</span> Complex macro<a href="macros.html#complex-macro" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The above was a simple macro that neatly drove the point home. How about a more complex macro, like one that works on an entire table, transforms it, has more than one argument and oh, one in which you can change the arguments? We are trying to work with a function where we cast things on sand, and not stone. That’s the kind of macro we need. Create a SQL called <code>age_trips</code> with the following code:</p>
+<p>The above was a simple macro that neatly drove the point home. How about a more complex macro, like one that works on an entire table, transforms it, has more than one argument and oh my… one in which you can specify the parameters? We want to write our functions on sand, not stone, so that we can change at will. That’s the kind of macro we need.</p>
+<p>Let’s go. Create a SQL called <code>age_trips</code> with the following code:</p>
 <pre><code>{% macro age_trips (column, duration, table_name, years = [1995, 1997, 2002]) %}
 
 SELECT {{ column }}, 
@@ -351,11 +354,11 @@ GROUP BY {{ column }}
 ORDER BY {{ column }} DESC
 
 {% endmacro %}</code></pre>
-<p>Our intelligent mind (no pun intended) created a macro that selects a column, sums the time duration in that column but aggregates the sum based on certain numerical column values. It will not sum everything in the entire set but for certain values specified by the <code>years</code> variable. Additionally, we have preset the values to go into the <code>years</code> variables which are <code>1995</code>, <code>1997</code> and <code>2002</code>. Finally, to finish in a clean manner, we order the table based on arranging the specified column values in descending order.</p>
-<p>Now is time to test our macro. Under the <code>jinja</code> directory, create a SQL file called <code>age_trip_totals</code>. It should have the below miniatuae code.</p>
+<p>Our intelligent mind (no pun intended) created a macro that selects a column, sums the time duration in that column and additionally, aggregates the sum based on certain numerical column values. It will not sum everything in the entire set but just certain values specified by the <code>years</code> variable. Additionally, we have preset the values to go into the <code>years</code> variables which are <code>1995</code>, <code>1997</code> and <code>2002</code>. Finally, we order the table by arranging the values of the specified columns in descending order.</p>
+<p>Now is time to test our macro. Under the <code>jinja</code> directory, create a SQL file called <code>age_trip_totals</code>. It should have the below minutiae code.</p>
 <pre><code>{{ age_trips(column=&#39;birth_year&#39;, duration=&#39;trip_min_round&#39;,
 table_name=&#39;citi_trips_long&#39;, years = [1990, 1996, 1998, 2001, 2002]) }}</code></pre>
-<p>What on earth just happened here? There was no <code>SELECT</code> statement as in the <code>biker_age</code> file? Yes, there wasn’t, and for the good reason in that we specifed our <code>SELECT</code> blueprint in the macros file, such that calling the <code>age_trips</code> function from within <code>age_trips_totals</code> file will invoke the SQL statement encapsulated by the <code>age_trips</code> function. If you run <code>dbt compile --select macros</code> the following SQL file will be compiled in the target directory.</p>
+<p>What on earth just happened here? There was no <code>SELECT</code> statement as in the <code>biker_age</code> file? Yes, there wasn’t, and for a good reason. We had already specifed our <code>SELECT</code> blueprint in the macros file. Therefore, calling the <code>age_trips</code> function from within <code>age_trips_totals</code> file will invoke the SQL statement encapsulated by the <code>age_trips</code> function. If you run <code>dbt compile --select macros</code>, the following SQL file will be compiled in the target directory.</p>
 <pre><code>SELECT birth_year, 
 SUM(trip_min_round) AS totals_trip_min_round
 FROM `dbt-project-437116`.`nyc_bikes`.`citi_trips_long`
@@ -380,10 +383,10 @@ WHERE birth_year IN (
 GROUP BY birth_year
 ORDER BY birth_year DESC
 </code></pre>
-<p>Pasting this query on BigQuery will give us a table with the total trip duration for all bikers aggregated into specific years: 1990, 1996, 1998, 2001 and 2002.</p>
+<p>Pasting this query on BigQuery will give us a table which aggregates the total trip duration for bikers born in specific years only. That is, those bikers born in any of the following years: 1990, 1996, 1998, 2001 and 2002.</p>
 <p><img src="images/age_trip.png" alt="Age trip table" />
 One can also create a view of this macro model using <code>dbt run --select age_trip_totals</code>. A <code>biker_age</code> view should appear under the <code>nyc_bikes</code> dataset.</p>
-<p>By doing the above, we not only created a macros with default parameters, but we could also change them and get valid results as seen when playing around with the <code>years</code> argument in our <code>age_trips()</code> function. As a matter of fact, the <code>years</code> parameter doesn’t have to take <em>years</em> per se, it can actually work with any numerical column. But we just specified the name <code>years</code> as a clue. In the <code>age_trip_totals2</code> SQL file, we specified the ages of interest from within the <code>AGE</code> column of our <code>biker_age</code> view.</p>
+<p>By doing the above, we not only created a macros with default parameters, but we could also change them and get valid results. We can do this by tweaking the <code>years</code> argument in our <code>age_trips()</code> function. As a matter of fact, the <code>years</code> parameter doesn’t have to take <em>years</em> per se, it can actually work with any numerical column. But we just specified the name <code>years</code> as a clue. In the <code>age_trip_totals2</code> SQL file, we specified the ages of interest from within the <code>AGE</code> column of our <code>biker_age</code> view.</p>
 <pre><code>{{ age_trips(column=&#39;AGE&#39;, duration=&#39;trip_min_round&#39;,
 table_name=&#39;biker_age&#39;, years = [22, 27, 29]) }}</code></pre>
 <p>Now let’s compile this model and see the result:</p>
@@ -417,7 +420,7 @@ ORDER BY AGE DESC
 <img src="images/age_trip_totals2.png" alt="Age trip total 2 view" />
 <div class="figcaption">Age trip total 2 view</div>
 </div>
-<p>As mentioned earlier, and as show with a quick example of <code>age_trip_totals</code> model, we can create views of each of our macro reliant models. Since they are all within the jinja directory, the following does the trick: <code>dbt run --select jinja</code>. This should create a view of each of our models created in this chapter.</p>
+<p>As mentioned earlier, and as show with a quick example of <code>age_trip_totals</code> model, we can create views of each of our macro models. Since they are all within the jinja directory, the following does the trick: <code>dbt run --select jinja</code>. This should create a view of each of our models created in this chapter.</p>
 <p>Below is a snippet of the creation of views.</p>
 <pre><code>-- snip --
 20:15:05  8 of 8 START sql view model nyc_bikes.age_trip_totals2 ......................... [RUN]
