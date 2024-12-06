@@ -1,6 +1,6 @@
 # The `dbt` architecture
 
-In my first time working with dbt, I was overwhelmed with its architecture. It felt like that individual who is sitting before that large screen in a nuclear power plant and in charge of all the controls. Nevertheless, if people can gain confidence in holding a nuclear power plant in their fingertips, then surely you can crack dbt.
+In my first time working with dbt, I was overwhelmed with its architecture. It felt like that individual who is sitting before that large screen in a nuclear power plant and in charge of all the controls. Nevertheless, if people can gain confidence in holding a nuclear power plant on their fingertips, then surely you can crack dbt.
 
 The main components that make up dbt are as follows:
 
@@ -52,7 +52,7 @@ left join customer_orders using (customer_id)
 
 dbt offers two ways to perform your tests: 
 
-1. generic and,
+1. generic, and,
 
 2. custom tests. 
 
@@ -113,7 +113,7 @@ models:
 
 ## Documentation
 
-Now the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the `description` key is used. 
+Now, the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the `description` key is used. 
 
 For example here is a description of a field called `event_id` inside a YAML file. 
 

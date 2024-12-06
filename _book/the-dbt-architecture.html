@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 The dbt architecture | A guide to using dbt with Google BigQuery</title>
+  <title>Chapter 3 The dbt architecture | dbt and BigQuery: an action oriented approach</title>
   <meta name="description" content="This book is your manual to using dbt with BigQuery." />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 The dbt architecture | A guide to using dbt with Google BigQuery" />
+  <meta property="og:title" content="Chapter 3 The dbt architecture | dbt and BigQuery: an action oriented approach" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/./images/home-page-pic.png" />
   <meta property="og:description" content="This book is your manual to using dbt with BigQuery." />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 The dbt architecture | A guide to using dbt with Google BigQuery" />
+  <meta name="twitter:title" content="Chapter 3 The dbt architecture | dbt and BigQuery: an action oriented approach" />
   
   <meta name="twitter:description" content="This book is your manual to using dbt with BigQuery." />
   <meta name="twitter:image" content="/./images/home-page-pic.png" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-12-01" />
+<meta name="date" content="2024-12-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -232,7 +232,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A guide to using dbt with Google BigQuery</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">dbt and BigQuery: an action oriented approach</a>
           </h1>
         </div>
 
@@ -242,7 +242,7 @@
             <section class="normal" id="section-">
 <div id="the-dbt-architecture" class="section level1 hasAnchor" number="3">
 <h1><span class="header-section-number">Chapter 3</span> The <code>dbt</code> architecture<a href="the-dbt-architecture.html#the-dbt-architecture" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In my first time working with dbt, I was overwhelmed with its architecture. It felt like that individual who is sitting before that large screen in a nuclear power plant and in charge of all the controls. Nevertheless, if people can gain confidence in holding a nuclear power plant in their fingertips, then surely you can crack dbt.</p>
+<p>In my first time working with dbt, I was overwhelmed with its architecture. It felt like that individual who is sitting before that large screen in a nuclear power plant and in charge of all the controls. Nevertheless, if people can gain confidence in holding a nuclear power plant on their fingertips, then surely you can crack dbt.</p>
 <p>The main components that make up dbt are as follows:</p>
 <ul>
 <li><p>models</p></li>
@@ -284,7 +284,7 @@ left join customer_orders using (customer_id)</code></pre>
 <p>“Do not put me to test”, is a familiar statement from an impatient person. However, dbt allows us to test our data and see if it meets certain assertions. In other words, does our data meet the requirements that have been set for it?</p>
 <p>dbt offers two ways to perform your tests:</p>
 <ol style="list-style-type: decimal">
-<li><p>generic and,</p></li>
+<li><p>generic, and,</p></li>
 <li><p>custom tests.</p></li>
 </ol>
 <p>Generic tests involve just using a pre-defined test that comes packaged in dbt. For example, for every field key you place in a YAML file in dbt, you can specify which kind of test to perform on that particular field from the following options: <code>unique</code>, <code>not_null</code>, <code>accepted_values</code> and <code>relationships</code>.</p>
@@ -331,7 +331,7 @@ having total_spent &gt; 10000  -- Assuming the limit is 10,000
 </div>
 <div id="documentation" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Documentation<a href="the-dbt-architecture.html#documentation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Now the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the <code>description</code> key is used.</p>
+<p>Now, the favourite part of dbt, and possibly the easiest is documentation. Documentation is the description of various components of your data. To write a description of any piece of your data, the <code>description</code> key is used.</p>
 <p>For example here is a description of a field called <code>event_id</code> inside a YAML file.</p>
 <pre><code>version: 2
 

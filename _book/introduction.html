@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Introduction | A guide to using dbt with Google BigQuery</title>
+  <title>Chapter 2 Introduction | dbt and BigQuery: an action oriented approach</title>
   <meta name="description" content="This book is your manual to using dbt with BigQuery." />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Introduction | A guide to using dbt with Google BigQuery" />
+  <meta property="og:title" content="Chapter 2 Introduction | dbt and BigQuery: an action oriented approach" />
   <meta property="og:type" content="book" />
   <meta property="og:image" content="/./images/home-page-pic.png" />
   <meta property="og:description" content="This book is your manual to using dbt with BigQuery." />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Introduction | A guide to using dbt with Google BigQuery" />
+  <meta name="twitter:title" content="Chapter 2 Introduction | dbt and BigQuery: an action oriented approach" />
   
   <meta name="twitter:description" content="This book is your manual to using dbt with BigQuery." />
   <meta name="twitter:image" content="/./images/home-page-pic.png" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Samuel Gachuhi Ngugi" />
 
 
-<meta name="date" content="2024-12-01" />
+<meta name="date" content="2024-12-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -232,7 +232,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A guide to using dbt with Google BigQuery</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">dbt and BigQuery: an action oriented approach</a>
           </h1>
         </div>
 
@@ -244,25 +244,25 @@
 <h1><span class="header-section-number">Chapter 2</span> Introduction<a href="introduction.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="what-is-dbt" class="section level2 hasAnchor" number="2.1">
 <h2><span class="header-section-number">2.1</span> What is dbt?<a href="introduction.html#what-is-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, when in full, stands for Data build tool. dbt is a tool that data scientists and analytical engineers use to transform data in their data warehouses. For now just think of dbt much like a recipe. In a recipe, you have the steps and the instructions to cook your favourite meal, say a roasted chicken. Sure enough, your recipe will contain details on the optimal oven temperature, heating duration and how to set your meal! dbt works in much the same way. We define how we want to transform or build our data. Once we hit <code>run</code>, the magic happens.</p>
+<p>dbt, when in full, stands for Data build tool. dbt is a tool that data scientists and analytical engineers use to transform data in their data warehouses. For now, just think of dbt much like a recipe. In a recipe, you have the instructions to cook your favourite meal, say a roasted chicken. Sure enough, your recipe will contain details on the optimal oven temperature, heating duration and setting the table! dbt works in much the same way. We define how we want to transform or build our data. Once we hit <code>run</code>, the magic happens.</p>
 </div>
 <div id="encounter-with-dbt" class="section level2 hasAnchor" number="2.2">
 <h2><span class="header-section-number">2.2</span> Encounter with <code>dbt</code><a href="introduction.html#encounter-with-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>How did I come across dbt? Being from a totally different background, the geographical sciences, my first experience with dbt, contrary to the many positive revs from online users, wasn’t so good. Either because a lot was on my desk back then, for I was having trouble piecing together all the different components that make dbt work, and how it works. It is only after some time, and several hard knocks in between, that I was able to get a semblance of what it does.</p>
+<p>How did I cross paths with dbt? Coming from the geographical sciences, my first experience with dbt, contrary to the many positive revs from online users, wasn’t so good. Perhaps it was because a lot was on my desk back then, for I was having trouble piecing together all the different components that make dbt work, and how it works. It is only after some time, and several hard knocks in between, that I was able to get a semblance of what it does.</p>
 <p>Nevertheless, at least I got a few things. dbt could be used to create views of your tables in the data warehouse, it could perform tests and lastly, (the one I liked the most) it could be used to render your documentation!</p>
 </div>
 <div id="dbt-from-the-professionals" class="section level2 hasAnchor" number="2.3">
 <h2><span class="header-section-number">2.3</span> dbt, from the professionals…<a href="introduction.html#dbt-from-the-professionals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>dbt, from the words of developers, is an open-source tool that analysts and data engineers use to transform data in their data warehouses. Data transformation is the process of converting data from its source format to the format required for analysis. The data transformation process is part of a three stage process known as Extract, Load and Transform (ELT). Before ELT, Extract, Transform, and Load (ETL) was the king. The former involves transfering data from the source, to the destination, such as a data warehouse or data lake and performing the transformation in the destination. The latter, ETL, though a traditional approach, involves first identifying the data, transforming it prior to landing it to the destination, in this case a data warehouse.</p>
+<p>dbt, from the words of developers, is an open-source tool that analysts and data engineers use to transform data in their data warehouses. Data transformation is the process of converting data from its source format to the format required for analysis. The data transformation process is part of a three stage process known as Extract, Load and Transform (ELT). Before ELT, Extract, Transform, and Load (ETL) was the king. The former involves transferring data from the source, to the destination, such as a data warehouse or data lake and performing the transformation in there. The latter, ETL, though a traditional approach, involves first identifying the data, transforming it prior to landing it to the destination, in this case a data warehouse.</p>
 <p>Here is a better description of the Extract, Load and Transform keywords.</p>
 <p>Extract - this is the identification and reading of data from one or more sources, such as databases, internet, comma separated value (csv) files and the like.</p>
 <p>Load - just like you would pull up a weight into a lorry, this is the process of transferring data from the source to your data warehouse.</p>
 <p>Transform - this is the conversion of data from its state to a format that can be used by downstream users.</p>
-<p>You may have seen the term <em>data warehouse</em> coming up quite a number of times. A data warehouse is a data management system that stores current and historical data from multiple sources in a business friendly manner for easier insights and reporting. Examples of data warehouses are Google Big Query, Snowflake, Amazon Redshift, Azure Synapse Analytics, IBM Db2 Warehouse and Firebolt.</p>
+<p>You may have seen the term <em>data warehouse</em> coming up quite a number of times. A data warehouse is a data management system that stores current and historical data from multiple sources in a business friendly manner for easier insights and reporting. Examples of data warehouses are Google BigQuery, Snowflake, Amazon Redshift, Azure Synapse Analytics, IBM Db2 Warehouse and Firebolt.</p>
 </div>
 <div id="why-use-dbt" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Why use dbt?<a href="introduction.html#why-use-dbt" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If you work with data that needs to be version controlled, that is, it can be rolled back to a previous time, you need to work in dbt. If you want to standardize the data models created across teams, dbt is the tool of choice. If you also want a central place where your data work is documented, dbt handles this quite well. In other words, dbt should be the swiss knife when working with large datasets and you want to maintain modularity, order and documentation of your work.</p>
+<p>If you work with data that needs to be version controlled, that is, it can be rolled back to a previous time, you need to work in dbt. If you want to standardize the data models created across teams, dbt is the tool of choice. If you also want a central place where your data work is also documented, dbt handles this quite well. In other words, dbt should be the swiss knife when working with large datasets and where you want to maintain modularity, order and documentation of your work.</p>
 <p>The below image summarises the role of dbt in your data processing work.</p>
 <div class="float">
 <img src="images/dbt.png" alt="The role of dbt" />
