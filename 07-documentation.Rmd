@@ -1,6 +1,6 @@
 # Documentation
 
-In the book *The voyages and adventures of Captain Hatteras* the sailors aboard a ship whose expedition was to the North Pole relied on the writing of former captains, explorers and sailsmen to not only find the best possible route to the North Pole, but also the hazards and the places where coal was hidden for their avoidance and use respectively. So how does this tie to data engineering and dbt? Well, in any digital organization, there is sure to be some turnover. There is sure to be some new chap who would want to wrap their heads around what the organization was doing, and the data being used. Documentation is one way to enable these experts start on a sure footing, but this is rarely the norm. The good thing with dbt is that it provides a way to create documentation at the same place you write code to transform it, and not in a spare pdf^[Portable Document Format]!
+In the book *The voyages and adventures of Captain Hatteras* the sailors aboard a ship whose expedition was to the North Pole relied on the writing of former captains, explorers and sailsmen to not only find the best possible route to the North Pole, but also the hazards to avoid and the places where coal was hidden for their sustenance. So how does this tie to data engineering and dbt? Well, in any digital organization, there is sure to be some turnover. There is sure to be some new chap who would want to wrap their heads around what the organization had been doing, and the data used. Documentation is one way to enable these experts start on a sure footing, but this is rarely the norm. The good thing with dbt is that it provides a way to create documentation at the same place you write code to transform it, and not in a spare pdf^[Portable Document Format]!
 
 ## The yml files
 
@@ -43,12 +43,12 @@ Let's go through the above structure briefly.
 
 ### `version: 2`
 
-There is a story behind this. It is that at the very beginning of dbt development, the structure was very different and inserting `version: 2` enabled developers know which version of dbt they were working with. Don't expect a `version: 3` to come any time soon, but this is just a required necessity. 
+There is a story behind this. It is that at the very beginning of dbt development, the structure was very different and inserting `version: 2` enabled developers know which version of dbt they were working with. Don't expect a `version: 3` to come any time soon, but writing `version: 2`  is just the norm but is not mandatory either. 
 
 
 ### `models`
 
-Remember when we said that a model in dbt is simply a SQL file? Well, next to the `name` key which is under this key you specify the name of your SQL file, minus the `.sql` extension. 
+Remember when we said that a model in dbt is simply a SQL file? Well, next to the `name` you specify the name of your SQL file, minus the `.sql` extension. 
 
 
 ### `description`
@@ -168,8 +168,6 @@ Start Time, in NYC local time. As accurate as could ever be.
 
 --snip--
 ```
-
-
 
 The `tables.md` just contains a description of our `citi_trips_round` table. 
 

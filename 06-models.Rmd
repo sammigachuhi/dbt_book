@@ -137,7 +137,7 @@ select *
 from source_data
 ```
 
-This is a WITH SQL statement. In very simple terms, the SQL statement in parentheses `()` is what is referenced as `source_data`. Once we define our SQL statement and close it with parentheses, we can now select the data referenced by `source_data`. 
+This is a `WITH` SQL statement. In very simple terms, the SQL statement in parentheses `()` is what is referenced as `source_data`. Once we define our SQL statement and close it with parentheses, we can now select the data referenced by `source_data`. 
 
 The SQL statements in parentheses is what is referred to as [Common Table Expression (CTE)](https://www.atlassian.com/data/sql/using-common-table-expressions). They were designed to simplify complex queries and be used in the context of a larger query. 
 
@@ -229,7 +229,7 @@ SELECT * FROM `dbt-project-437116.nyc_bikes.citi_trips_minutes`
 Our `trip_duration_min` column of interest is onto the far right of our view.
 
 
-We had hinted earlier that there is no limit to the complexity or number of models you can create in dbt. Below is a more complex model. This model not only rounds off the minutes to one decimal place but also removes the null columns, thus reducing number of rows from 58, 937, 715 to 53, 108, 721. The model is saved as `citi_trips_round.sql`. 
+We had hinted earlier that there is no limit to the complexity or number of models you can create in dbt. Below is a more complex model. This model not only rounds off the minutes to one decimal place but also removes the null columns, thus reducing number of rows from 58,937,715 to 53,108,721. The model is saved as `citi_trips_round.sql`. 
 
 ```
 {{ config(materialized='view') }}
