@@ -89,7 +89,7 @@ Scroll down to the `new_york_citibike` dataset under the `bigquery-public-data` 
 ![Copy sidebar](./images/copy_sidebar.png)
 
 
-In the **Destination** searchbar, type `nyc_bikes` in reference to where we want to copy the contents into. You may need to enable the data transfer API to perform the copy operation. Do so if BigQuery necessitates that this must be enabled.
+In the **Destination** searchbar, type `nyc_bikes` in reference to where we want to copy the contents into. You may need to enable the data transfer API to perform the copy operation. Do so if BigQuery necessitates that *it* must be enabled.
 
 Once you copy the dataset, a small bar will appear on the screen saying **View Details**. Click on it to stop the run operation since BigQuery will be rerunning the copy operation after every 24 hours. Disable the transfer process and delete it. 
 
