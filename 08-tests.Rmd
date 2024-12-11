@@ -2,17 +2,20 @@
 
 Probably if you've worked on a Windows computer, you must have used Microsoft Defender Full Scan at some point. During or at the end of the scan, some results were displayed. dbt works in almost the same way, only that this time they scan your data.
 
-Tests in dbt are basically assertions of your data. That is, they are just some assumptions that you have of your datasets that are correct. Tests enable one to know: 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feel like something to bemoan, can fail (as all tests do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug later on! In a nutshell, dbt tests perform much like a programmatic scan that will only spew out errors of something that is suspicious.
+Tests in dbt are basically assertions of your data. That is, they are just some assumptions of your datasets that are correct. Tests enable one to know: 1) which assumptions are wrong about our data, and 2) which parts of our data diverge from the expected norm. Tests can sometimes feel like something to bemoan, can fail (as some do) but the overarching advantage is that they make us understand more about our data. They can also be lifesavers in that they can pinpoint a serious problem which could be harder to debug later on! In a nutshell, dbt tests perform much like a programmatic scan that will only spew out errors if something is suspicious.
 
 ## Types of tests in dbt
 
 In dbt, a test can be defined in either of the following two ways:
 
-1. generic test - this is a test written in a SQL model and defined inside a YAML file. The test in the YAML file is defined using jinja Macros. dbt comes with  four all-batteries included tests namely:
+1. generic test - this is a test written in a SQL model and defined inside a YAML file. The test in the YAML file is defined using jinja Macros. dbt comes in with  four, all-batteries included tests namely:
 
 * unique - asserts that the column has no repeating values
+
 * not_null - asserts that there are no null values
+
 * accepted_values - checks if the values in your field correspond to those in a defined list
+
 * relationships - checks if the field has an existing relationship with another field in a different table. 
 
 2. singular test - some normally refer to this as a custom test. This is a SQL query which is used to check assertions in your data. The SQL files that make up your test are defined inside the `tests` directory or the path defined in the `test-paths` key inside the `dbt_project.yml` file. Each SQL file will have one test only. Nevertheless, if this test will be used across many fields and files, you can reference it using jinja macros `{{ }}`. If this is the case, it is no longer a singular test but a generic *custom* test. 
@@ -21,7 +24,7 @@ Let's start with a dbt out-of-the-box generic test.
 
 ## Generic tests in dbt
 
-We will start with a very simple test, the `not_null` test on the `start_station_name` column of `citi_trips_long` model. Surely, unless someone is teleporting from somewhere, every rented bike must have an origin. 
+We will start with a very simple test, the `not_null` test on the `start_station_name` column of `citi_trips_long` model. Surely, unless someone is teleporting from somewhere, every rented bike must have an origin! 
 
 
 ```
@@ -78,7 +81,7 @@ Now let's create a test that will fail on purpose. From a large dataset, obvious
           - unique
 ```
 
-The output is as below. Note that it results in a failure and also shows the path to the SQL query inside the `target/` directory that was used to carry out the test. If you paste this SQL query from the `target` directory into your data warehouse, it will return the number of rows that failed the test.
+The output is as below. Note that it results in a failure and also shows the path to the SQL query inside the `target/` directory that was used to carry out the test. If you paste this SQL query from the `target` directory into the SQL tab of the BigQuery data warehouse, it will return the number of rows that failed the test.
 
 ```
 19:23:35  Concurrency: 1 threads (target='dev')
@@ -117,7 +120,7 @@ WHERE trip_min_round < 10
 
 ```
 
-So to perform the litmus test, run our usual magic phrase:
+So to perform the litmus test, run the usual magic phrase:
 
 ```
 dbt test --select unnecessary_trips
@@ -177,7 +180,7 @@ WHERE LENGTH(start_station_name) > 15
 
 In very few words, the above SQL tells dbt to shout out an error if any station name is greater than 15 characters.
 
-Let's create another test that will raise alarms if there are special characters within your `start_station_name`. 
+Let's create another test that will raise an alarm if there are special characters within your `start_station_name`. 
 
 ```
 {% test special_characters (model, column_name) %}
@@ -188,7 +191,7 @@ LIKE '%^[a-zA-Z0-9+-]%'
 
 ```
 
-Okay, it's now time for our litmus test. Going back to the `start_station_name` mapping that we have performed some litmus tests, lets also add our two *custom* generic tests of `long_character` and `special_characters`. 
+Okay, it's now time for our litmus test. Going back to the `start_station_name` mapping where we already performed some litmus tests, lets also add our two *custom* generic tests of `long_character` and `special_characters`. 
 
 
 ```
@@ -248,7 +251,7 @@ There is also another output following the above which shows how many records fa
 
 What if you feel that the *FAIL* alert like in the above tests is shouting too much?! That you would prefer them to be *WARNINGS* because they are non-critical?
 
-You can do so by setting the configuration to display as a warning rather than an error.
+You can do so by setting the configuration to display as a warning rather than as an error.
 
 ```
 {% test long_characters (model, column_name) %}

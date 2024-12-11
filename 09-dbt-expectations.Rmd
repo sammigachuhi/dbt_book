@@ -4,7 +4,7 @@ What is dbt-expectations? dbt-expectations is an extension package for dbt which
 
 Unless you've used GE, you may be wondering what this is in the first place, and its okay to feel lost. GE is much like tests in the previous chapter, it conducts quality tests on your data, thus flagging those that deviate from the set assertions. 
 
-I would put dbt-expectations and GE on the same plane and use an allegory to drive the point home: that of a car. When buying a car, there are some common checklist items, and others bespoke depending on your car model. For example, an ordinary car must have the following features (at least most of them):
+I would put dbt-expectations and GE on the same plane and use an allegory to drive the point home: that of a car. When buying a car, there are some common checklist items, and others bespoke depending on your car model. For example, an ordinary car must have the following features:
 
 * have four wheels
 * have a driver's seat
@@ -97,7 +97,7 @@ We will perform one test in each category just to exemplify the potential of `db
 
 #### `expect_table_row_count_to_equal_other_table`
 
-Description: Expect the number of rows in a model match another model.
+**Description**: Expect the number of rows in a model match another model.
 
 We will expect the `citi_trips_round` and the `citi_trips_minutes` tables to have the same number of rows since their respective models used the same `citi_bike_trips` table. Therefore, the two tables should pass this test, or will they?
 
@@ -135,9 +135,9 @@ If you click on the destination of the SQL statement and copy the contents to th
 
 #### `expect_column_values_to_not_be_null`
 
-Description: Expect column values to not be null.
+**Description**: Expect column values to not be null.
 
-This is a *no-brainer* kind of test. Can you guess which columns in any of our tables in the `nyc_bikes` dataset should never be null? Here is a clue, station_id and station names, unless the biker teleports to or from somewhere!
+This is a *no-brainer* kind of test. Can you guess which columns in any of our tables in the `nyc_bikes` dataset should never be null? Here is a clue: station_id and station names, unless the biker teleports to or from somewhere!
 
 So on the `my_models` YAML file, insert the below test on the `start_station_id`, `start_station_name`, `end_station_id` and `end_station_name` fields.
 
@@ -154,7 +154,7 @@ A caveat when using the `dbt_expectations.expect_column_values_to_not_be_null`, 
 
 #### `expect_column_values_to_be_in_set`
 
-Description: Expect each column value to be in a given set.
+**Description**: Expect each column value to be in a given set.
 
 This test works best for where you are sure that a certain column will only accept certain values. A good example is the `gender` column. There can only be three results: male, female and other. Here we insert the test in our `citi_trips_minutes` and `citi_trips_round` models.
 
@@ -173,7 +173,7 @@ If you run the above test for both the `citi_trips_minutes` and `citi_trips_roun
 
 #### `expect_column_value_lengths_to_be_between`
 
-Description: Expect column entries to be strings with length between a min_value value and a max_value value (inclusive).
+**Description**: Expect column entries to be strings with length between a min_value value and a max_value value (inclusive).
 
 Because our `citi_trips_minutes` table has several null rows, we will put the minimum expected value to be 0. Since we also want to catch those station names with overly long names, we will put the max value as 70. So for both the `start_station_name` and the `end_station_name`, we inserted the following test:
 
@@ -191,7 +191,7 @@ We are glad to know both models passed this simple test.
 
 #### `expect_column_max_to_be_between`
 
-Description: Expect the column max to be between a min and max value
+**Description**: Expect the column max to be between a min and max value
 
 You may wonder what the purpose of this test is. But don't dismiss it yet, it can come quite in handy when searching for outlier values. We will demonstrate it in catching overly long bike trips. However, this test needs some background knowledge of your data. 
 
@@ -206,7 +206,7 @@ SELECT * FROM dbt-project-437116.nyc_bikes.citi_trips_minutes
 WHERE trip_duration_min > 200000;
 ```
 
-Now lets place the limits of our maximum trip duration values to be between the average of 16 and some intermediate value such as 100, 000 minutes (1, 666 hours)!
+Now lets place the limits of our maximum trip duration values to be between the average of 16 and some intermediate value such as 100,000 minutes (1,666 hours)!
 
 ```
 tests:
@@ -221,7 +221,7 @@ That will flag off some errors, but if you change the `max_value` parameter to `
 
 #### `expect_column_pair_values_A_to_be_greater_than_B`
 
-Description: Expect values in column A to be greater than column B.
+**Description**: Expect values in column A to be greater than column B.
 
 This kind of test comes in handy when you want to ensure that one of your columnar values is greater than, or less than that of a different column. A good example is a comparison of trip duration in seconds in the `tripduration` column versus the trip duration in minutes from `trip_min_round` column in our `citi_trips_round` table. Definitely time in seconds will always have a greater value in terms of length than the more concise minutes values!
 
